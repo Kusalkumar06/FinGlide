@@ -1,0 +1,37 @@
+import express from "express"
+import cors from "cors"
+import router from "./routes/authRoutes.js";
+
+import "dotenv/config"
+
+import { connectDB } from "./config/db.js";
+
+const app = express();
+
+app.use(cors());
+app.use(express.json())
+
+const PORT = process.env.PORT
+const URL = process.env.MONGO_URI
+
+if (!URL){
+    console.error("MONGO_URI is not defined in the .env file.")
+    process.exit(1)
+}
+
+
+async function main(){
+    try{
+        await connectDB(URL);
+        app.listen(PORT, () => {
+            console.log(`Server is running in the http://localhost:${PORT}`)
+        })
+    } catch (err){
+        console.error("Error Connecting to the DataBase.",err)
+        process.exit(1);
+    }
+}
+
+main()
+
+app.use('/auth/', router)
