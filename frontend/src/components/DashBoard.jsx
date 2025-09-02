@@ -9,7 +9,7 @@ function DashBoard() {
     <div>
       <div className='flex items-center justify-between mb-5'>
         <div>
-          <h1 className='text-[#3A3A3A] text-[28px]'>Dashboard</h1>
+          <h1 className='text-[#3A3A3A] text-[28px] font-[500]'>Dashboard</h1>
           <p className='text-[14px] text-[#3B3F40]'>Welcome back! Here's your financial overview.</p>
         </div>
         <div>
@@ -58,12 +58,89 @@ function DashBoard() {
           </div>
         </div>
       </div>
-      <div className='flex justify-between items-stretch'>
-        <div>
+
+      <div className='flex items-stretch gap-4 my-3'>
+        <div className="flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl flex flex-col border-2 border-[#DDDFDE]">
           <PieChartCategory/>
         </div>
-        <div>
+        <div className="flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl flex flex-col border-2 border-[#DDDFDE]">
           <BarChartInVsEx/>
+        </div>
+      </div>
+
+      <div className='flex items-stretch gap-4'>
+        <div className='flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl border-2 border-[#DDDFDE] p-4 flex flex-col'>
+          <div>
+            <h1 className="text-lg font-semibold text-gray-700">Account Overview</h1>
+            <p className="text-[#8E5660]">Your account balances at a glance.</p>
+          </div>
+          <div className='my-3 space-y-2'>
+            <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-3 rounded-lg'>
+              <div>
+                <h1 className='text-[#433C3E] text-[20px]'>Checking Account</h1>
+                <p className='text-[12px] text-gray-700'>Bank</p>
+              </div>
+              <h1 className='text-green-700 text-[18px]'>₹15,750.5</h1>
+            </div>
+            <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-3 rounded-lg'>
+              <div>
+                <h1 className='text-[#433C3E] text-[20px]'>Checking Account</h1>
+                <p className='text-[12px] text-gray-700'>Bank</p>
+              </div>
+              <h1 className='text-green-700 text-[18px]'>₹15,750.5</h1>
+            </div>
+            <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-3 rounded-lg'>
+              <div>
+                <h1 className='text-[#433C3E] text-[20px]'>Checking Account</h1>
+                <p className='text-[12px] text-gray-700'>Bank</p>
+              </div>
+              <h1 className='text-green-700 text-[18px]'>₹15,750.5</h1>
+            </div>
+          </div>
+        </div>
+
+        <div className='flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl border-2 border-[#DDDFDE] p-4 flex flex-col'>
+          <div>
+            <h1 className="text-lg font-semibold text-gray-700">Recent Transactions</h1>
+            <p className="text-[#8E5660]">Your Latest financial activity.</p>
+          </div>
+          <div className='my-3 space-y-1'>
+            <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-1 rounded-lg'>
+              <div>
+                <h1 className='text-[#433C3E] text-[20px]'>Grocery Store</h1>
+                <p className='text-[12px] text-gray-700'>Bank</p>
+              </div>
+              <h1 className='text-green-700 text-[18px]'>₹15,750.5</h1>
+            </div>
+            <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-1 rounded-lg'>
+              <div>
+                <h1 className='text-[#433C3E] text-[20px]'>Grocery Store</h1>
+                <p className='text-[12px] text-gray-700'>Bank</p>
+              </div>
+              <h1 className='text-green-700 text-[18px]'>₹15,750.5</h1>
+            </div>
+            <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-1 rounded-lg'>
+              <div>
+                <h1 className='text-[#433C3E] text-[20px]'>Grocery Store</h1>
+                <p className='text-[12px] text-gray-700'>Bank</p>
+              </div>
+              <h1 className='text-green-700 text-[18px]'>₹15,750.5</h1>
+            </div>
+            <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-1 rounded-lg'>
+              <div>
+                <h1 className='text-[#433C3E] text-[20px]'>Grocery Store</h1>
+                <p className='text-[12px] text-gray-700'>Bank</p>
+              </div>
+              <h1 className='text-green-700 text-[18px]'>₹15,750.5</h1>
+            </div>
+            <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-1 rounded-lg'>
+              <div>
+                <h1 className='text-[#433C3E] text-[20px]'>Grocery Store</h1>
+                <p className='text-[12px] text-gray-700'>Bank</p>
+              </div>
+              <h1 className='text-green-700 text-[18px]'>₹15,750.5</h1>
+            </div>
+          </div>
         </div>
       </div>
     </div>

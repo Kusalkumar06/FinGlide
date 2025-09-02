@@ -10,7 +10,9 @@ const slice = createSlice({
         registerName: "",
         registerEmail: "",
         registerPassword: "",
-        registerErr: true
+        registerErr: true,
+
+        activeCategoryTab: "EXPENSE",
     },
     reducers:{
         loginusername: (state,data) => {
@@ -19,6 +21,7 @@ const slice = createSlice({
         loginpassword:(state,data) => {
             state.loginPassword = data.payload;
         },
+        
         registername: (state,data) => {
             state.registerName = data.payload;
         },
@@ -28,6 +31,10 @@ const slice = createSlice({
         registerpassword:(state,data) => {
             state.registerPassword = data.payload;
         },
+
+        toggleCategoryTab:(state,data) => {
+            state.activeCategoryTab = data.payload;
+        }
     },
 })
 

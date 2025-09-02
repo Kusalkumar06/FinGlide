@@ -8,7 +8,7 @@ import { TbReportSearch } from "react-icons/tb";
 function SideBar() {
   return (
     <div className='flex'>
-      <div className='border-r-1 w-75 h-screen bg-gradient-to-b from-orange-100 via-white to-orange-100 flex flex-col'>
+      <div className='border-r-1 w-75 h-screen bg-gradient-to-b from-orange-100 via-white to-orange-100 flex flex-col fixed top-0 left-0'>
         {/* {Logo container} */}
         <div className='flex p-5 px-9'>
           <div className='rounded-[50%] p-1 bg-[#da6e39] mr-1'>
@@ -29,11 +29,11 @@ function SideBar() {
               <IoHomeOutline size={20} className='text-[ #505050]' />
               <p className='ml-3 text-[18px] '>Dashboard</p>
             </Link>
-            <Link to='/' className='flex items-center justify-start px-2 py-1 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
+            <Link to='/accounts' className='flex items-center justify-start px-2 py-1 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
               <IoWalletOutline size={20} className='text-[ #505050]' />
               <p className='ml-3 text-[18px] '>Accounts</p>
             </Link>
-            <Link to='/' className='flex items-center justify-start p-2 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
+            <Link to='/categories' className='flex items-center justify-start p-2 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
               <LuTags size={20} className='text-[ #505050]' />
               <p className='ml-3 text-[18px] '>Categories</p>
             </Link>
@@ -63,7 +63,7 @@ function SideBar() {
 
 
 
-      <div className='flex-1 p-6'>
+      <div className='flex-1 p-6 ml-75'>
         <Outlet/>
       </div>
     </div>

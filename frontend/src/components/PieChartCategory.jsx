@@ -57,7 +57,7 @@ const CustomTooltip = ({ active, payload }) => {
 
 export default function PieChartCategory() {
   return (
-    <div className="bg-[#FFFAF4] flex flex-col justify-center items-center shadow-lg rounded-2xl p-4 w-full max-w-md mr-3 shadow-lg border-1 border-[#DDDFDE] h-[]">
+    <div className="flex flex-col justify-center items-center rounded-2xl p-4 w-full max-w-md mr-3">
       <div className="self-start">
         <h2 className="text-lg font-semibold text-gray-700">Expenses by Category</h2>
         <p className="text-[#8E5660]">Your spending breakdown for this month.</p>
