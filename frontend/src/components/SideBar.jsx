@@ -8,7 +8,7 @@ import { TbReportSearch } from "react-icons/tb";
 function SideBar() {
   return (
     <div className='flex'>
-      <div className='border-r-1 w-75 h-screen bg-gradient-to-b from-orange-100 via-white to-orange-100 flex flex-col fixed top-0 left-0'>
+      <div className='border-r-1 w-75 h-screen bg-gradient-to-b from-orange-100 via-white to-orange-100 flex flex-col fixed top-0 left-0 z-50'>
         {/* {Logo container} */}
         <div className='flex p-5 px-9'>
           <div className='rounded-[50%] p-1 bg-[#da6e39] mr-1'>
@@ -37,11 +37,11 @@ function SideBar() {
               <LuTags size={20} className='text-[ #505050]' />
               <p className='ml-3 text-[18px] '>Categories</p>
             </Link>
-            <Link to='/' className='flex items-center justify-start p-2 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
+            <Link to='/transactions' className='flex items-center justify-start p-2 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
               <LiaCreditCardSolid size={20} className='text-[ #505050]' />
               <p className='ml-3 text-[18px] '>Transactions</p>
             </Link>
-            <Link to='/' className='flex items-center justify-start p-2 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
+            <Link to='/budgets' className='flex items-center justify-start p-2 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
               <LuChartPie size={20} className='text-[ #505050]' />
               <p className='ml-3 text-[18px] '>Budgets</p>
             </Link>

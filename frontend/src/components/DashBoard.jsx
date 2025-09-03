@@ -60,7 +60,7 @@ function DashBoard() {
       </div>
 
       <div className='flex items-stretch gap-4 my-3'>
-        <div className="flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl flex flex-col border-2 border-[#DDDFDE]">
+        <div className="flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl flex flex-col border-2 border-[#DDDFDE] ">
           <PieChartCategory/>
         </div>
         <div className="flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl flex flex-col border-2 border-[#DDDFDE]">

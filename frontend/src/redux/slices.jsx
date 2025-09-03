@@ -13,6 +13,8 @@ const slice = createSlice({
         registerErr: true,
 
         activeCategoryTab: "EXPENSE",
+
+        searchTransaction:'',
     },
     reducers:{
         loginusername: (state,data) => {
@@ -34,6 +36,10 @@ const slice = createSlice({
 
         toggleCategoryTab:(state,data) => {
             state.activeCategoryTab = data.payload;
+        },
+
+        setSearchTransaction:(state,data) => {
+            state.searchTransaction = data.payload
         }
     },
 })

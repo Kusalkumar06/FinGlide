@@ -41,7 +41,7 @@ const accountDetails = [
 
 function Accounts() {
   return (
-    <div >
+    <div>
       <div className='flex items-center justify-between mb-5'>
         <div>
           <h1 className='text-[#3A3A3A] text-[28px] font-[500]'>Accounts</h1>
