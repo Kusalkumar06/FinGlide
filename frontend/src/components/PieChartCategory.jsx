@@ -73,7 +73,11 @@ export default function PieChartCategory() {
           dataKey="value"
           labelLine={false}
           label={renderCustomizedLabel}
-          isAnimationActive={false}
+          isAnimationActive={true}
+          animationDuration={1000}
+          animationEasing="ease-out"
+          animationBegin={0}
+
         >
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>

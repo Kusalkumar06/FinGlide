@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet } from 'react-router-dom'
 import { IoHomeOutline,IoWalletOutline,IoSettingsOutline } from "react-icons/io5";
 import { LuTags,LuChartPie } from "react-icons/lu";
 import { LiaCreditCardSolid } from "react-icons/lia";
@@ -24,39 +24,39 @@ function SideBar() {
 
         <div className='p-5'>
           <p className='text-[#958590] text-[16px]'>Navigation</p>
-          <div className='my-3'>
-            <Link to='/' className='flex items-center justify-start px-2 py-1 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
+          <nav className='my-3'>
+            <NavLink to='/' className={({isActive}) => `flex items-center justify-start px-2 py-1 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded ${isActive ? 'bg-[#F96C4A] text-white' : ''}`}>
               <IoHomeOutline size={20} className='text-[ #505050]' />
               <p className='ml-3 text-[18px] '>Dashboard</p>
-            </Link>
-            <Link to='/accounts' className='flex items-center justify-start px-2 py-1 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
+            </NavLink>
+            <NavLink to='/accounts' className={({isActive}) => `flex items-center justify-start px-2 py-1 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded ${isActive ? 'bg-[#F96C4A] text-white' : ''}`}>
               <IoWalletOutline size={20} className='text-[ #505050]' />
               <p className='ml-3 text-[18px] '>Accounts</p>
-            </Link>
-            <Link to='/categories' className='flex items-center justify-start p-2 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
+            </NavLink>
+            <NavLink to='/categories' className={({isActive}) => `flex items-center justify-start px-2 py-1 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded ${isActive ? 'bg-[#F96C4A] text-white' : ''}`}>
               <LuTags size={20} className='text-[ #505050]' />
               <p className='ml-3 text-[18px] '>Categories</p>
-            </Link>
-            <Link to='/transactions' className='flex items-center justify-start p-2 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
+            </NavLink>
+            <NavLink to='/transactions' className={({isActive}) => `flex items-center justify-start px-2 py-1 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded ${isActive ? 'bg-[#F96C4A] text-white' : ''}`}>
               <LiaCreditCardSolid size={20} className='text-[ #505050]' />
               <p className='ml-3 text-[18px] '>Transactions</p>
-            </Link>
-            <Link to='/budgets' className='flex items-center justify-start p-2 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
+            </NavLink>
+            <NavLink to='/budgets' className={({isActive}) => `flex items-center justify-start px-2 py-1 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded ${isActive ? 'bg-[#F96C4A] text-white' : ''}`}>
               <LuChartPie size={20} className='text-[ #505050]' />
               <p className='ml-3 text-[18px] '>Budgets</p>
-            </Link>
-            <Link to='/' className='flex items-center justify-start p-2 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
+            </NavLink>
+            <NavLink to='/reports' className={({isActive}) => `flex items-center justify-start px-2 py-1 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded ${isActive ? 'bg-[#F96C4A] text-white' : ''}`}>
               <TbReportSearch size={20} className='text-[ #505050]' />
               <p className='ml-3 text-[18px] '>Reports</p>
-            </Link>
-          </div>
+            </NavLink>
+          </nav>
         </div>
 
         <div className='px-2 py-1 mt-auto gap-1 space-y-2'>
-          <Link to='/' className='self-end flex items-center justify-start p-2 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
+          <NavLink to='/' className='self-end flex items-center justify-start p-2 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
             <IoSettingsOutline size={20} className='text-[ #505050]' />
             <p className='ml-3 text-[18px] '>Settings</p>
-          </Link>
+          </NavLink>
           <button className='w-[100%] bg-[#F96C4A] text-white p-1 text-[18px] rounded cursor-pointer'>Logout</button>
         </div>
       </div>

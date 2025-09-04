@@ -8,6 +8,7 @@ import Categories from './components/Categories'
 import Accounts from './components/Accounts'
 import Transactions from './components/Transactions'
 import Budgets from './components/Budgets'
+import Reports from './components/Reports'
 
 
 
@@ -22,6 +23,7 @@ function App() {
           <Route path='/accounts' element={<Accounts/>}></Route>
           <Route path='/transactions' element ={<Transactions/>}></Route>
           <Route path='/budgets' element ={<Budgets/>}></Route>
+          <Route path='/reports' element ={<Reports/>}></Route>
         </Route>
         <Route path='/register/' element={<Signup />}></Route>
         <Route path='/login/' element={<Signin />}></Route>

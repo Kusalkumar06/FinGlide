@@ -60,11 +60,11 @@ function Signin() {
         <form className='my-5' onSubmit={handleSubmit}>
           <div className='flex flex-col mb-6'>
             <label className='mb-2 text-[#473624] font-[600] text-[18px]'>Username</label>
-            <input className='border-1 rounded p-1 outline-none ' placeholder='Enter username' type='text' value={loginUsername} onChange={handleUsername}/>
+            <input className='border-1 rounded p-1 outline-none ' required placeholder='Enter username' type='text' value={loginUsername} onChange={handleUsername}/>
           </div>
           <div className='flex flex-col mb-7'>
             <label className='mb-2 text-[#473624] font-[600] text-[18px]'>Password</label>
-            <input className='border-1 rounded p-1 outline-none' placeholder='Enter password' type='password' value={loginPassword} onChange={handlePassword}/>
+            <input className='border-1 rounded p-1 outline-none' required placeholder='Enter password' type='password' value={loginPassword} onChange={handlePassword}/>
           </div>
           <div className='flex flex-col justify-center'>
             <button className='p-1 rounded bg-[#D86D38] text-[#FFFBF3] font-[600]'>Sign in</button>
