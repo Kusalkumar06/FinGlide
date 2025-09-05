@@ -3,9 +3,7 @@ import { CiCalendar } from "react-icons/ci";
 import { FaArrowTrendUp,FaArrowTrendDown } from "react-icons/fa6";
 import { useSelector,useDispatch } from 'react-redux';
 import slice from '../redux/slices';
-// import PieChartCategory from './PieChartCategory';
-import {BarChartSpVsBud,AreaGraphAccount,PieChartCategory,LineChartInVsEx} from './ReportsTab';
-import BarChartInVsEx from './BarChartInVsEx';
+import {BarChartSpVsBud,AreaGraphAccount,PieChartCategory,LineChartInVsEx,BarChartInVsEx} from './ReportsTab';
 
 const reportTabs = [
   {

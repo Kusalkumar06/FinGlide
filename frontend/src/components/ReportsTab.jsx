@@ -11,6 +11,9 @@ const bardata = [
   { category: "Entertainment", budget: 2000, spent: 2500 },
   { category: "Healthcare", budget: 1500, spent: 1000 },
   { category: "Travel", budget: 2500, spent: 2000 },
+  { category: "Food", budget: 8000, spent: 7800 },
+  { category: "Shopping", budget: 3500, spent: 3800 },
+  { category: "Shopping", budget: 3500, spent: 3800 },
 ];
 
 export function BarChartSpVsBud(){
@@ -30,19 +33,55 @@ export function BarChartSpVsBud(){
 
 
   return (
-    <div className="flex flex-col bg-[#FFFAF4] shadow-lg rounded-2xl justify-center items-center rounded-2xl p-4 w-full mr-3">
-      <ResponsiveContainer width="70%" height={350}>
-        <BarChart data={bardata} barGap={8}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="category" />
-          <YAxis />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend />
-          <Bar dataKey="budget" fill="#888888" name="Budget" />
-          <Bar dataKey="spent" fill="#ff6600" name="Spent" />
-        </BarChart>
-      </ResponsiveContainer>
+    <div className="flex items-center items-stretch gap-4">
+      <div className="shadow-lg bg-[#FFFAF4] w-[60%] rounded-2xl p-4 border-1 border-[#DDDFDE]">
+        <div className="self-start mb-5">
+            <h2 className="text-lg font-semibold text-gray-700">Category Spending vs Budget</h2>
+            <p className="text-[#8E5660]">Compare actual spending against budgets.</p>
+        </div>
+        <ResponsiveContainer width="100%" height={350}>
+          <BarChart data={bardata} barGap={8}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="category" fontSize={10}/>
+            <YAxis />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend />
+            <Bar dataKey="budget" fill="#888888" name="Budget" />
+            <Bar dataKey="spent" fill="#ff6600" name="Spent" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="shadow-lg flex-1 bg-[#FFFAF4] rounded-2xl p-4 border-1 border-[#DDDFDE]">
+        <div className="self-start mb-5">
+            <h2 className="text-lg font-semibold text-gray-700">Category Analysis</h2>
+            <p className="text-[#8E5660]">Detailed breakdown of spending by category.</p>
+        </div>
+        <div className='my-3 space-y-1'>
+          <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-1 rounded-lg'>
+            <div>
+              <h1 className='text-[#433C3E] text-[20px]'>Grocery Store</h1>
+              <p className='text-[12px] text-gray-700'>65 Transactions</p>
+            </div>
+            <h1 className='text-green-700 text-[18px]'>₹15,750.5</h1>
+          </div>
+          <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-1 rounded-lg'>
+            <div>
+              <h1 className='text-[#433C3E] text-[20px]'>Grocery Store</h1>
+              <p className='text-[12px] text-gray-700'>29 Transactions</p>
+            </div>
+            <h1 className='text-green-700 text-[18px]'>₹15,750.5</h1>
+          </div>
+          <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-1 rounded-lg'>
+            <div>
+              <h1 className='text-[#433C3E] text-[20px]'>Grocery Store</h1>
+              <p className='text-[12px] text-gray-700'>48 Transactions</p>
+            </div>
+            <h1 className='text-green-700 text-[18px]'>₹15,750.5</h1>
+          </div>
+        </div>
+      </div>
     </div>
+    
   );
 }
 
@@ -73,28 +112,14 @@ export  function PieChartCategory() {
     }
     return null;
   };
-  const renderCustomizedLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-  }) => {
+  const renderCustomizedLabel = ({ cx,cy,midAngle,innerRadius,outerRadius,percent,}) => {
     const RADIAN = Math.PI / 180;
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
     return (
-      <text
-        x={x}
-        y={y}
-        fill="white"
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontSize="12"
-      >
+      <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize="12" >
         {`${(percent * 100).toFixed(0)}%`}
       </text>
     );
@@ -102,7 +127,7 @@ export  function PieChartCategory() {
 
   return (
     <div className="">
-      <div className="flex flex-col bg-[#FFFAF4] shadow-lg rounded-2xl justify-center items-center rounded-2xl p-4 w-full max-w-md mr-3">
+      <div className="flex flex-col bg-[#FFFAF4] border-1 border-[#DDDFDE] shadow-lg rounded-2xl justify-center items-center rounded-2xl p-4 w-full max-w-md mr-3">
         <div className="self-start">
           <h2 className="text-lg font-semibold text-gray-700">Expenses by Category</h2>
           <p className="text-[#8E5660]">Your spending breakdown for this month.</p>
@@ -201,7 +226,6 @@ export function AreaGraphAccount  () {
   );
 }
 
-// Example monthly data
 const linedata = [
   { month: "Jan", income: 5000, expenses: 4000, savings: 1000 },
   { month: "Feb", income: 4500, expenses: 3800, savings: 700 },
@@ -217,37 +241,95 @@ const linedata = [
   { month: "Dec", income: 6500, expenses: 5200, savings: 1300 },
 ];
 
-// Custom Tooltip
-const CustomTooltip = ({ active, payload }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-white p-2 shadow-lg rounded-md border text-sm">
-        {payload.map((entry) => (
-          <p key={entry.name} className="text-black font-semibold">
-            {entry.name}: ₹{entry.value}
-          </p>
-        ))}
-      </div>
-    );
-  }
-  return null;
-};
-
 export  function LineChartInVsEx() {
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-2 shadow-lg rounded-md border text-sm">
+          {payload.map((entry) => (
+            <p key={entry.name} className="text-black font-semibold">
+              {entry.name}: ₹{entry.value}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
   return (
-    <div className="bg-white shadow-lg rounded-2xl p-4 w-full max-w-4xl">
-      <h2 className="text-lg font-semibold text-gray-700 mb-4">Monthly Income, Expenses & Savings</h2>
-      <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={linedata} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+    <div className="flex items-center justify-center mt-5">
+      <div className="bg-[#FFFAF4] shadow-lg rounded-2xl p-4 w-full max-w-4xl border-1 border-[#DDDFDE]">
+        <div className="self-start mb-5">
+          <h2 className="text-lg font-semibold text-gray-700">Monthly Income, Expenses & Savings</h2>
+          <p className="text-[#8E5660]">Income, expenses, and savings over the past year.</p>
+        </div>
+        <div>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={linedata} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend verticalAlign="top" height={36} />
+              <Line type="monotone" dataKey="income" stroke="#0088FE" strokeWidth={2} dot={{ r: 4 }}/>
+              <Line type="monotone" dataKey="expenses" stroke="#FF8042" strokeWidth={2} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="savings" stroke="#00C49F" strokeWidth={2} dot={{ r: 4 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const data = [
+  { month: "Jan", income: 5000, expenses: 4000 },
+  { month: "Feb", income: 4500, expenses: 3800 },
+  { month: "Mar", income: 5200, expenses: 4300 },
+  { month: "Apr", income: 4800, expenses: 3900 },
+  { month: "May", income: 6000, expenses: 4700 },
+  { month: "Jun", income: 5500, expenses: 4500 },
+  { month: "Jul", income: 5000, expenses: 4200 },
+  { month: "Aug", income: 5300, expenses: 4600 },
+  { month: "Sep", income: 5800, expenses: 4900 },
+  { month: "Oct", income: 6000, expenses: 5000 },
+  { month: "Nov", income: 6200, expenses: 5100 },
+  { month: "Dec", income: 6500, expenses: 5200 },
+];
+
+
+export function BarChartInVsEx() {
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-2 shadow-lg rounded-md border text-sm">
+          {payload.map((entry) => (
+            <p key={entry.name} className="text-black font-semibold">
+              {entry.name}: ₹{entry.value}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+  return (
+    <div className="bg-[#FFFAF4] border-1 border-[#DDDFDE] rounded-2xl p-4 w-[730px] max-w-4xl flex-1">
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold text-gray-700">Monthly Income vs Expenses</h2>
+        <p className="text-[#8E5660]">Monthly comparison over the past year</p>
+      </div>
+      <ResponsiveContainer width="100%" height={350}>
+        <BarChart data={data} margin={{ top: 20, left: 0, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" />
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
-          <Legend verticalAlign="top" height={36} />
-          <Line type="monotone" dataKey="income" stroke="#0088FE" strokeWidth={2} dot={{ r: 4 }}/>
-          <Line type="monotone" dataKey="expenses" stroke="#FF8042" strokeWidth={2} dot={{ r: 4 }} />
-          <Line type="monotone" dataKey="savings" stroke="#00C49F" strokeWidth={2} dot={{ r: 4 }} />
-        </LineChart>
+          <Legend height={36} />
+          <Bar dataKey="income" fill="#0088FE" barSize={15} />
+          <Bar dataKey="expenses" fill="#FF8042" barSize={15} />
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );

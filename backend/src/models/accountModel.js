@@ -1,0 +1,32 @@
+import mongoose from "mongoose";
+
+const accountSchema = new mongoose.Schema({
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        required:true,
+      },
+      name : {
+        type:String,
+        required:true,
+      },
+      accountType:{
+        type:String,
+        enum: ["wallet", "bank", "card", "investment","crypto","loan"], 
+        required:true,
+      },
+      balance:{
+        type:Number,
+        default:0,
+        required:true
+      },
+      institution:{ 
+        type: String 
+      },
+      createdAt:{
+        type:Date,
+        default: Date.now(),
+      }
+})
+
+export const  AccountModel = mongoose.model("Account",accountSchema)

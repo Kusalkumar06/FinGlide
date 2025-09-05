@@ -1,5 +1,6 @@
 import React from 'react'
 import ProgressBar from './ProgressBar'
+import { MdOutlineDelete,MdOutlineEdit } from "react-icons/md";
 
 const budgets = [
   {
@@ -123,6 +124,14 @@ function Budgets() {
                         <div>
                             <h1 className='text-[18px] font-[500]'>{each.category}</h1>
                             <button className='text-gray-500 text-[11px] border py-[1px] px-2 rounded'>{each.period}</button>
+                        </div>
+                        <div className='opacity-0 group-hover:opacity-100 flex gap-4 ml-auto'>
+                          <button className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'>
+                            <MdOutlineEdit size={15}/>
+                          </button>
+                          <button className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'> 
+                            <MdOutlineDelete size={17} />
+                          </button>
                         </div>
                     </div>
                     <div className='flex justify-between mb-3'>

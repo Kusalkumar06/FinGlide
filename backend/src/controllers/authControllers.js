@@ -58,7 +58,7 @@ export const login = async (req,res) => {
             }
         }
     } catch (err){
-        res.catch(500).json({
+        res.status(500).json({
             error: `Something went wrong during Authentication. Error: ${err}`
         })
     }

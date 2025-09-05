@@ -1,6 +1,8 @@
 import express from "express"
 import cors from "cors"
-import router from "./routes/authRoutes.js";
+import authRouter from "./routes/authRoutes.js";
+import accountRouter from "./routes/accountRoutes.js";
+import categoryRouter from "./routes/categoryRoutes.js";
 
 import "dotenv/config"
 
@@ -34,4 +36,8 @@ async function main(){
 
 main()
 
-app.use('/auth/', router)
+app.use('/auth/', authRouter)
+
+app.use('/account/',accountRouter)
+
+app.use('/category/',categoryRouter)
