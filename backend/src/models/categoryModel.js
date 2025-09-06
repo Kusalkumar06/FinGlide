@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const categoryModel = mongoose.Schema({
+const categoryModel = new mongoose.Schema({
   userId:{
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -12,7 +12,7 @@ const categoryModel = mongoose.Schema({
   },
   categoryType:{
     type: String,
-    enum: ["expense","income"],
+    enum: ["Expense","Income"],
     required: true
   },
   icon:{
@@ -30,6 +30,6 @@ const categoryModel = mongoose.Schema({
     type: Date,
     default: Date.now 
   }
-})
+},{ timeStamps: true })
 
 export const CategoryModel = mongoose.model("Category",categoryModel)

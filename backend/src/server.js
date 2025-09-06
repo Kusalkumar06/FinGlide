@@ -3,6 +3,8 @@ import cors from "cors"
 import authRouter from "./routes/authRoutes.js";
 import accountRouter from "./routes/accountRoutes.js";
 import categoryRouter from "./routes/categoryRoutes.js";
+import trasactionRouter from "./routes/transactionRoutes.js";
+import budgetRouter from "./routes/budgetRoutes.js";
 
 import "dotenv/config"
 
@@ -41,3 +43,7 @@ app.use('/auth/', authRouter)
 app.use('/account/',accountRouter)
 
 app.use('/category/',categoryRouter)
+
+app.use('/transaction/',trasactionRouter)
+
+app.use('/budget/',budgetRouter)

@@ -23,10 +23,16 @@ const accountSchema = new mongoose.Schema({
       institution:{ 
         type: String 
       },
+      icon:{
+        type: String,
+      },
+      color:{ 
+        type: String, 
+      },
       createdAt:{
         type:Date,
         default: Date.now(),
       }
-})
+},{ timeStamps: true })
 
 export const  AccountModel = mongoose.model("Account",accountSchema)

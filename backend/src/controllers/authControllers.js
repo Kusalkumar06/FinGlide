@@ -1,7 +1,11 @@
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import {UserModel} from "../models/userModel.js"
+import { CategoryModel } from "../models/categoryModel.js";
+import { AccountModel } from "../models/accountModel.js"; 
 import "dotenv/config"
+import { defaultCategories,defaultAccounts } from "../default.js"
+
 
 export const register = async(req,res) => {
     const {username,password,email} = req.body;
@@ -16,6 +20,21 @@ export const register = async(req,res) => {
         } else {
             const hashed_pass = await bcrypt.hash(password,10);
             const newUser = await UserModel.create({username,email,password:hashed_pass})
+
+            const accountsWithuser = defaultAccounts.map(acc => ({
+                userId: newUser._id,
+                ...acc,
+            }))
+
+            await AccountModel.insertMany(accountsWithuser)
+
+            const categoriesWithuser = defaultCategories.map(cate => ({
+                userId: newUser._id,
+                ...cate,
+            }))
+
+            await CategoryModel.insertMany(categoriesWithuser)
+
             res.status(201).json({
                 message: "User created successfully.",
                 result:newUser,
