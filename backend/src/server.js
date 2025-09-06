@@ -5,6 +5,7 @@ import accountRouter from "./routes/accountRoutes.js";
 import categoryRouter from "./routes/categoryRoutes.js";
 import trasactionRouter from "./routes/transactionRoutes.js";
 import budgetRouter from "./routes/budgetRoutes.js";
+import cookieParser from "cookie-parser"
 
 import "dotenv/config"
 
@@ -12,8 +13,12 @@ import { connectDB } from "./config/db.js";
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173", 
+  credentials: true,               
+}));
 app.use(express.json())
+app.use(cookieParser())
 
 const PORT = process.env.PORT
 const URL = process.env.MONGO_URI

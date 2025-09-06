@@ -69,10 +69,15 @@ export const login = async (req,res) => {
                     username,
                     email:exsisting_user.email,
                 }
-                const jwtToken = jwt.sign(payload,secret_code, {expiresIn : "1h"})
-                res.status(200).json({
+                const jwtToken = jwt.sign(payload,secret_code, {expiresIn : "1d"})
+
+                res.cookie("authToken", jwtToken, {
+                    httpOnly: true,   
+                    secure: false, 
+                    sameSite: "strict",
+                    maxAge: 24 * 60 * 60 * 1000,//[ 1 day]
+                }).json({
                     message: "Login Successfull.",
-                    jwt_token : jwtToken
                 }) 
             }
         }

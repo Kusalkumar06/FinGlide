@@ -2,6 +2,7 @@ import React from 'react'
 import { useSelector,useDispatch } from 'react-redux'
 import slice from '../redux/slices'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
 
 const actions = slice.actions 
 
@@ -31,16 +32,17 @@ function Signin() {
       password:loginPassword,
     }
     const url = "http://localhost:5000/auth/login"
-    const options = {
-      method: "POST",
-      headers:{
-        "Content-Type" : "application/json",
-      },
-      body: JSON.stringify(details)
-    }
+    // const options = {
+    //   method: "POST",
+    //   headers:{
+    //     "Content-Type" : "application/json",
+    //   },
+    //   body: JSON.stringify(details)
+    // }
 
-    const response = await fetch(url,options)
-    const data = await response.json()
+    // const response = await fetch(url,options)
+    // const data = await response.json()
+    const data = await axios.post(url,details,{withCredentials:true})
     console.log(data);
   }
 
