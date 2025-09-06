@@ -24,7 +24,7 @@ const categoryModel = new mongoose.Schema({
     default: "#D96D38" 
   },
   description:{
-    type: String 
+    type: String,
   },
   createdAt:{
     type: Date,

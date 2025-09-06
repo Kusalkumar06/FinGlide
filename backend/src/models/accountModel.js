@@ -20,6 +20,10 @@ const accountSchema = new mongoose.Schema({
         default:0,
         required:true
       },
+      accountNumber:{
+        type: String,
+        default: "N/A"
+      },
       institution:{ 
         type: String ,
         default:"",
