@@ -26,7 +26,7 @@ const accountSchema = new mongoose.Schema({
       },
       institution:{ 
         type: String ,
-        default:"",
+        default:"N/A",
       },
       icon:{
         type: String,

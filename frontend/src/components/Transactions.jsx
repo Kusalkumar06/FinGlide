@@ -2,7 +2,8 @@ import React from 'react'
 import { CiFilter,CiSearch } from "react-icons/ci";
 import { useSelector,useDispatch } from 'react-redux';
 import slice from '../redux/slices';
-
+import axios from 'axios';
+import { useEffect } from 'react';
 const mockTransactions = [
   {
     id: 1,
@@ -191,9 +192,24 @@ const actions = slice.actions
 function Transactions() {
 
   const dispatch = useDispatch()
-  const {searchTransaction} = useSelector((store) => {
+  const {searchTransaction,transactionList} = useSelector((store) => {
     return store.sliceState
   })
+
+  console.log(transactionList)
+
+  const fetchTransactions = () => {
+    const fn = async() => {
+      const url = "http://localhost:5000/transaction/getTransactions/"
+      const response = await axios.get(url,{withCredentials:true})
+      console.log(response.data.transactions)
+      dispatch(actions.setTransactionList(response.data.transactions))
+    }
+    fn();
+  }
+
+
+  useEffect(fetchTransactions,[])
 
   return (
     <div>
@@ -244,8 +260,8 @@ function Transactions() {
             <div className="relative inline-block w-44 rounded-md border border-gray-300 p-2 text-sm font-medium text-gray-700 shadow-sm">
                 <select className="w-38 focus:outline-none cursor-pointer" defaultValue="all">
                     {
-                        transactionTypes.map((each) => (
-                            <option value={each.value}>{each.display}</option>
+                        transactionTypes.map((each,index) => (
+                            <option key={index} value={each.value}>{each.display}</option>
                         ))
                     }
                 </select>
@@ -253,8 +269,8 @@ function Transactions() {
             <div className="relative inline-block w-44 rounded-md border border-gray-300 p-2 text-sm font-medium text-gray-700 shadow-sm">
                 <select className="w-38 focus:outline-none cursor-pointer" defaultValue="all">
                     {
-                        categoryTypes.map((each) => (
-                            <option value={each.value}>{each.display}</option>
+                        categoryTypes.map((each,index) => (
+                            <option key={index} value={each.value}>{each.display}</option>
                         ))
                     }
                 </select>
@@ -262,8 +278,8 @@ function Transactions() {
             <div className="relative inline-block w-44 rounded-md border border-gray-300 p-2 text-sm font-medium text-gray-700 shadow-sm">
                 <select className="w-38 focus:outline-none cursor-pointer border-gray-300" defaultValue="all">
                     {
-                        accountTypes.map((each) => (
-                            <option value={each.value}>{each.display}</option>
+                        accountTypes.map((each,index) => (
+                            <option key={index} value={each.value}>{each.display}</option>
                         ))
                     }
                 </select>
@@ -279,8 +295,8 @@ function Transactions() {
         </div>
         <div className='space-y-4'>
           {
-            mockTransactions.map((each) => (
-              <div className='border-2 border-[#DDDFDE] rounded p-3 flex gap-4'>
+            mockTransactions.map((each,index) => (
+              <div key={index} className='border-2 border-[#DDDFDE] rounded p-3 flex gap-4'>
                 <div>
                   Icon
                 </div>

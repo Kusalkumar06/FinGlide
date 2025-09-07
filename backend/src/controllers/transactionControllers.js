@@ -36,7 +36,7 @@ export const getTransactions = async(req,res) => {
 
     res.status(201).json({
       message: "All Transactions fetched",
-      AllTransaction: allTransactions,
+      transactions: allTransactions,
     })
   }catch(err){
     res.status(500).json({

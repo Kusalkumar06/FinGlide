@@ -1,6 +1,9 @@
 import React from 'react'
 import ProgressBar from './ProgressBar'
 import { MdOutlineDelete,MdOutlineEdit } from "react-icons/md";
+import axios from "axios"
+// import { useSelector,useDispatch } from 'react-redux'
+import { useEffect } from 'react';
 
 const budgets = [
   {
@@ -68,6 +71,23 @@ const budgets = [
 const budgetAlerts = budgets.filter((each) => each.percentage > 80)
 
 function Budgets() {
+  // const dispatch = useDispatch();
+  // const {budgetList} = useSelector((store) => {
+  //   return store.sliceState
+  // })
+
+
+  const fetchBudgets = () => {
+    const fn = async () => {
+      const url = "http://localhost:5000/budget/getBudgets/"
+      const response = await axios.get(url,{withCredentials:true})
+      console.log(response)
+    }
+    fn()
+  }
+  useEffect(fetchBudgets,[])
+  
+
   return (
     <div>
       <div className='flex items-center justify-between mb-5'>
@@ -165,8 +185,8 @@ function Budgets() {
         </div>
         <div className='space-y-4'>
             {
-              budgetAlerts.map((each) => (
-                <div className='flex justify-between bg-white rounded-lg p-2'>
+              budgetAlerts.map((each,index) => (
+                <div key={index} className='flex justify-between bg-white rounded-lg p-2'>
                   <div className='flex gap-4'>
                     <p>icon</p>
                     <h1 className='text-[18px] font-[400]'>{each.category}</h1>

@@ -12,11 +12,17 @@ const slice = createSlice({
         registerPassword: "",
         registerErr: true,
 
-        activeCategoryTab: "EXPENSE",
+        activeCategoryTab: "Expense",
 
         searchTransaction:'',
 
-        activeReportsTab: 'OVERVIEW'
+        activeReportsTab: 'OVERVIEW',
+
+        budgetList: [],
+        categoryList: [],
+        accountList: [],
+        transactionList:[],
+
     },
     reducers:{
         loginusername: (state,data) => {
@@ -47,6 +53,19 @@ const slice = createSlice({
         setReportsTab:(state,data) => {
             state.activeReportsTab = data.payload;
         },
+
+        setBudgetList:(state,data) => {
+            state.budgetList = data.payload;
+        },
+        setCategoryList:(state,data) => {
+            state.categoryList = data.payload;
+        },
+        setAccountList:(state,data) => {
+            state.accountList = data.payload;
+        },
+        setTransactionList:(state,data) => {
+            state.transactionList = data.payload;
+        }
     },
 })
 
