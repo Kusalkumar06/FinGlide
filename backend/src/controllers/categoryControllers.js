@@ -1,4 +1,6 @@
+import { TransactionModel } from "../models/transactionModel.js";
 import { CategoryModel } from "../models/categoryModel.js";
+import mongoose from "mongoose";
 
 export const createCategory = async(req,res) => {
   try{
@@ -65,6 +67,33 @@ export const deleteCategory = async(req,res) => {
   } catch(err){
     res.status(500).json({
       message: `Error during deleting the Category ${err}`
+    })
+  }
+}
+
+export const getPieData = async(req,res) => {
+  try{
+    const userId = new mongoose.Types.ObjectId(req.user.userId);
+
+    const transactions = await TransactionModel.aggregate([{$match: {userId: userId,transactionType: "Expense" }},{$group:{_id: "$categoryId", total:{$sum: "$amount"}}}])
+
+    const results = await Promise.all(
+      transactions.map(async(eachTransac) => {
+        const category = await CategoryModel.findOne({userId,_id: eachTransac._id})
+        return {
+          name: category.name,
+          total: eachTransac.total,
+          color: category.color
+        }
+      })
+    )
+
+    res.status(200).json({
+      transactionData : results
+    })
+  } catch(err){
+    res.status(500).json({
+      message: `Error during fetching the pieData ${err}`
     })
   }
 }

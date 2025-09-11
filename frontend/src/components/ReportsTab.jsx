@@ -2,21 +2,36 @@ import {  BarChart,  Bar,  XAxis,  YAxis,  Tooltip,  Legend,  ResponsiveContaine
 import { PieChart, Pie, Cell, } from "recharts"; 
 import {AreaChart,Area} from "recharts";
 import {LineChart,Line} from "recharts";
+import axios from "axios";
+import { useSelector,useDispatch } from "react-redux";
+import { useEffect } from "react";
+import slice from "../redux/slices";
 
-const bardata = [
-  { category: "Food", budget: 8000, spent: 7800 },
-  { category: "Transport", budget: 4500, spent: 4200 },
-  { category: "Shopping", budget: 3500, spent: 3800 },
-  { category: "Bills", budget: 4000, spent: 3600 },
-  { category: "Entertainment", budget: 2000, spent: 2500 },
-  { category: "Healthcare", budget: 1500, spent: 1000 },
-  { category: "Travel", budget: 2500, spent: 2000 },
-  { category: "Food", budget: 8000, spent: 7800 },
-  { category: "Shopping", budget: 3500, spent: 3800 },
-  { category: "Shopping", budget: 3500, spent: 3800 },
-];
+const actions = slice.actions
 
 export function BarChartSpVsBud(){
+
+  const dispatch = useDispatch();
+
+
+  const {speVsbudYear,speVsbudMonth,spendVsBudgetData} = useSelector((store) => {
+    return store.sliceState;
+  })
+
+  console.log(speVsbudMonth,speVsbudYear)
+
+  const fetchSpendVsBudget = () => {
+      const fn = async () => {
+        const url = `http://localhost:5000/budget/spendVsBudget?month=${speVsbudMonth}&year=${speVsbudYear}`
+        const response = await axios.get(url,{withCredentials:true})
+        // console.log(response.data.accounts)
+        dispatch(actions.setspendVsBudget(response.data.data))
+      }
+      fn()
+    }
+    useEffect(fetchSpendVsBudget,[])
+
+    console.log(spendVsBudgetData)
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -31,18 +46,38 @@ export function BarChartSpVsBud(){
     return null;
   };
 
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
 
   return (
     <div className="flex items-center items-stretch gap-4">
       <div className="shadow-lg bg-[#FFFAF4] w-[60%] rounded-2xl p-4 border-1 border-[#DDDFDE]">
-        <div className="self-start mb-5">
-            <h2 className="text-lg font-semibold text-gray-700">Category Spending vs Budget</h2>
-            <p className="text-[#8E5660]">Compare actual spending against budgets.</p>
+        <div className="self-start mb-5 flex justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-700">Category Spending vs Budget</h2>
+              <p className="text-[#8E5660]">Compare actual spending against budgets.</p>
+            </div>
+            <div>
+              <div className="flex gap-4 items-center">
+                <select className="px-2 p-1 border rounded" value={speVsbudMonth} onChange={(e) => dispatch(actions.setspeVsBudMonth(parseInt(e.target.value)))}>
+                  {months.map((month, i) => (
+                    <option key={i} value={i + 1}>{month}</option>
+                  ))}
+                </select>
+
+                <select className="px-2 p-1 border rounded" value={speVsbudYear} onChange={(e) => dispatch(actions.setspeVsBudYear(parseInt(e.target.value)))}>
+                  {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i)
+                    .map((year,i) => (
+                      <option key={i} value={year}>{year}</option>
+                    ))}
+                </select>
+              </div>
+            </div>
         </div>
         <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={bardata} barGap={8}>
+          <BarChart data={spendVsBudgetData} barGap={8}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="category" fontSize={10}/>
+            <XAxis dataKey="categoryName" fontSize={10}/>
             <YAxis />
             <Tooltip content={<CustomTooltip />} />
             <Legend />
@@ -51,6 +86,8 @@ export function BarChartSpVsBud(){
           </BarChart>
         </ResponsiveContainer>
       </div>
+
+
       <div className="shadow-lg flex-1 bg-[#FFFAF4] rounded-2xl p-4 border-1 border-[#DDDFDE]">
         <div className="self-start mb-5">
             <h2 className="text-lg font-semibold text-gray-700">Category Analysis</h2>
@@ -85,44 +122,39 @@ export function BarChartSpVsBud(){
   );
 }
 
-const piedata = [
-  { name: "Food", value: 400 },
-  { name: "Shopping", value: 300 },
-  { name: "Transport", value: 300 },
-  { name: "Entertainment", value: 200 },
-  { name: "Bills", value: 278 },
-];
-
-const COLORS = ["#FF8042", "#0088FE", "#00C49F", "#FFBB28", "#AF19FF"];
-
 export  function PieChartCategory() {
+  const dispatch = useDispatch()
+
+  const {pieData} = useSelector((store) => {
+    return store.sliceState
+  })
+
+  const fetchLineData = () => {
+      const fn = async () => {
+        const url = "http://localhost:5000/category/getPieData/"
+        const response = await axios.get(url,{withCredentials:true})
+        // console.log(response.data.accounts)
+        dispatch(actions.setPieData(response.data.transactionData))
+      }
+      fn()
+    }
+    useEffect(fetchLineData,[])
+
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
-      const { name, value } = payload[0].payload; 
-      const total = piedata.reduce((sum, entry) => sum + entry.value, 0);
-      const percentage = ((value / total) * 100).toFixed(1);
+      const { name,total } = payload[0].payload; 
+      const totalAmount = pieData.reduce((sum, entry) => sum + entry.total, 0);
+      const percentage = ((total / totalAmount) * 100).toFixed(1);
 
       return (
         <div className="bg-white p-2 shadow-lg rounded-md border text-sm">
           <p className="font-semibold text-black" >{name}</p>
-          <p className="text-black">Amount: ₹{value}</p>
+          <p className="text-black">Amount: ₹{total}</p>
           <p className="text-black">Percentage: {percentage}%</p>
         </div>
       );
     }
     return null;
-  };
-  const renderCustomizedLabel = ({ cx,cy,midAngle,innerRadius,outerRadius,percent,}) => {
-    const RADIAN = Math.PI / 180;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-    return (
-      <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize="12" >
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
   };
 
   return (
@@ -134,23 +166,22 @@ export  function PieChartCategory() {
         </div>
         <PieChart width={350} height={350} stroke="none">
           <Pie
-            data={piedata}
+            data={pieData}
             cx="50%"
             cy="50%"
             innerRadius={70}
             outerRadius={100}
             paddingAngle={1}
-            dataKey="value"
+            dataKey="total"
             labelLine={false}
-            label={renderCustomizedLabel}
             isAnimationActive={true}
             animationDuration={1000}
             animationEasing="ease-out"
             animationBegin={0}
 
           >
-            {piedata.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>
+            {pieData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color}/>
             ))}
           </Pie>
 
@@ -226,22 +257,25 @@ export function AreaGraphAccount  () {
   );
 }
 
-const linedata = [
-  { month: "Jan", income: 5000, expenses: 4000, savings: 1000 },
-  { month: "Feb", income: 4500, expenses: 3800, savings: 700 },
-  { month: "Mar", income: 5200, expenses: 4300, savings: 900 },
-  { month: "Apr", income: 4800, expenses: 3900, savings: 900 },
-  { month: "May", income: 6000, expenses: 4700, savings: 1300 },
-  { month: "Jun", income: 5500, expenses: 4500, savings: 1000 },
-  { month: "Jul", income: 5000, expenses: 4200, savings: 800 },
-  { month: "Aug", income: 5300, expenses: 4600, savings: 700 },
-  { month: "Sep", income: 5800, expenses: 4900, savings: 900 },
-  { month: "Oct", income: 6000, expenses: 5000, savings: 1000 },
-  { month: "Nov", income: 6200, expenses: 5100, savings: 1100 },
-  { month: "Dec", income: 6500, expenses: 5200, savings: 1300 },
-];
 
 export  function LineChartInVsEx() {
+  const dispatch = useDispatch()
+
+  const {linedata} = useSelector((store) => {
+    return store.sliceState
+  })
+
+  const fetchLineData = () => {
+      const fn = async () => {
+        const url = "http://localhost:5000/transaction/yearlySummary/"
+        const response = await axios.get(url,{withCredentials:true})
+        console.log(response.data.summary)
+        dispatch(actions.setLineData(response.data.summary))
+      }
+      fn()
+    }
+    useEffect(fetchLineData,[])
+    // console.log(linedata)
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
@@ -273,7 +307,7 @@ export  function LineChartInVsEx() {
               <Tooltip content={<CustomTooltip />} />
               <Legend verticalAlign="top" height={36} />
               <Line type="monotone" dataKey="income" stroke="#0088FE" strokeWidth={2} dot={{ r: 4 }}/>
-              <Line type="monotone" dataKey="expenses" stroke="#FF8042" strokeWidth={2} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="expense" stroke="#FF8042" strokeWidth={2} dot={{ r: 4 }} />
               <Line type="monotone" dataKey="savings" stroke="#00C49F" strokeWidth={2} dot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>

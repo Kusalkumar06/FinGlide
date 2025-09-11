@@ -77,6 +77,7 @@ export const getBudgets = async(req,res) => {
       results.push({
         budgetId: budget._id,
         category: budget.categoryId.name,
+        categoryId: budget.categoryId._id,
         limit: budget.limit,
         spent,
         remaining: budget.limit - spent,
@@ -133,6 +134,50 @@ export const deleteBudget = async(req,res) => {
   } catch(err){
     res.status(500).json({
       message: `Error during deleting the budget. ${err}`,
+    })
+  }
+}
+
+export const spendVsBudget = async(req,res) => {
+  try{
+    const userId = req.user.userId;
+    const month = parseInt(req.query.month);
+    const year = parseInt(req.query.year)
+
+    const startDate = new Date(year,month-1,1);
+    const endDate = new Date(year,month,0,23,59,59);
+
+    const budgets = await BudgetModel.find({userId}).populate("categoryId")
+
+    const transactions = await TransactionModel.find({
+      userId: userId,
+      transactionType : "Expense",
+      date: {$gte: startDate, $lte: endDate},
+    })
+
+    const spentMap = {}
+    transactions.forEach((eachTransac) => {
+      const catId = eachTransac.categoryId.toString();
+      if (!spentMap[catId])
+        spentMap[catId] = 0
+      spentMap[catId] += eachTransac.amount;
+    })
+
+
+    const results = budgets.map((budget) => ({
+      categoryName: budget.categoryId.name,
+      budget: budget.limit,
+      spent: spentMap[budget.categoryId._id.toString()] || 0,
+    }))
+
+    res.status(200).json({
+      message: `spendVsBudget data fetched Successfully.`,
+      data: results,
+
+    })
+  } catch(err){
+    res.status(500).json({
+      message: `Error during fetching the spendVsBudget ${err}.`
     })
   }
 }
