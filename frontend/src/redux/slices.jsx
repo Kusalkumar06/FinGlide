@@ -14,6 +14,20 @@ const linedata = [
     {"month":"Nov","income":0,"expense":0,"savings":0},
     {"month":"Dec","income":0,"expense":0,"savings":0}
 ]
+const barData = [
+    {"month":"Jan","income":0,"expense":0},
+    {"month":"Feb","income":0,"expense":0},
+    {"month":"Mar","income":0,"expense":0},
+    {"month":"Apr","income":0,"expense":0},
+    {"month":"May","income":0,"expense":0},
+    {"month":"Jun","income":0,"expense":0},
+    {"month":"Jul","income":0,"expense":0},
+    {"month":"Aug","income":0,"expense":0},
+    {"month":"Sep","income":0,"expense":0},
+    {"month":"Oct","income":0,"expense":0},
+    {"month":"Nov","income":0,"expense":0},
+    {"month":"Dec","income":0,"expense":0}
+]
 
 const slice = createSlice({
     name: "slice",
@@ -40,6 +54,7 @@ const slice = createSlice({
 
         pieData : [],
         linedata: linedata,
+        expVsInc: barData,
 
         speVsbudMonth: new Date().getMonth() +1,
         speVsbudYear: new Date().getFullYear(),
@@ -94,6 +109,9 @@ const slice = createSlice({
         },
         setLineData: (state,data) => {
             state.linedata = data.payload;
+        },
+        setexpVsInc: (state,data) => {
+            state.expVsInc = data.payload;
         },
 
         setspeVsBudMonth: (state,data) => {

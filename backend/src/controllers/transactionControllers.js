@@ -163,3 +163,44 @@ export const yearlySummary = async(req,res) => {
     })
   }
 }
+
+export const expVsincYearly = async(req,res) => {
+  try{
+    const userId = req.user.userId;
+    const fullYear = new Date().getFullYear()
+
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+    const summary = months.map(month => ({
+      month: month,
+      income: 0,
+      expense: 0,
+    }))
+
+    const transactions = await TransactionModel.find({userId:userId,
+      date:{
+        $gte : new Date(`${fullYear}-01-01`),
+        $lte : new Date(`${fullYear}-12-31`)
+      }
+    })
+
+    transactions.forEach((eachTransac) => {
+      const monthIndex = eachTransac.date.getMonth();
+      if (eachTransac.transactionType  === "Income"){
+        summary[monthIndex].income += eachTransac.amount
+      } else if (eachTransac.transactionType === "Expense"){
+        summary[monthIndex].expense += eachTransac.amount
+      }
+    })
+
+    res.status(200).json({
+      message: `Summary fetched Successfully.`,
+      summary : summary
+    })
+
+  } catch(err){
+    res.status(500).json({
+      message: `Error during fetching the summary ${err}`
+    })
+  }
+}

@@ -9,6 +9,138 @@ import slice from "../redux/slices";
 
 const actions = slice.actions
 
+
+
+export  function PieChartCategory() {
+  const dispatch = useDispatch()
+
+  const {pieData} = useSelector((store) => {
+    return store.sliceState
+  })
+
+  const fetchLineData = () => {
+      const fn = async () => {
+        const url = "http://localhost:5000/category/getPieData/"
+        const response = await axios.get(url,{withCredentials:true})
+        // console.log(response.data.accounts)
+        dispatch(actions.setPieData(response.data.transactionData))
+      }
+      fn()
+    }
+    useEffect(fetchLineData,[])
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const { name,total } = payload[0].payload; 
+      const totalAmount = pieData.reduce((sum, entry) => sum + entry.total, 0);
+      const percentage = ((total / totalAmount) * 100).toFixed(1);
+
+      return (
+        <div className="bg-white p-2 shadow-lg rounded-md border text-sm">
+          <p className="font-semibold text-black" >{name}</p>
+          <p className="text-black">Amount: ₹{total}</p>
+          <p className="text-black">Percentage: {percentage}%</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div className="">
+      <div className="flex flex-col bg-[#FFFAF4] border-1 border-[#DDDFDE] shadow-lg rounded-2xl justify-center items-center rounded-2xl p-4 w-full max-w-md mr-3">
+        <div className="self-start">
+          <h2 className="text-lg font-semibold text-gray-700">Expenses by Category</h2>
+          <p className="text-[#8E5660]">Your spending breakdown for this month.</p>
+        </div>
+        <PieChart width={350} height={350} stroke="none">
+          <Pie
+            data={pieData}
+            cx="50%"
+            cy="50%"
+            innerRadius={70}
+            outerRadius={100}
+            paddingAngle={1}
+            dataKey="total"
+            labelLine={false}
+            isAnimationActive={true}
+            animationDuration={1000}
+            animationEasing="ease-out"
+            animationBegin={0}
+
+          >
+            {pieData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color}/>
+            ))}
+          </Pie>
+
+          <Tooltip content={<CustomTooltip />} animationDuration={0} />
+          <Legend verticalAlign="bottom" height={50} />
+        </PieChart> 
+      </div>
+    </div>
+  );
+}
+
+export  function LineChartInVsEx() {
+  const dispatch = useDispatch()
+
+  const {linedata} = useSelector((store) => {
+    return store.sliceState
+  })
+
+  const fetchLineData = () => {
+      const fn = async () => {
+        const url = "http://localhost:5000/transaction/yearlySummary/"
+        const response = await axios.get(url,{withCredentials:true})
+        console.log(response.data.summary)
+        dispatch(actions.setLineData(response.data.summary))
+      }
+      fn()
+    }
+    useEffect(fetchLineData,[])
+    // console.log(linedata)
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-2 shadow-lg rounded-md border text-sm">
+          {payload.map((entry) => (
+            <p key={entry.name} className="text-black font-semibold">
+              {entry.name}: ₹{entry.value}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+  return (
+    <div className="flex items-center justify-center mt-5">
+      <div className="bg-[#FFFAF4] shadow-lg rounded-2xl p-4 w-full max-w-4xl border-1 border-[#DDDFDE]">
+        <div className="self-start mb-5">
+          <h2 className="text-lg font-semibold text-gray-700">Monthly Income, Expenses & Savings</h2>
+          <p className="text-[#8E5660]">Income, expenses, and savings over the past year.</p>
+        </div>
+        <div>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={linedata} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend verticalAlign="top" height={36} />
+              <Line type="monotone" dataKey="income" stroke="#0088FE" strokeWidth={2} dot={{ r: 4 }}/>
+              <Line type="monotone" dataKey="expense" stroke="#FF8042" strokeWidth={2} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="savings" stroke="#00C49F" strokeWidth={2} dot={{ r: 4 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function BarChartSpVsBud(){
 
   const dispatch = useDispatch();
@@ -122,19 +254,20 @@ export function BarChartSpVsBud(){
   );
 }
 
-export  function PieChartCategory() {
+export function BarChartInVsEx() {
+
   const dispatch = useDispatch()
 
-  const {pieData} = useSelector((store) => {
+  const {expVsInc} = useSelector((store) => {
     return store.sliceState
   })
 
   const fetchLineData = () => {
       const fn = async () => {
-        const url = "http://localhost:5000/category/getPieData/"
+        const url = "http://localhost:5000/transaction/expVsincYearly/"
         const response = await axios.get(url,{withCredentials:true})
-        // console.log(response.data.accounts)
-        dispatch(actions.setPieData(response.data.transactionData))
+        console.log(response.data.summary)
+        dispatch(actions.setexpVsInc(response.data.summary))
       }
       fn()
     }
@@ -142,53 +275,35 @@ export  function PieChartCategory() {
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
-      const { name,total } = payload[0].payload; 
-      const totalAmount = pieData.reduce((sum, entry) => sum + entry.total, 0);
-      const percentage = ((total / totalAmount) * 100).toFixed(1);
-
       return (
         <div className="bg-white p-2 shadow-lg rounded-md border text-sm">
-          <p className="font-semibold text-black" >{name}</p>
-          <p className="text-black">Amount: ₹{total}</p>
-          <p className="text-black">Percentage: {percentage}%</p>
+          {payload.map((entry) => (
+            <p key={entry.name} className="text-black font-semibold">
+              {entry.name}: ₹{entry.value}
+            </p>
+          ))}
         </div>
       );
     }
     return null;
   };
-
   return (
-    <div className="">
-      <div className="flex flex-col bg-[#FFFAF4] border-1 border-[#DDDFDE] shadow-lg rounded-2xl justify-center items-center rounded-2xl p-4 w-full max-w-md mr-3">
-        <div className="self-start">
-          <h2 className="text-lg font-semibold text-gray-700">Expenses by Category</h2>
-          <p className="text-[#8E5660]">Your spending breakdown for this month.</p>
-        </div>
-        <PieChart width={350} height={350} stroke="none">
-          <Pie
-            data={pieData}
-            cx="50%"
-            cy="50%"
-            innerRadius={70}
-            outerRadius={100}
-            paddingAngle={1}
-            dataKey="total"
-            labelLine={false}
-            isAnimationActive={true}
-            animationDuration={1000}
-            animationEasing="ease-out"
-            animationBegin={0}
-
-          >
-            {pieData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color}/>
-            ))}
-          </Pie>
-
-          <Tooltip content={<CustomTooltip />} animationDuration={0} />
-          <Legend verticalAlign="bottom" height={50} />
-        </PieChart> 
+    <div className="bg-[#FFFAF4] border-1 border-[#DDDFDE] rounded-2xl p-4 w-[730px] max-w-4xl flex-1">
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold text-gray-700">Monthly Income vs Expenses</h2>
+        <p className="text-[#8E5660]">Monthly comparison over the past year</p>
       </div>
+      <ResponsiveContainer width="100%" height={350}>
+        <BarChart data={expVsInc} margin={{ top: 20, left: 0, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" />
+          <YAxis />
+          <Tooltip content={<CustomTooltip />} />
+          <Legend height={36} />
+          <Bar dataKey="income" fill="#0088FE" barSize={15} />
+          <Bar dataKey="expense" fill="#FF8042" barSize={15} />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 }
@@ -252,118 +367,6 @@ export function AreaGraphAccount  () {
           <Area type="monotone" dataKey="savings" stackId="1" stroke="#82ca9d" fill="url(#colorSavings)" />
           <Area type="monotone" dataKey="investment" stackId="1" stroke="#ffc658" fill="url(#colorinvestment)" />
         </AreaChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
-
-
-export  function LineChartInVsEx() {
-  const dispatch = useDispatch()
-
-  const {linedata} = useSelector((store) => {
-    return store.sliceState
-  })
-
-  const fetchLineData = () => {
-      const fn = async () => {
-        const url = "http://localhost:5000/transaction/yearlySummary/"
-        const response = await axios.get(url,{withCredentials:true})
-        console.log(response.data.summary)
-        dispatch(actions.setLineData(response.data.summary))
-      }
-      fn()
-    }
-    useEffect(fetchLineData,[])
-    // console.log(linedata)
-
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white p-2 shadow-lg rounded-md border text-sm">
-          {payload.map((entry) => (
-            <p key={entry.name} className="text-black font-semibold">
-              {entry.name}: ₹{entry.value}
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
-  return (
-    <div className="flex items-center justify-center mt-5">
-      <div className="bg-[#FFFAF4] shadow-lg rounded-2xl p-4 w-full max-w-4xl border-1 border-[#DDDFDE]">
-        <div className="self-start mb-5">
-          <h2 className="text-lg font-semibold text-gray-700">Monthly Income, Expenses & Savings</h2>
-          <p className="text-[#8E5660]">Income, expenses, and savings over the past year.</p>
-        </div>
-        <div>
-          <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={linedata} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend verticalAlign="top" height={36} />
-              <Line type="monotone" dataKey="income" stroke="#0088FE" strokeWidth={2} dot={{ r: 4 }}/>
-              <Line type="monotone" dataKey="expense" stroke="#FF8042" strokeWidth={2} dot={{ r: 4 }} />
-              <Line type="monotone" dataKey="savings" stroke="#00C49F" strokeWidth={2} dot={{ r: 4 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-const data = [
-  { month: "Jan", income: 5000, expenses: 4000 },
-  { month: "Feb", income: 4500, expenses: 3800 },
-  { month: "Mar", income: 5200, expenses: 4300 },
-  { month: "Apr", income: 4800, expenses: 3900 },
-  { month: "May", income: 6000, expenses: 4700 },
-  { month: "Jun", income: 5500, expenses: 4500 },
-  { month: "Jul", income: 5000, expenses: 4200 },
-  { month: "Aug", income: 5300, expenses: 4600 },
-  { month: "Sep", income: 5800, expenses: 4900 },
-  { month: "Oct", income: 6000, expenses: 5000 },
-  { month: "Nov", income: 6200, expenses: 5100 },
-  { month: "Dec", income: 6500, expenses: 5200 },
-];
-
-
-export function BarChartInVsEx() {
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white p-2 shadow-lg rounded-md border text-sm">
-          {payload.map((entry) => (
-            <p key={entry.name} className="text-black font-semibold">
-              {entry.name}: ₹{entry.value}
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
-  return (
-    <div className="bg-[#FFFAF4] border-1 border-[#DDDFDE] rounded-2xl p-4 w-[730px] max-w-4xl flex-1">
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold text-gray-700">Monthly Income vs Expenses</h2>
-        <p className="text-[#8E5660]">Monthly comparison over the past year</p>
-      </div>
-      <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={data} margin={{ top: 20, left: 0, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend height={36} />
-          <Bar dataKey="income" fill="#0088FE" barSize={15} />
-          <Bar dataKey="expenses" fill="#FF8042" barSize={15} />
-        </BarChart>
       </ResponsiveContainer>
     </div>
   );
