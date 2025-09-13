@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 export const createCategory = async(req,res) => {
   try{
-    const {name, categoryType, icon, color, description} = req.body;
+    const {name, categoryType, icon, description} = req.body;
 
     const exsisting_category = await CategoryModel.findOne({name})
 
@@ -15,7 +15,7 @@ export const createCategory = async(req,res) => {
     } else {
         const newCategory = await CategoryModel.create({
         userId: req.user.userId,
-        name, categoryType, icon, color, description
+        name, categoryType, icon, description
       });
 
       res.status(201).json({
@@ -45,7 +45,7 @@ export const getCategories = async(req,res) => {
 
 export const updateCategory = async(req,res) => {
   try{
-    const updatedCategory = await CategoryModel.findOneAndUpdate({_id:req.params.id,userId:req.user.userId},req.body,{new:true});
+    const updatedCategory = await CategoryModel.findOneAndUpdate({_id:req.params.id,userId:req.user.userId},req.body,{new:true},{ runValidators: true });
 
     res.status(200).json({
       updatedCategory : updatedCategory
@@ -97,3 +97,4 @@ export const getPieData = async(req,res) => {
     })
   }
 }
+

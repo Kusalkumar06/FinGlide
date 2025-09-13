@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 export const createAccount = async(req,res) => {
   try{
-    const {name ,accountType, balance, institution} = req.body;
+    const {name ,accountType, accountNumber, balance, institution} = req.body;
 
     const exsisting_account = await AccountModel.findOne({name})
 
@@ -15,7 +15,7 @@ export const createAccount = async(req,res) => {
     } else {
         const newAccount = await AccountModel.create({
         userId: req.user.userId,
-        name, accountType, balance,institution
+        name, accountType, balance,institution,accountNumber
       });
 
       res.status(201).json({

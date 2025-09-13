@@ -32,97 +32,151 @@ const barData = [
 const slice = createSlice({
     name: "slice",
     initialState:{
-        loginUsername: "",
-        loginPassword: "",
-        loginErr: true,
+      loginUsername: "",
+      loginPassword: "",
+      loginErr: true,
 
-        registerName: "",
-        registerEmail: "",
-        registerPassword: "",
-        registerErr: true,
+      registerName: "",
+      registerEmail: "",
+      registerPassword: "",
+      registerErr: true,
 
-        activeCategoryTab: "Expense",
+      activeCategoryTab: "Expense",
 
-        searchTransaction:'',
+      searchTransaction:'',
 
-        activeReportsTab: 'OVERVIEW',
+      activeReportsTab: 'OVERVIEW',
 
-        budgetList: [],
-        categoryList: [],
-        accountList: [],
-        transactionList:[],
+      budgetList: [],
+      categoryList: [],
+      accountList: [],
+      transactionList:[],
 
-        pieData : [],
-        linedata: linedata,
-        expVsInc: barData,
+      pieData : [],
+      linedata: linedata,
+      expVsInc: barData,
 
-        speVsbudMonth: new Date().getMonth() +1,
-        speVsbudYear: new Date().getFullYear(),
-        spendVsBudgetData: [],
+      speVsbudMonth: new Date().getMonth() +1,
+      speVsbudYear: new Date().getFullYear(),
+      spendVsBudgetData: [],
+
+      isCategoryModalOpen: false,
+      addCategoryForm:{
+        name:"",
+        categoryType:"Expense",
+        icon: "home",
+        description: ""
+      },
+
+      editCategory: null,
+      editCategoryForm: {
+        name: "",
+        categoryType: "Expense",
+        icon: "home",
+        description: ""
+      },
+
+      isAccountModalOpen: false,
+      addAccountForm:{
+        name:"",
+        accountType: "wallet",
+        balance:0,
+        accountNumber:"",
+        institution: "",
+        icon: "cash",
+      }
+
 
     },
     reducers:{
-        loginusername: (state,data) => {
-            state.loginUsername = data.payload;
-        },
-        loginpassword:(state,data) => {
-            state.loginPassword = data.payload;
-        },
-        
-        registername: (state,data) => {
-            state.registerName = data.payload;
-        },
-        registeremail: (state,data) => {
-            state.registerEmail = data.payload;
-        },
-        registerpassword:(state,data) => {
-            state.registerPassword = data.payload;
-        },
+      loginusername: (state,data) => {
+        state.loginUsername = data.payload;
+      },
+      loginpassword:(state,data) => {
+        state.loginPassword = data.payload;
+      },
+      
+      registername: (state,data) => {
+        state.registerName = data.payload;
+      },
+      registeremail: (state,data) => {
+        state.registerEmail = data.payload;
+      },
+      registerpassword:(state,data) => {
+        state.registerPassword = data.payload;
+      },
 
-        toggleCategoryTab:(state,data) => {
-            state.activeCategoryTab = data.payload;
-        },
+      toggleCategoryTab:(state,data) => {
+        state.activeCategoryTab = data.payload;
+      },
 
-        setSearchTransaction:(state,data) => {
-            state.searchTransaction = data.payload
-        },
+      setSearchTransaction:(state,data) => {
+        state.searchTransaction = data.payload
+      },
 
-        setReportsTab:(state,data) => {
-            state.activeReportsTab = data.payload;
-        },
+      setReportsTab:(state,data) => {
+        state.activeReportsTab = data.payload;
+      },
 
-        setBudgetList:(state,data) => {
-            state.budgetList = data.payload;
-        },
-        setCategoryList:(state,data) => {
-            state.categoryList = data.payload;
-        },
-        setAccountList:(state,data) => {
-            state.accountList = data.payload;
-        },
-        setTransactionList:(state,data) => {
-            state.transactionList = data.payload;
-        },
+      setBudgetList:(state,data) => {
+        state.budgetList = data.payload;
+      },
+      setCategoryList:(state,data) => {
+        state.categoryList = data.payload;
+      },
+      setAccountList:(state,data) => {
+        state.accountList = data.payload;
+      },
+      setTransactionList:(state,data) => {
+        state.transactionList = data.payload;
+      },
 
-        setPieData: (state,data) => {
-            state.pieData = data.payload;
-        },
-        setLineData: (state,data) => {
-            state.linedata = data.payload;
-        },
-        setexpVsInc: (state,data) => {
-            state.expVsInc = data.payload;
-        },
+      setPieData: (state,data) => {
+        state.pieData = data.payload;
+      },
+      setLineData: (state,data) => {
+        state.linedata = data.payload;
+      },
+      setexpVsInc: (state,data) => {
+        state.expVsInc = data.payload;
+      },
 
-        setspeVsBudMonth: (state,data) => {
-            state.speVsbudMonth = data.payload;
-        },
-        setspeVsBudYear: (state,data) => {
-            state.speVsbudMonth = data.payload;
-        },
-        setspendVsBudget: (state,data) => {
-            state.spendVsBudgetData = data.payload;
-        }
+      setspeVsBudMonth: (state,data) => {
+        state.speVsbudMonth = data.payload;
+      },
+      setspeVsBudYear: (state,data) => {
+        state.speVsbudMonth = data.payload;
+      },
+      setspendVsBudget: (state,data) => {
+        state.spendVsBudgetData = data.payload;
+      },
+
+      setIsCategoryModalOpen: (state) => {
+        state.isCategoryModalOpen = !state.isCategoryModalOpen;
+      },
+      setAddCategoryForm:(state,data) => {
+        const {field,value} = data.payload;
+        state.addCategoryForm[field] = value;
+      },
+      
+      setEditCategory: (state,data) => {
+        state.editCategory = data.payload;
+      },
+      setEditCategoryForm:(state,data) => {
+        const { field, value } = data.payload;
+        state.editCategoryForm[field] = value;
+      },
+      setCategoryForm:(state,data) => {
+        state.editCategoryForm = data.payload
+      },
+
+      setIsAccountModalOpen: (state) => {
+        state.isAccountModalOpen = !state.isAccountModalOpen;
+      },
+      setAddAccountForm: (state,data) => {
+        const {field,value} = data.payload;
+        state.addAccountForm[field] = value;
+      },
     },
 })
 

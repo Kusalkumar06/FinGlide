@@ -17,11 +17,6 @@ const categoryModel = new mongoose.Schema({
   },
   icon:{
     type: String,
-    default: "💰",
-  },
-  color:{ 
-    type: String,
-    default: "#D96D38" 
   },
   description:{
     type: String,

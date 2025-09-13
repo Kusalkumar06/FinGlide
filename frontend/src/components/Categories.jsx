@@ -4,69 +4,10 @@ import { useSelector,useDispatch } from 'react-redux'
 import slice from '../redux/slices'
 import axios from "axios"
 import { useEffect } from 'react';
+import { CategoryModal } from './AddModals';
+import { categoryIcons } from './Icons';
+import { EditCategoryModal } from './EditModals';
 
-// const categories = [
-//   {
-//     "category_name": "Food & Dining",
-//     "category_type": "EXPENSE",
-//     "description": "Restaurants and groceries"
-//   },
-//   {
-//     "category_name": "Transportation",
-//     "category_type": "EXPENSE",
-//     "description": "Gas, public transport"
-//   },
-//   {
-//     "category_name": "Shopping",
-//     "category_type": "EXPENSE",
-//     "description": "Clothes, electronics"
-//   },
-//   {
-//     "category_name": "Entertainment",
-//     "category_type": "EXPENSE",
-//     "description": "Movies, games, hobbies"
-//   },
-//   {
-//     "category_name": "Bills & Utilities",
-//     "category_type": "EXPENSE",
-//     "description": "Electricity, water, internet"
-//   },
-//   {
-//     "category_name": "Healthcare",
-//     "category_type": "EXPENSE",
-//     "description": "Medical expenses"
-//   },
-//   {
-//     "category_name": "Travel",
-//     "category_type": "EXPENSE",
-//     "description": "Vacation and trips"
-//   },
-//   {
-//     "category_name": "Education",
-//     "category_type": "EXPENSE",
-//     "description": "Courses and books"
-//   },
-//   {
-//     "category_name": "Salary",
-//     "category_type": "INCOME",
-//     "description": "Monthly salary"
-//   },
-//   {
-//     "category_name": "Freelance",
-//     "category_type": "INCOME",
-//     "description": "Freelance work"
-//   },
-//   {
-//     "category_name": "Investment",
-//     "category_type": "INCOME",
-//     "description": "Investment returns"
-//   },
-//   {
-//     "category_name": "Side Business",
-//     "category_type": "INCOME",
-//     "description": "Business income"
-//   },
-// ]
 
 const categoriesTabs = {
   income: "Income",
@@ -77,7 +18,7 @@ const actions = slice.actions
 
 function Categories() {
   const dispatch = useDispatch()
-  const {activeCategoryTab,categoryList} = useSelector((store) => (
+  const {activeCategoryTab,categoryList,isCategoryModalOpen,editCategory} = useSelector((store) => (
     store.sliceState
   ))
 
@@ -96,21 +37,31 @@ function Categories() {
 
   const incomeButton = `${activeCategoryTab == "Income" ? "bg-white shadow" : ""} py-1 px-3 w-[45%] rounded`
 
-  const category_list = categoryList.filter((eachCate) => eachCate.categoryType === activeCategoryTab)
+  const category_list = (categoryList || []).filter((eachCate) => eachCate.categoryType === activeCategoryTab)
 
   const inButton = 'text-[#9F0712] text-[11px] bg-[#DBFCE7] py-[1px] px-2 rounded'
 
   const exButton = 'text-[#9F0712] text-[11px] bg-[#FFE2E2] py-[1px] px-2 rounded'
 
+  const deleteCategory = async(id) => {
+    const url = `http://localhost:5000/category/delete/${id}`
+    console.log(url)
+    await axios.delete(url,{withCredentials:true})
+    const categories = await axios.get(`http://localhost:5000/category/getCategories/`,{withCredentials:true})
+
+    dispatch(actions.setCategoryList(categories.data.Categories))
+  }
   return (
     <div>
+      {isCategoryModalOpen && <CategoryModal/>}
+      
       <div className='flex items-center justify-between mb-5'>
         <div>
           <h1 className='text-[#3A3A3A] text-[28px] font-[500]'>Categories</h1>
           <p className='text-[14px] text-[#3B3F40]'>Organize your income and expense categories.</p>
         </div>
         <div>
-          <button className='bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer'>+ Add Category</button>
+          <button onClick={() => dispatch(actions.setIsCategoryModalOpen())} className='bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer'>+ Add Category</button>
         </div>
       </div>
 
@@ -146,32 +97,37 @@ function Categories() {
 
       <div className='flex flex-wrap gap-4 justify-between'>
         {
-          category_list.map((category,index) => (
-            <div key={index} className='bg-[#FFFAF4] w-[380px] p-5 border-2 border-[#DDDFDE] rounded-lg group shadow'>
-              <div className='mb-5 flex justify-between items-center'>
-                <div className='flex gap-4 items-center'>
-                  <div className='flex items-center justify-center p-2 rounded-[50%] w-12' style={{backgroundColor: category.color}}>
-                    <p>{category.icon}</p>
+          category_list.map((category,index) => {
+
+            const IconComponent = categoryIcons.find((eachIcon) => eachIcon.id === category.icon)
+            return (
+              <div key={index} className='bg-[#FFFAF4] w-[380px] p-5 border-2 border-[#DDDFDE] rounded-lg group shadow'>
+                <div className='mb-5 flex justify-between items-center'>
+                  <div className='flex gap-4 items-center'>
+                    <div className='w-12 h-12 rounded-full mx-2 flex items-center justify-center' style={{backgroundColor: IconComponent.color}}>
+                      <IconComponent.icon color='white'/>
+                    </div>
+                    <div>
+                      <h1 className='text-[20px] font-[500] text-[#3A3A3A]'>{category.name}</h1>
+                      <button className={category.categoryType === "Expense" ? exButton : inButton}>{category.categoryType === "Expense" ? "Expense" : "Income"}</button>
+                    </div>
                   </div>
-                  <div>
-                    <h1 className='text-[20px] font-[500] text-[#3A3A3A]'>{category.name}</h1>
-                    <button className={category.categoryType === "Expense" ? exButton : inButton}>{category.categoryType === "Expense" ? "Expense" : "Income"}</button>
+                  <div className='opacity-0 group-hover:opacity-100 flex gap-4'>
+                    <button onClick={() => dispatch(actions.setEditCategory(category))} className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'>
+                      <MdOutlineEdit size={15}/>
+                    </button>
+                    <button onClick={() => deleteCategory(category._id)} className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'> 
+                      <MdOutlineDelete size={17} />
+                    </button>
                   </div>
                 </div>
-                <div className='opacity-0 group-hover:opacity-100 flex gap-4'>
-                  <button className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'>
-                    <MdOutlineEdit size={15}/>
-                  </button>
-                  <button className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'> 
-                    <MdOutlineDelete size={17} />
-                  </button>
-                </div>
+                <p className='text-[#3A3A3A]'>{category.description && category.description}</p>
               </div>
-              <p className='text-[#3A3A3A]'>{category.description && category.description}</p>
-            </div>
-          ))
+          )})
         }
       </div>
+
+      {editCategory && <EditCategoryModal category={editCategory}/>}
 
     </div>
   )

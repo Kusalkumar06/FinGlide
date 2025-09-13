@@ -31,9 +31,6 @@ const accountSchema = new mongoose.Schema({
       icon:{
         type: String,
       },
-      color:{ 
-        type: String, 
-      },
       createdAt:{
         type:Date,
         default: Date.now(),

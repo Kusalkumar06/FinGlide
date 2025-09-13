@@ -4,50 +4,13 @@ import axios from "axios"
 import { useSelector,useDispatch } from 'react-redux'
 import { useEffect } from 'react';
 import slice from '../redux/slices';
-
-// const accountDetails = [
-//   {
-//     "accountName": "Main Checking",
-//     "accountType": "Bank",
-//     "currentBalance": 15750.50,
-//     "lastFourDigits": "1234",
-//     "institution": "Chase Bank"
-//   },
-//   {
-//     "accountName": "Emergency Savings",
-//     "accountType": "Bank",
-//     "currentBalance": 8500.00,
-//     "lastFourDigits": "5678",
-//     "institution": "Wells Fargo"
-//   },
-//   {
-//     "accountName": "Travel Credit Card",
-//     "accountType": "Credit Card",
-//     "currentBalance": -1500.00,
-//     "lastFourDigits": "9802",
-//     "institution": "American Express"
-//   },
-//   {
-//     "accountName": "Cash Wallet",
-//     "accountType": "Cash",
-//     "currentBalance": 250.00,
-//     "lastFourDigits": "N/A",
-//     "institution": "Physical Cash"
-//   },
-//   {
-//     "accountName": "Investment Account",
-//     "accountType": "Investment",
-//     "currentBalance": 12750.25,
-//     "lastFourDigits": "3456",
-//     "institution": "Fidelity"
-//   }
-// ]
+import { AccountModal } from './AddModals';
 
 const actions = slice.actions
 
 function Accounts() {
   const dispatch = useDispatch();
-  const {accountList} = useSelector((store) => {
+  const {accountList,isAccountModalOpen} = useSelector((store) => {
     return store.sliceState
   })
 
@@ -65,13 +28,14 @@ function Accounts() {
 
   return (
     <div>
+      {isAccountModalOpen && <AccountModal/>}
       <div className='flex items-center justify-between mb-5'>
         <div>
           <h1 className='text-[#3A3A3A] text-[28px] font-[500]'>Accounts</h1>
           <p className='text-[14px] text-[#3B3F40]'>Manage your financial accounts and view balances.</p>
         </div>
         <div>
-          <button className='bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer'>+ Add Account</button>
+          <button onClick={() => dispatch(actions.setIsAccountModalOpen())} className='bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer'>+ Add Account</button>
         </div>
       </div>
 
