@@ -22,12 +22,10 @@ const transactionSchema = new mongoose.Schema({
   categoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
-    required: true,
   },
   accountId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Account",
-    required: true,
   },
   fromAccountId: {
     type: mongoose.Schema.Types.ObjectId,

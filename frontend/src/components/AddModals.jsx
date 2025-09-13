@@ -3,7 +3,7 @@ import slice from "../redux/slices"
 const actions = slice.actions
 import { MdOutlineCancel } from "react-icons/md";
 import Select from 'react-select'
-import { categoryIcons,accountIcons } from "./Icons";
+import { categoryIcons,accountIcons } from "./Utilities";
 import axios from "axios";
 
 const customStyles = {
@@ -28,7 +28,7 @@ const customStyles = {
     menu: (provided) => ({
       ...provided,
       borderRadius: '8px',
-      padding: '4px', 
+      padding: '4px',
     }),
 };
 
@@ -50,7 +50,7 @@ export const CategoryModal = () => {
       await axios.post(url,categoryDetails,{withCredentials:true})
     
       const updatedCategories = await axios.get("http://localhost:5000/category/getCategories/",{withCredentials:true})
-      dispatch(actions.setCategoryList(updatedCategories.data.Categories),actions.setCategoryName(""),actions.setCategoryType("Expense"),actions.setCategoryIcon("home"),actions.setCategoryDescription(""))
+      dispatch(actions.setCategoryList(updatedCategories.data.Categories))
       dispatch(actions.setIsCategoryModalOpen())
       
     }catch(err){
@@ -200,6 +200,114 @@ export const AccountModal = () => {
               </div>
               <div className="flex justify-end">
                 <button className="bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer">Add Account</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      </div>
+    )
+}
+
+export const TransactionModal = () => {
+  const {isTransactionModalOpen,addTransactionForm,categoryList,accountList} = useSelector((store) => {
+   return  store.sliceState
+  })
+  console.log(addTransactionForm)
+  const categoryOptions = categoryList.filter((category) => category.categoryType === addTransactionForm.transactionType).map((category) => {
+      return {
+        label: category.name,
+        value: category._id.toString()
+      }
+  })
+
+  const acoountOptions = accountList.map((account) => {
+    return {
+      label: account.name,
+      value: account._id.toString()
+    }
+  })
+  
+
+  const dispatch = useDispatch()
+
+  const handleSubmit = async(event) => {
+    event.preventDefault();
+  
+    try{
+      const transactionDetails = addTransactionForm
+      console.log(transactionDetails)
+      
+      const url = "http://localhost:5000/transaction/createTransaction/";
+      await axios.post(url,transactionDetails,{withCredentials:true})
+    
+      const updatedTransactions = await axios.get("http://localhost:5000/transaction/getTransactions/",{withCredentials:true})
+      dispatch(actions.setTransactionList(updatedTransactions.data.transactions))
+      dispatch(actions.setIsTransactionModalOpen())
+      
+    }catch(err){
+      console.error(`Error during adding the category.`,err)   
+    }
+  }
+
+    return(
+      <div>
+        {isTransactionModalOpen && (
+        <div className=" fixed inset-0 bg-[#00000080] bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white w-[480px] p-5 rounded-lg">
+            <div className="mb-6 flex justify-between">
+              <div>
+                <h1 className="text-[#3A3A3A] font-[500] text-[23px]">Add New Transaction</h1>
+                <p className="text-[#5A5A5A] text-[14px]">Create a new category to organize your transactions.</p>
+              </div>
+              <MdOutlineCancel size={25} onClick={() => {dispatch(actions.setIsTransactionModalOpen());}}  className="self-start mt-3 cursor-pointer text-[#555B5A] hover:text-red-600" />
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="flex flex-col mb-5">
+                <label className="text-[#3A3A3A] font-[500] text-[18px] mb-3">Description</label>
+                <input required value={addTransactionForm.description} onChange={(e) => dispatch(actions.setAddTransactionForm({ field: "description", value: e.target.value }))} type="text" placeholder="e.g., Grocery Store" className=" outline-none py-2 px-3 rounded shadow focus-within:border-orange-400 focus-within:ring-2 focus-within:ring-orange-300" />
+              </div>
+              <div className='flex justify-center mb-5'>
+                <div className='flex justify-between w-[800px]  px-3 py-2 rounded-lg text-center shadow border-1 border-gray-300'>
+                  <div className={`${addTransactionForm.transactionType == "Income" ? "bg-green-500 shadow text-white" : ""} py-1 px-3 w-[45%] rounded cursor-pointer`} onClick={() => {dispatch(actions.setAddTransactionForm({ field: "transactionType", value: "Income" }));dispatch(actions.setAddTransactionForm({ field: "fromAccountId", value: null}));dispatch(actions.setAddTransactionForm({ field: "toAccountId", value: null}))}}>Income</div>
+                  <div className={`${addTransactionForm.transactionType == "Expense" ? "bg-red-500 shadow text-white" : ""} py-1 px-3 w-[45%] rounded cursor-pointer`} onClick={() => {dispatch(actions.setAddTransactionForm({ field: "transactionType", value: "Expense" }));dispatch(actions.setAddTransactionForm({ field: "fromAccountId", value: null}));dispatch(actions.setAddTransactionForm({ field: "toAccountId", value: null}))}}>Expense</div>
+                  <div className={`${addTransactionForm.transactionType == "Transfer" ? "bg-blue-500 shadow text-white" : ""} py-1 px-3 w-[45%] rounded cursor-pointer`} onClick={() => {dispatch(actions.setAddTransactionForm({ field: "transactionType", value: "Transfer" }));dispatch(actions.setAddTransactionForm({ field: "categoryId", value: null}));dispatch(actions.setAddTransactionForm({ field: "accountId", value: null}))}}>Transfer</div>
+                </div>
+              </div>
+              { (addTransactionForm.transactionType === "Income" || addTransactionForm.transactionType === "Expense") && 
+                <div className="flex w-[100%] items-center justify-between mb-3">
+                  <div className="flex flex-col w-[45%]">
+                    <label className="text-[#3A3A3A] font-[500] text-[18px]">Category</label>
+                    <Select value={categoryOptions.find(opt => opt.value === addTransactionForm.categoryId) || null} onChange={(option) => dispatch(actions.setAddTransactionForm({ field: "categoryId", value: option.value }))} options={categoryOptions} styles={customStyles} maxMenuHeight={150}/>
+                  </div>
+                  <div className="flex flex-col w-[45%]">
+                    <label className="text-[#3A3A3A] font-[500] text-[18px]">Account</label>
+                    <Select value={acoountOptions.find(opt => opt.value === addTransactionForm.accountId) || null} onChange={(option) => dispatch(actions.setAddTransactionForm({ field: "accountId", value: option.value }))} options={acoountOptions} styles={customStyles} maxMenuHeight={150}/>
+                  </div>
+                </div>
+              }
+              { addTransactionForm.transactionType === "Transfer" && 
+                <div className="flex w-[100%] items-center justify-between mb-3">
+                  <div className="flex flex-col w-[45%]">
+                    <label className="text-[#3A3A3A] font-[500] text-[18px]">From Account</label>
+                    <Select value={acoountOptions.find(opt => opt.value === addTransactionForm.fromAccountId) || null} onChange={(option) => dispatch(actions.setAddTransactionForm({ field: "fromAccountId", value: option.value }))} options={acoountOptions} styles={customStyles} maxMenuHeight={150}/>
+                  </div>
+                  <div className="flex flex-col w-[45%]">
+                    <label className="text-[#3A3A3A] font-[500] text-[18px]">To Account</label>
+                    <Select value={acoountOptions.find(opt => opt.value === addTransactionForm.toAccountId) || null} onChange={(option) => dispatch(actions.setAddTransactionForm({ field: "toAccountId", value: option.value }))} options={acoountOptions} styles={customStyles} maxMenuHeight={150}/>
+                  </div>
+                </div>
+              }
+              <div className="flex flex-col">
+                  <label className="text-[#3A3A3A] font-[500] text-[18px] mb-2">Amount</label>
+                  <input required value={addTransactionForm.amount} onChange={(e) => dispatch(actions.setAddTransactionForm({ field: "amount", value: e.target.value }))} type="number" placeholder="0.00" step={0.1} className="outline-none py-2 px-3 rounded shadow w-[80%] border-1 border-gray-300" />
+                </div>
+              <div className="flex flex-col mb-5">
+                <label className="text-[#3A3A3A] font-[500] text-[18px] mb-3">notes <span className="text-[16px] font-[400]">(optional)</span></label>
+                <textarea value={addTransactionForm.notes} onChange={(e) => dispatch(actions.setAddTransactionForm({ field: "notes", value: e.target.value }))} type="text" placeholder="Brief description of this category" className="border-1 border-gray-300 outline-none py-2 px-3 h-[70px] rounded shadow" />
+              </div>
+              <div className="flex justify-end">
+                <button className="bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer">Add Transaction</button>
               </div>
             </form>
           </div>

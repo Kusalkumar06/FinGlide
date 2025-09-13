@@ -93,25 +93,58 @@ export const defaultCategories =[
 ;
 
 export const defaultAccounts = [
-  { 
-    name: "Cash", 
-    accountType: "wallet", 
-    balance: 0, 
-    icon: "💵",         
-    color: "#FFD93D"   
+  {
+    name: "Cash in Hand",
+    accountType: "wallet",
+    balance: 0,
+    accountNumber: "N/A",
+    institution: "N/A",
+    icon: "cash",
+    createdAt: new Date("2025-09-13T09:30:00Z")
   },
   {
-    name: "Bank Account", 
-    accountType: "bank", 
-    balance: 0, 
-    icon: "🏦",         
-    color: "#3A86FF"   
+    name: "HDFC Credit Card",
+    accountType: "card",
+    balance: 0,
+    accountNumber: "N/A",
+    institution: "N/A",
+    icon: "credit-card",
+    createdAt: new Date("2025-09-13T09:31:00Z")
   },
-  { 
-    name: "UPI / Digital Wallet", 
-    accountType: "wallet", 
-    balance: 0, 
-    icon: "📱",         
-    color: "#FF6B6B"   
-  }
-];
+  {
+    name: "Emergency Fund",
+    accountType: "bank",
+    balance: 0,
+    accountNumber: "N/A",
+    institution: "N/A",
+    icon: "piggy-bank",
+    createdAt: new Date("2025-09-13T09:32:00Z")
+  },
+  {
+    name: "Everyday Wallet",
+    accountType: "wallet",
+    balance: 0,
+    accountNumber: "N/A",
+    institution: "N/A",
+    icon: "wallet",
+    createdAt: new Date("2025-09-13T09:33:00Z")
+  },
+  {
+    name: "SBI Savings",
+    accountType: "bank",
+    balance: 0,
+    accountNumber: "N/A",
+    institution: "N/A",
+    icon: "landmark",
+    createdAt: new Date("2025-09-13T09:34:00Z")
+  },
+  {
+    name: "Crypto Wallet",
+    accountType: "crypto",
+    balance: 0,
+    accountNumber: "N/A",
+    institution: "N/A",
+    icon: "bitcoin",
+    createdAt: new Date("2025-09-13T09:35:00Z")
+  },
+]

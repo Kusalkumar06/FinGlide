@@ -22,7 +22,6 @@ export  function PieChartCategory() {
       const fn = async () => {
         const url = "http://localhost:5000/category/getPieData/"
         const response = await axios.get(url,{withCredentials:true})
-        // console.log(response.data.accounts)
         dispatch(actions.setPieData(response.data.transactionData))
       }
       fn()

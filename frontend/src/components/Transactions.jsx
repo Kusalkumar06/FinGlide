@@ -4,199 +4,60 @@ import { useSelector,useDispatch } from 'react-redux';
 import slice from '../redux/slices';
 import axios from 'axios';
 import { useEffect } from 'react';
-const mockTransactions = [
-  {
-    id: 1,
-    date: "2024-01-15",
-    description: "Grocery Store",
-    category: "Food & Dining",
-    account: "Main Checking",
-    type: "Expense",
-    amount: -85.5,
-    notes: "Weekly groceries",
-  },
-  {
-    id: 2,
-    date: "2024-01-15",
-    description: "Salary Deposit",
-    category: "Salary",
-    account: "Main Checking",
-    type: "Income",
-    amount: 4500.0,
-    notes: "Monthly salary",
-  },
-  {
-    id: 3,
-    date: "2024-01-14",
-    description: "Gas Station",
-    category: "Transportation",
-    account: "Travel Credit Card",
-    type: "Expense",
-    amount: -45.2,
-    notes: "Fill up tank",
-  },
-  {
-    id: 4,
-    date: "2024-01-14",
-    description: "Netflix Subscription",
-    category: "Entertainment",
-    account: "Main Checking",
-    type: "Expense",
-    amount: -15.99,
-    notes: "Monthly subscription",
-  },
-  {
-    id: 5,
-    date: "2024-01-13",
-    description: "Freelance Payment",
-    category: "Freelance",
-    account: "Main Checking",
-    type: "Income",
-    amount: 750.0,
-    notes: "Web design project",
-  },
-  {
-    id: 6,
-    date: "2024-01-12",
-    description: "Transfer to Savings",
-    category: "Transfer",
-    account: "Main Checking → Emergency Savings",
-    type: "Transfer",
-    amount: -500.0,
-    notes: "Monthly savings",
-  },
-  {
-    id: 7,
-    date: "2024-01-11",
-    description: "Restaurant Dinner",
-    category: "Food & Dining",
-    account: "Travel Credit Card",
-    type: "Expense",
-    amount: -67.8,
-    notes: "Date night",
-  },
-  {
-    id: 8,
-    date: "2024-01-10",
-    description: "Online Course",
-    category: "Education",
-    account: "Main Checking",
-    type: "Expense",
-    amount: -199.0,
-    notes: "React development course",
-  },
-  {
-    id: 9,
-    date: "2024-01-09",
-    description: "Investment Dividend",
-    category: "Investment",
-    account: "Investment Account",
-    type: "Income",
-    amount: 125.5,
-    notes: "Quarterly dividend",
-  },
-  {
-    id: 10,
-    date: "2024-01-08",
-    description: "Coffee Shop",
-    category: "Food & Dining",
-    account: "Cash Wallet",
-    type: "Expense",
-    amount: -4.5,
-    notes: "Morning coffee",
-  },
-]
+import { categoryIcons } from './Utilities';
+import { TransactionModal } from './AddModals';
+import Select from "react-select"
+import { ArrowBigRight } from "lucide-react";
 
-const transactionTypes =  [
-  {
-    "value": "all",
-    "display": "All Types"
-  },
-  {
-    "value": "income",
-    "display": "Income"
-  },
-  {
-    "value": "expense",
-    "display": "Expense"
-  },
-  {
-    "value": "transfer",
-    "display": "Transfer"
-  }
-]
+const customStyles = {
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isFocused ? '#F96C4A' : 'white',
+      color: state.isFocused ? 'white' : "black",
+      cursor: 'pointer', 
+      borderRadius: '6px',
+      ":active": {
+        ...provided[":active"],
+        backgroundColor: "#F96C4A", 
+      },
+    }),
+    control: (provided,state) => ({
+      ...provided,
+      boxShadow: "none",
+      outline: "none",
+      borderColor: state.isFocused ? "#999" : "#ccc",
+      "&:hover": { borderColor: "#999" },
+    }),
+    menu: (provided) => ({
+      ...provided,
+      borderRadius: '8px',
+      padding: '4px',
+    }),
+};
 
-const categoryTypes = [
-  {
-    "value": "all",
-    "display": "All Categories"
-  },
-  {
-    "value": "salary",
-    "display": "Salary"
-  },
-  {
-    "value": "freelance",
-    "display": "Freelance"
-  },
-  {
-    "value": "food_dining",
-    "display": "Food & Dining"
-  },
-  {
-    "value": "transportation",
-    "display": "Transportation"
-  },
-  {
-    "value": "entertainment",
-    "display": "Entertainment"
-  },
-  {
-    "value": "education",
-    "display": "Education"
-  },
-  {
-    "value": "investment",
-    "display": "Investment"
-  }
-]
 
-const accountTypes = [
-  {
-    "value": "all",
-    "display": "All Accounts"
-  },
-  {
-    "value": "main_checking",
-    "display": "Main Checking"
-  },
-  {
-    "value": "emergency_savings",
-    "display": "Emergency Savings"
-  },
-  {
-    "value": "travel_credit_card",
-    "display": "Travel Credit Card"
-  },
-  {
-    "value": "cash_wallet",
-    "display": "Cash Wallet"
-  },
-  {
-    "value": "investment_account",
-    "display": "Investment Account"
-  }
-]
 
 const actions = slice.actions
 function Transactions() {
 
   const dispatch = useDispatch()
-  const {searchTransaction,transactionList} = useSelector((store) => {
+  const {transactionList,isTransactionModalOpen,categoryList,accountList,filterOptions} = useSelector((store) => {
     return store.sliceState
   })
 
-  console.log(transactionList)
+  const transactionTypes = [{value: "All",label: "All Types"},{value: "Expense",label: "Expense"},{value: "Income",label: "Income"},{value: "Transfer",label: "Transfer"}]
+  const categoryTypes = [{value: "All",label: "All Categories"},...categoryList.map((category) => {
+      return {
+        label: category.name,
+        value: category._id.toString()
+      }
+  })]
+  const accountTypes = [{value: "All",label: "All Accounts"},...accountList.map((account) => {
+    return {
+      label: account.name,
+      value: account._id.toString()
+    }
+  })]
 
   const fetchTransactions = () => {
     const fn = async() => {
@@ -213,13 +74,14 @@ function Transactions() {
 
   return (
     <div>
+      {isTransactionModalOpen && <TransactionModal/> }
       <div className='flex items-center justify-between mb-5'>
         <div>
           <h1 className='text-[#3A3A3A] text-[28px] font-[500]'>Transactions</h1>
           <p className='text-[14px] text-[#3B3F40]'>Track and manage all your financial transactions.</p>
         </div>
         <div>
-          <button className='bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer'>+ Add Transaction</button>
+          <button onClick={() => dispatch(actions.setIsTransactionModalOpen())} className='bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer'>+ Add Transaction</button>
         </div>
       </div>
 
@@ -255,35 +117,11 @@ function Transactions() {
         <div className='flex flex-wrap justify-between gap-4'>
             <div className='flex items-center p-2 rounded shadow focus-within:border-orange-400 focus-within:ring-2 focus-within:ring-orange-200'>
                 <CiSearch/> 
-                <input className='ml-3 outline-none w-[200px]' placeholder='Search Transactions...' value={searchTransaction} onChange={(event) => dispatch(actions.setSearchTransaction(event.target.value))}/>
+                <input className='ml-3 outline-none w-[200px]' placeholder='Search Transactions...' value={filterOptions.searchTransaction} onChange={(event) => dispatch(actions.setFilterOptionsField({ field: "searchTransaction", value: event.target.value }))}/>
             </div>
-            <div className="relative inline-block w-44 rounded-md border border-gray-300 p-2 text-sm font-medium text-gray-700 shadow-sm">
-                <select className="w-38 focus:outline-none cursor-pointer" defaultValue="all">
-                    {
-                        transactionTypes.map((each,index) => (
-                            <option key={index} value={each.value}>{each.display}</option>
-                        ))
-                    }
-                </select>
-            </div>
-            <div className="relative inline-block w-44 rounded-md border border-gray-300 p-2 text-sm font-medium text-gray-700 shadow-sm">
-                <select className="w-38 focus:outline-none cursor-pointer" defaultValue="all">
-                    {
-                        categoryTypes.map((each,index) => (
-                            <option key={index} value={each.value}>{each.display}</option>
-                        ))
-                    }
-                </select>
-            </div>
-            <div className="relative inline-block w-44 rounded-md border border-gray-300 p-2 text-sm font-medium text-gray-700 shadow-sm">
-                <select className="w-38 focus:outline-none cursor-pointer border-gray-300" defaultValue="all">
-                    {
-                        accountTypes.map((each,index) => (
-                            <option key={index} value={each.value}>{each.display}</option>
-                        ))
-                    }
-                </select>
-            </div>
+                <Select className='w-44' value={transactionTypes.find(opt => opt.value === filterOptions.searchTransactionType) || null} onChange={(option) => dispatch(actions.setFilterOptionsField({ field: "searchTransactionType", value: option.value }))} options={transactionTypes} styles={customStyles}  defaultValue={transactionTypes[0]} maxMenuHeight={150}/>
+                <Select className='w-44' value={categoryTypes.find(opt => opt.value === filterOptions.searchCategory) || null} onChange={(option) => dispatch(actions.setFilterOptionsField({ field: "searchCategory", value: option.value }))} options={categoryTypes} styles={customStyles}  defaultValue={categoryTypes[0]} maxMenuHeight={150}/>
+                <Select className='w-44' value={accountTypes.find(opt => opt.value === filterOptions.searchAccount)} onChange={(option) => dispatch(actions.setFilterOptionsField({ field: "searchAccount", value: option.value }))} options={accountTypes} styles={customStyles}  defaultValue={accountTypes[0]} maxMenuHeight={150}/>
             <button className='p-2 w-35 bg-white rounded-md border border-gray-300 p-2 text-sm font-medium text-gray-700 shadow-sm cursor-pointer'>clear filters</button>
         </div>
       </div>
@@ -295,30 +133,52 @@ function Transactions() {
         </div>
         <div className='space-y-4'>
           {
-            mockTransactions.map((each,index) => (
-              <div key={index} className='border-2 border-[#DDDFDE] rounded p-3 flex gap-4'>
-                <div>
-                  Icon
-                </div>
-                <div className='flex-1'>
-                  <div className='flex gap-4 items-center'>
-                    <h1 className='text-[#3A3A3A] text-[18px] font-[500]'>{each.description}</h1>
-                    <button className='text-[#9F0712] text-[11px] border py-[1px] px-2 rounded'>{each.type}</button>
+            transactionList.map((each,index) => {
+              let button
+              let IconComponent = {icon: ArrowBigRight , color: "blue"}
+              if(each.transactionType === "Expense")
+                button = "text-white bg-red-500 text-[11px] border py-1 px-2 rounded"
+              else if(each.transactionType === "Transfer")
+                button = "text-white bg-blue-500 text-[11px] border py-1 px-2 rounded"
+              else
+                button = "text-white bg-green-500 text-[11px] border py-1 px-2 rounded"
+              if (each.transactionType === "Income" || each.transactionType === "Expense")
+                 IconComponent = categoryIcons.find((eachIcon) => eachIcon.id === each.categoryId.icon)
+              return (
+                <div key={index} className='border-2 border-[#DDDFDE] bg-white rounded p-3 flex gap-4 items-center'>
+                  <div className='w-12 h-12 rounded-full mx-2 flex items-center justify-center' style={{backgroundColor: IconComponent.color}}>
+                    <IconComponent.icon color='white'/>
                   </div>
-                  <div className='flex items-center justify-between'>
+                  <div className='flex items-center justify-between flex-1'>
                     <div>
-                      <ul className='flex gap-10'>
-                        <p className='text-[#494847] text-[15px]'>{each.category}</p>
-                        <li className='text-[#494847] text-[15px] list-disc'>{each.account}</li>
-                        <li className='text-[#494847] text-[15px] list-disc'>{each.date}</li>
-                      </ul>
-                      <p className='text-[#494847] text-[15px]'>{each.notes}</p>
+                      <div className='flex gap-4 items-center'>
+                        <h1 className='text-[#3A3A3A] text-[18px] font-[500]'>{each.description}</h1>
+                        <p className={button}>{each.transactionType}</p>
+                      </div>
+                      <div>
+                        { (each.transactionType === "Income" || each.transactionType === "Expense") ? 
+                          <ul className='flex gap-10'>
+                            <p className='text-[#494847] text-[15px]'>{each.categoryId.name}</p>
+                            <li className='text-[#494847] text-[15px] list-disc'>{each.accountId.name}</li>
+                            <li className='text-[#494847] text-[15px] list-disc'>{new Date(each.date).toDateString()}</li>
+                          </ul>
+                          : <ul className='flex gap-10'>
+                              <p className='text-[#494847] text-[15px]'>From: {each.fromAccountId.name}</p>
+                              <p className='text-[#494847] text-[15px] list-disc'>To: {each.toAccountId.name}</p>
+                              <li className='text-[#494847] text-[15px] list-disc'>{new Date(each.date).toDateString()}</li>
+                            </ul>
+                        }
+                        <p className='text-[#494847] text-[15px]'>{each.notes}</p>
+                      </div>  
                     </div>
-                    <p className='text-[20px]'>{each.amount}</p>
+                    {each.transactionType === "Expense" ? 
+                      <p className={`text-[22px] font-[500] text-red-600`}><span>- </span>₹{each.amount}</p> 
+                      : <p className={`text-[22px] font-[500] ${each.transactionType==="Transfer" ? 'text-blue-600':'text-green-500'}`}>₹{each.amount}</p>
+                    }
                   </div>
                 </div>
-              </div>
-            ))
+              )
+            })
           }
         </div>
       </div>

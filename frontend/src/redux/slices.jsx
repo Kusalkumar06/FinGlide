@@ -43,7 +43,13 @@ const slice = createSlice({
 
       activeCategoryTab: "Expense",
 
-      searchTransaction:'',
+      filterOptions: {
+        searchTransaction: '',
+        searchAccount: 'All',
+        searchTransactionType: "All",
+        searchCategory: "All"
+      },
+
 
       activeReportsTab: 'OVERVIEW',
 
@@ -84,8 +90,29 @@ const slice = createSlice({
         accountNumber:"",
         institution: "",
         icon: "cash",
-      }
+      },
 
+      editAccount : null,
+      editAccountForm:{
+        name:"",
+        accountType: "wallet",
+        balance:0,
+        accountNumber:"",
+        institution: "",
+        icon: "cash",
+      },
+
+      isTransactionModalOpen: false,
+      addTransactionForm: {
+        description:"",
+        transactionType: "Expense",
+        categoryId: "",
+        accountId: "",
+        fromAccountId: null,
+        toAccountId: null,
+        amount: 1,
+        notes: "",
+      },
 
     },
     reducers:{
@@ -110,8 +137,9 @@ const slice = createSlice({
         state.activeCategoryTab = data.payload;
       },
 
-      setSearchTransaction:(state,data) => {
-        state.searchTransaction = data.payload
+      setFilterOptionsField:(state,data) => {
+        const {field,value} = data.payload;
+        state.filterOptions[field] = value;
       },
 
       setReportsTab:(state,data) => {
@@ -166,7 +194,7 @@ const slice = createSlice({
         const { field, value } = data.payload;
         state.editCategoryForm[field] = value;
       },
-      setCategoryForm:(state,data) => {
+      setEntireCategoryForm:(state,data) => {
         state.editCategoryForm = data.payload
       },
 
@@ -176,6 +204,25 @@ const slice = createSlice({
       setAddAccountForm: (state,data) => {
         const {field,value} = data.payload;
         state.addAccountForm[field] = value;
+      },
+
+      setEditAccount: (state,data) => {
+        state.editAccount = data.payload;
+      },
+      setEditAccountForm: (state,data) => {
+        const {field,value} = data.payload;
+        state.editAccountForm[field] = value;
+      },
+      setEntireEditAccountForm: (state,data) => {
+        state.editAccountForm = data.payload;
+      },
+
+      setIsTransactionModalOpen: (state) => {
+        state.isTransactionModalOpen = !state.isTransactionModalOpen;
+      },
+      setAddTransactionForm: (state,data) => {
+        const {field,value} = data.payload;
+        state.addTransactionForm[field] = value;
       },
     },
 })

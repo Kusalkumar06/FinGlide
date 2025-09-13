@@ -5,7 +5,7 @@ import slice from '../redux/slices'
 import axios from "axios"
 import { useEffect } from 'react';
 import { CategoryModal } from './AddModals';
-import { categoryIcons } from './Icons';
+import { categoryIcons } from './Utilities';
 import { EditCategoryModal } from './EditModals';
 
 
@@ -32,10 +32,6 @@ function Categories() {
     fn()
   }
   useEffect(fetchCategories,[])
-
-  const expenseButton = `${activeCategoryTab == "Expense" ? "bg-white shadow" : ""} py-1 px-3 w-[45%] rounded`
-
-  const incomeButton = `${activeCategoryTab == "Income" ? "bg-white shadow" : ""} py-1 px-3 w-[45%] rounded`
 
   const category_list = (categoryList || []).filter((eachCate) => eachCate.categoryType === activeCategoryTab)
 
@@ -90,8 +86,8 @@ function Categories() {
 
       <div className='flex justify-center my-5'>
         <div className='flex justify-between w-[800px] bg-[#FFFAF4] px-3 py-2 rounded-lg'>
-          <button className={expenseButton} onClick={() => dispatch(actions.toggleCategoryTab(categoriesTabs.expense))}>Expense Categories</button>
-          <button className={incomeButton} onClick={() => dispatch(actions.toggleCategoryTab(categoriesTabs.income))}>Income Categories</button>
+          <button className={`${activeCategoryTab == "Expense" ? "bg-white shadow" : ""} py-1 px-3 w-[45%] rounded`} onClick={() => dispatch(actions.toggleCategoryTab(categoriesTabs.expense))}>Expense Categories</button>
+          <button className={`${activeCategoryTab == "Income" ? "bg-white shadow" : ""} py-1 px-3 w-[45%] rounded`} onClick={() => dispatch(actions.toggleCategoryTab(categoriesTabs.income))}>Income Categories</button>
         </div>
       </div>
 
