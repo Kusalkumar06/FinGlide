@@ -47,9 +47,20 @@ const actions = slice.actions
 
 function Reports() {
   const dispatch = useDispatch()
-  const {activeReportsTab} = useSelector((store) => {
+  const {activeReportsTab,transactionList} = useSelector((store) => {
     return store.sliceState
   })
+
+  const currentYear = new Date().getFullYear();
+  let income = 0, expenses = 0;
+
+  transactionList.forEach(tx => {
+    const year = new Date(tx.date).getFullYear();
+    if (year === currentYear) {
+      if (tx.transactionType === "Income") income += tx.amount;
+      if (tx.transactionType === "Expense") expenses += tx.amount;
+    }
+  });
 
   const analysisTab = analysis.filter((tab) => tab.id === activeReportsTab);
   return (
@@ -71,8 +82,8 @@ function Reports() {
             <FaArrowTrendUp size={20} color='green' />
           </div>
           <div>
-            <h1 className='text-[25px] text-green-500 font-[600]'>₹54,000</h1>
-            <p className='flex items-center text-[12px]'>Avg: ₹4,500/month</p>
+            <h1 className='text-[25px] text-green-500 font-[600]'>₹{income}</h1>
+            <p className='flex items-center text-[12px]'>Avg: ₹{(income/12).toFixed(2)}/month</p>
           </div>
         </div>
         <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
@@ -81,8 +92,8 @@ function Reports() {
             <FaArrowTrendDown size={20} color='red' />
           </div>
           <div>
-            <h1 className='text-[25px] text-red-600 font-[600]'>₹38,500</h1>
-            <p className='flex items-center text-[12px]'>Avg: ₹3,208/month</p>
+            <h1 className='text-[25px] text-red-600 font-[600]'>₹{expenses}</h1>
+            <p className='flex items-center text-[12px]'>Avg: ₹{(expenses/12).toFixed(2)}/month</p>
           </div>
         </div>
         <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
@@ -91,8 +102,8 @@ function Reports() {
             <p className='text-yellow-600'>₹</p>
           </div>
           <div>
-            <h1 className='text-[25px] text-yellow-600 font-[600]'>₹15,500</h1>
-            <p className='flex items-center text-[12px]'>28.7% savings rate</p>
+            <h1 className='text-[25px] text-yellow-600 font-[600]'>₹{income - expenses}</h1>
+            <p className='flex items-center text-[12px]'>{(((income-expenses)/income)*100).toFixed(2)}% savings rate</p>
           </div>
         </div>
         <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
@@ -102,7 +113,7 @@ function Reports() {
           </div>
           <div>
             <h1 className='text-[25px] font-[600]'>12 Months</h1>
-            <p className='flex items-center text-[12px]'>Jan 2024 - Dec 2024</p>
+            <p className='flex items-center text-[12px]'>Jan {currentYear} - Dec {currentYear}</p>
           </div>
         </div>
       </div>

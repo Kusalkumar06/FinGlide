@@ -20,7 +20,7 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 5000
 const URL = process.env.MONGO_URI
 
 if (!URL){

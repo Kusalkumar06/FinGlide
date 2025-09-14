@@ -20,12 +20,6 @@ const budgetModel = new mongoose.Schema({
     enum: ["monthly","yearly","weekly"],
     default: "monthly,"
   },
-  icon: {
-    type: String,
-  },
-  color: {
-    type: String,
-  }
 },{ timestamps: true })
 
 export const BudgetModel = mongoose.model("Budget",budgetModel)

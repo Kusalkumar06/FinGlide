@@ -1,102 +1,37 @@
 import React from 'react'
 import ProgressBar from './ProgressBar'
 import { MdOutlineDelete,MdOutlineEdit } from "react-icons/md";
-import axios from "axios"
-// import { useSelector,useDispatch } from 'react-redux'
-import { useEffect } from 'react';
+import { useSelector,useDispatch } from 'react-redux'
+import slice from '../redux/slices';
+import { BudgetModal } from './AddModals';
+import { categoryIcons } from './Utilities';
+import {TriangleAlert,CircleCheckBig,CircleX} from 'lucide-react'
 
-const budgets = [
-  {
-    category: "Food & Dining",
-    period: "Monthly",
-    spent: 650.5,
-    limit: 800,
-    percentage: 81.3,
-    status: "Near Limit",
-    remaining: 149.5,
-    remainingStatus: "positive",
-  },
-  {
-    category: "Transportation",
-    period: "Monthly",
-    spent: 245.2,
-    limit: 300,
-    percentage: 81.7,
-    status: "Near Limit",
-    remaining: 54.8,
-    remainingStatus: "positive",
-  },
-  {
-    category: "Entertainment",
-    period: "Monthly",
-    spent: 215.99,
-    limit: 200,
-    percentage: 108.0,
-    status: "Over Budget",
-    remaining: -15.99, // negative means over budget
-    remainingStatus: "negative",
-  },
-  {
-    category: "Shopping",
-    period: "Monthly",
-    spent: 320,
-    limit: 500,
-    percentage: 64.0,
-    status: "On Track",
-    remaining: 180,
-    remainingStatus: "positive",
-  },
-  {
-    category: "Bills & Utilities",
-    period: "Monthly",
-    spent: 380,
-    limit: 400,
-    percentage: 95.0,
-    status: "Near Limit",
-    remaining: 20,
-    remainingStatus: "positive",
-  },
-  {
-    category: "Healthcare",
-    period: "Monthly",
-    spent: 85,
-    limit: 150,
-    percentage: 56.7,
-    status: "On Track",
-    remaining: 65,
-    remainingStatus: "positive",
-  },
-];
-
-const budgetAlerts = budgets.filter((each) => each.percentage > 80)
-
+const actions = slice.actions
 function Budgets() {
-  // const dispatch = useDispatch();
-  // const {budgetList} = useSelector((store) => {
-  //   return store.sliceState
-  // })
+  const dispatch = useDispatch();
+  const {isBudgetModalOpen,budgetList} = useSelector((store) => {
+    return store.sliceState
+  })
 
 
-  const fetchBudgets = () => {
-    const fn = async () => {
-      const url = "http://localhost:5000/budget/getBudgets/"
-      const response = await axios.get(url,{withCredentials:true})
-      console.log(response)
-    }
-    fn()
-  }
-  useEffect(fetchBudgets,[])
-  
+
+  const totalBudget = budgetList.reduce((a,b) => (a+b.limit),0)
+  const totalSpent = budgetList.reduce((a,b) => (a+b.spent),0)
+  const budgetAlerts = budgetList.filter((each) => each.percentage > 80)
+  const spentPercent = ((totalSpent/totalBudget) *100).toFixed(2)
+  const overBudgets = budgetList.filter((each) => each.percentage > 100).length
 
   return (
     <div>
+      {isBudgetModalOpen && <BudgetModal/>}
       <div className='flex items-center justify-between mb-5'>
         <div>
           <h1 className='text-[#3A3A3A] text-[28px] font-[500]'>Budgets</h1>
           <p className='text-[14px] text-[#3B3F40]'>Set spending limits and track your progress.</p>
         </div>
         <div>
-          <button className='bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer'>+ Add Budget</button>
+          <button onClick={() => dispatch(actions.setIsBudgetModalOpen())} className='bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer'>+ Add Budget</button>
         </div>
       </div>
       <div className='flex justify-between mb-5 gap-4'>
@@ -105,42 +40,49 @@ function Budgets() {
             <p>Total Budget</p>
           </div>
           <div>
-            <h1 className='text-[25px] font-[600]'>₹2,350</h1>
+            <h1 className='text-[25px] font-[600]'>₹{totalBudget}</h1>
             <p className='flex items-center text-[12px]'>Monthly Limit</p>
           </div>
         </div>
         <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
           <p>Total Spent</p>
           <div>
-            <h1 className='text-[25px] font-[600]'>₹1,896.69</h1>
+            <h1 className='text-[25px] font-[600]'>₹{totalSpent}</h1>
             <div className='flex items-center gap-4'>
-                <ProgressBar value={60} width={100}/>
-                <p className='text-[12px]'>80% of budget</p>
+                <div className='w-[40%]'>
+                  <ProgressBar value={spentPercent} />
+                </div>
+                <p className='text-[12px]'>{spentPercent}% of budget</p>
             </div>
           </div>
         </div>
         <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
             <p className='text-red-600'>Over Budget</p>
           <div>
-            <h1 className='text-[25px] text-red-600 font-[600]'>1</h1>
+            <h1 className='text-[25px] text-red-600 font-[600]'>{overBudgets}</h1>
             <p className='flex items-center text-[12px]'>Categories exceeded</p>
           </div>
         </div>
         <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
           <p className='text-yellow-600'>Near Limit</p>
           <div>
-            <h1 className='text-[25px] text-yellow-600 font-[600]'>3</h1>
+            <h1 className='text-[25px] text-yellow-600 font-[600]'>{budgetAlerts.length}</h1>
             <p className='flex items-center text-[12px]'>Categories at 80%+</p>
           </div>
         </div>
       </div>
 
-      <div className='flex flex-wrap gap-4 justify-between mb-3'>
+      <div className='flex flex-wrap gap-4 mb-3'>
         {
-            budgets.map((each,index) => (
-                <div key={index} className='bg-[#FFFAF4] w-[370px] p-4 border-2 border-[#DDDFDE] rounded-lg group shadow'>
+            budgetList.map((each,index) => {
+              const IconComponent = categoryIcons.find((eachIcon) => eachIcon.id === each.icon)
+              console.log(IconComponent)
+              return (
+                  <div key={index} className='bg-[#FFFAF4] w-[370px] p-4 border-2 border-[#DDDFDE] rounded-lg group shadow'>
                     <div className='flex gap-4 items-center mb-6'>
-                        <p>Icon</p>
+                        <div className='w-12 h-12 rounded-full mx-2 flex items-center justify-center' style={{backgroundColor: IconComponent.color}}>
+                          <IconComponent.icon color='white'/>
+                        </div>
                         <div>
                             <h1 className='text-[18px] font-[500]'>{each.category}</h1>
                             <button className='text-gray-500 text-[11px] border py-[1px] px-2 rounded'>{each.period}</button>
@@ -155,14 +97,18 @@ function Budgets() {
                         </div>
                     </div>
                     <div className='flex justify-between mb-3'>
-                      <div className='flex gap-2'>
-                        <p>icon</p>
-                        <p className='text-yellow-600'>{each.status}</p>
+                      <div className='flex gap-2 items-center'>
+                        {each.progress <= 80 ? <CircleCheckBig size={17} color='green'/> : <TriangleAlert size={17} className='text-yellow-600'/>}
+                        {each.progress >= 100 && <CircleX size={17} color='red'/>}
+                        {each.progress >= 100 ? 
+                          <p className='text-red-500 text-[18px]'>Over Budget</p> :
+                          <p className={`${each.progress <= 80 ? "text-green-500" : "text-yellow-500"} text-[18px]`}>{each.progress <= 80 ? "On Track" : "Near Limit"}</p>
+                        }
                       </div>
-                      <p>{each.percentage}%</p>
+                      <p>{each.progress.toFixed(2)}%</p>
                     </div>
                     <div className='mb-3'>
-                      <ProgressBar value={each.percentage}/>
+                      <ProgressBar value={each.progress}/>
                     </div>
                     <div className='flex justify-between mb-3'>
                       <p className='text-yellow-500'>₹{each.spent}</p>
@@ -173,18 +119,19 @@ function Budgets() {
                       <p>Remaining:</p>
                       <p className='text-green-600'>₹{each.remaining}</p>
                     </div>
-                </div>
-            ))
+                  </div>
+              )
+            })
         }
       </div>
 
       <div className='bg-[#FFFAF4] p-5 border-2 border-[#DDDFDE] rounded-lg shadow mb-5'>
         <div className='flex gap-4 items-center mb-5'>
-          <p>Icon</p>
+          <TriangleAlert size={22} className='text-yellow-600'/>
           <h1 className='text-[20px] font-[500]'>Budget Alerts</h1>
         </div>
         <div className='space-y-4'>
-            {
+            { budgetAlerts.length > 0 ? 
               budgetAlerts.map((each,index) => (
                 <div key={index} className='flex justify-between bg-white rounded-lg p-2'>
                   <div className='flex gap-4'>
@@ -195,7 +142,7 @@ function Budgets() {
                     <h1 className='text-yellow-500'>{each.remaining > 0 ? `${each.percentage}% of budget is used` : `₹${Math.abs(each.remaining)}  over budget`}</h1>
                   </div>
                 </div>
-              ))
+              )) : <div className='text-center'><p>All budgets are on track.</p></div>
             }
         </div>
       </div>

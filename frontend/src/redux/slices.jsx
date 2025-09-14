@@ -34,7 +34,7 @@ const slice = createSlice({
     initialState:{
       loginUsername: "",
       loginPassword: "",
-      loginErr: true,
+      loginErr: false,
 
       registerName: "",
       registerEmail: "",
@@ -114,6 +114,13 @@ const slice = createSlice({
         notes: "",
       },
 
+      isBudgetModalOpen: false,
+      addBudgetForm: {
+        categoryId: "",
+        limit: 0.00,
+        period: "monthly",
+      },
+      addBudgetCategoryError: false,
     },
     reducers:{
       loginusername: (state,data) => {
@@ -121,6 +128,9 @@ const slice = createSlice({
       },
       loginpassword:(state,data) => {
         state.loginPassword = data.payload;
+      },
+      setLoginErr:(state) => {
+        state.loginErr = !state.loginErr
       },
       
       registername: (state,data) => {
@@ -131,6 +141,9 @@ const slice = createSlice({
       },
       registerpassword:(state,data) => {
         state.registerPassword = data.payload;
+      },
+      setRegisterErr:(state) => {
+        state.registerErr = !state.registerErr;
       },
 
       toggleCategoryTab:(state,data) => {
@@ -223,6 +236,20 @@ const slice = createSlice({
       setAddTransactionForm: (state,data) => {
         const {field,value} = data.payload;
         state.addTransactionForm[field] = value;
+      },
+
+      setIsBudgetModalOpen: (state) => {
+        state.isBudgetModalOpen = !state.isBudgetModalOpen;
+      },
+      setAddBudgetForm: (state,data) => {
+        state.addBudgetForm = data.payload
+      },
+      setAddBudgetModalFormField: (state,data) => {
+        const {field,value} = data.payload;
+        state.addBudgetForm[field] = value;
+      },
+      setAddBudgetCategoryError: (state,data) => {
+        state.addBudgetCategoryError = data.payload;
       },
     },
 })

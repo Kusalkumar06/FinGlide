@@ -123,7 +123,8 @@ export const AccountModal = () => {
   { value: "card", label: "Card" },
   { value: "investment", label: "Investment" },
   { value: "crypto", label: "Crypto" },
-  { value: "loan", label: "Loan" }
+  { value: "loan", label: "Loan" },
+  { value: "creditCard", label: "Credit Card" }
 ];
 
 
@@ -142,7 +143,7 @@ export const AccountModal = () => {
       dispatch(actions.setIsAccountModalOpen())
       
     }catch(err){
-      console.error(`Error during adding the category.`,err)   
+      console.error(`Error during adding the Account.`,err)   
     }
   }
 
@@ -166,7 +167,7 @@ export const AccountModal = () => {
               <div className="flex w-[100%] items-center justify-between mb-3">
                 <div className="flex flex-col w-[45%]">
                   <label className="text-[#3A3A3A] font-[500] text-[18px] mb-2">Account type</label>
-                  <Select value={accountOptions.find(opt => opt.value === addAccountForm.accountType) || null} onChange={(option) => dispatch(actions.setAddAccountForm({ field: "accountType", value: option.value }))} options={accountOptions} styles={customStyles}  defaultValue={accountOptions[0]}/>
+                  <Select value={accountOptions.find(opt => opt.value === addAccountForm.accountType) || null} onChange={(option) => dispatch(actions.setAddAccountForm({ field: "accountType", value: option.value }))} options={accountOptions} styles={customStyles}  defaultValue={accountOptions[0]} maxMenuHeight={200}/>
                 </div>
                 <div className="flex flex-col w-[45%]">
                   <label className="text-[#3A3A3A] font-[500] text-[18px] mb-2">Account Balance</label>
@@ -221,10 +222,10 @@ export const TransactionModal = () => {
       }
   })
 
-  const acoountOptions = accountList.map((account) => {
+  const accountOptions = accountList.map((account) => {
     return {
       label: account.name,
-      value: account._id.toString()
+      value: account._id.toString(),
     }
   })
   
@@ -246,7 +247,7 @@ export const TransactionModal = () => {
       dispatch(actions.setIsTransactionModalOpen())
       
     }catch(err){
-      console.error(`Error during adding the category.`,err)   
+      console.error(`Error during adding the Transaction.`,err)   
     }
   }
 
@@ -282,7 +283,7 @@ export const TransactionModal = () => {
                   </div>
                   <div className="flex flex-col w-[45%]">
                     <label className="text-[#3A3A3A] font-[500] text-[18px]">Account</label>
-                    <Select value={acoountOptions.find(opt => opt.value === addTransactionForm.accountId) || null} onChange={(option) => dispatch(actions.setAddTransactionForm({ field: "accountId", value: option.value }))} options={acoountOptions} styles={customStyles} maxMenuHeight={150}/>
+                    <Select value={accountOptions.find(opt => opt.value === addTransactionForm.accountId) || null} onChange={(option) => dispatch(actions.setAddTransactionForm({ field: "accountId", value: option.value }))} options={accountOptions} styles={customStyles} maxMenuHeight={150}/>
                   </div>
                 </div>
               }
@@ -290,11 +291,11 @@ export const TransactionModal = () => {
                 <div className="flex w-[100%] items-center justify-between mb-3">
                   <div className="flex flex-col w-[45%]">
                     <label className="text-[#3A3A3A] font-[500] text-[18px]">From Account</label>
-                    <Select value={acoountOptions.find(opt => opt.value === addTransactionForm.fromAccountId) || null} onChange={(option) => dispatch(actions.setAddTransactionForm({ field: "fromAccountId", value: option.value }))} options={acoountOptions} styles={customStyles} maxMenuHeight={150}/>
+                    <Select value={accountOptions.find(opt => opt.value === addTransactionForm.fromAccountId) || null} onChange={(option) => dispatch(actions.setAddTransactionForm({ field: "fromAccountId", value: option.value }))} options={accountOptions} styles={customStyles} maxMenuHeight={150}/>
                   </div>
                   <div className="flex flex-col w-[45%]">
                     <label className="text-[#3A3A3A] font-[500] text-[18px]">To Account</label>
-                    <Select value={acoountOptions.find(opt => opt.value === addTransactionForm.toAccountId) || null} onChange={(option) => dispatch(actions.setAddTransactionForm({ field: "toAccountId", value: option.value }))} options={acoountOptions} styles={customStyles} maxMenuHeight={150}/>
+                    <Select value={accountOptions.find(opt => opt.value === addTransactionForm.toAccountId) || null} onChange={(option) => dispatch(actions.setAddTransactionForm({ field: "toAccountId", value: option.value }))} options={accountOptions} styles={customStyles} maxMenuHeight={150}/>
                   </div>
                 </div>
               }
@@ -308,6 +309,81 @@ export const TransactionModal = () => {
               </div>
               <div className="flex justify-end">
                 <button className="bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer">Add Transaction</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      </div>
+    )
+}
+
+export const BudgetModal = () => {
+  const {isBudgetModalOpen,addBudgetForm,categoryList,addBudgetCategoryError} = useSelector((store) => {
+   return  store.sliceState
+  })
+
+  const dispatch = useDispatch()
+  const categoryOptions = categoryList.filter((category) => category.categoryType === "Expense").map((category) => {
+      return {
+        label: category.name,
+        value: category._id.toString()
+      }
+  })
+
+  const periodOptions = [{value: "monthly",label: "Monthly"},{value: "yearly",label: "Yearly"},{value: "weekly",label: "Weekly"}]
+
+  const handleSubmit = async(event) => {
+    event.preventDefault();
+    if (addBudgetForm.categoryId === ""){
+      dispatch(actions.setAddBudgetCategoryError(true))
+      return;
+    } else{
+      dispatch(actions.setAddBudgetCategoryError(false))
+    }
+    try{
+      const budgetDetails = addBudgetForm
+      
+      const url = "http://localhost:5000/budget/createBudget/";
+      await axios.post(url,budgetDetails,{withCredentials:true})
+    
+      const updatedCategories = await axios.get("http://localhost:5000/budget/getBudgets/",{withCredentials:true})
+      dispatch(actions.setBudgetList(updatedCategories.data.Budgets))
+      dispatch(actions.setAddBudgetForm({categoryId: "",limit: 0.00,period: "monthly",}))
+      dispatch(actions.setIsBudgetModalOpen())
+    }catch(err){
+      console.error(`Error during adding the Budget.`,err)
+    }
+  }
+
+    return(
+      <div>
+        {isBudgetModalOpen && (
+        <div className=" fixed inset-0 bg-[#00000080] bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white w-[350px] p-5 rounded-lg">
+            <div className="mb-6 flex justify-between">
+              <div>
+                <h1 className="text-[#3A3A3A] font-[500] text-[23px]">Add New Budget</h1>
+                <p className="text-[#5A5A5A] text-[14px]">Create a new category to organize your transactions.</p>
+              </div>
+              <MdOutlineCancel size={25} onClick={() => {dispatch(actions.setIsBudgetModalOpen());dispatch(actions.setAddBudgetForm({categoryId: "",limit: 0.00,period: "monthly",}));dispatch(actions.setAddBudgetCategoryError(false))}}  className="self-start mt-3 cursor-pointer text-[#555B5A] hover:text-red-600" />
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="flex flex-col mb-5">
+                <label className="text-[#3A3A3A] font-[500] text-[18px] mb-3">Category type</label>
+                <Select className='w-[100%]' value={categoryOptions.find(opt => opt.value === addBudgetForm.categoryId) || null} onChange={(option) => dispatch(actions.setAddBudgetModalFormField({ field: "categoryId", value: option.value }))} options={categoryOptions} styles={customStyles}  defaultValue={categoryOptions[0]} maxMenuHeight={150}/>
+                {addBudgetCategoryError && <p className="text-red-600">*Please select a category.</p>}
+              </div>
+              <div className="flex flex-col w-[100%] mb-5">
+                  <label className="text-[#3A3A3A] font-[500] text-[18px] mb-2">Budget Limit</label>
+                  <input required value={addBudgetForm.limit} onChange={(e) => dispatch(actions.setAddBudgetModalFormField({ field: "limit", value: e.target.value }))} type="number" placeholder="0.00" step={0.1} className="outline-none py-2 px-3 rounded shadow border-1 border-gray-300" />
+                </div>
+              <div className="flex flex-col mb-5">
+                <label className="text-[#3A3A3A] font-[500] text-[18px] mb-3">Period</label>
+                <Select className='w-[100%]' value={periodOptions.find(opt => opt.value === addBudgetForm.period) || null} onChange={(option) => dispatch(actions.setAddBudgetModalFormField({ field: "period", value: option.value }))} options={periodOptions} styles={customStyles}  defaultValue={periodOptions[0]}/>
+              </div>
+              <div className="flex justify-end">
+                <button className="bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer">Add Budget</button>
               </div>
             </form>
           </div>

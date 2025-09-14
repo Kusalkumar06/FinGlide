@@ -2,8 +2,6 @@ import React from 'react'
 import { CiFilter,CiSearch } from "react-icons/ci";
 import { useSelector,useDispatch } from 'react-redux';
 import slice from '../redux/slices';
-import axios from 'axios';
-import { useEffect } from 'react';
 import { categoryIcons } from './Utilities';
 import { TransactionModal } from './AddModals';
 import Select from "react-select"
@@ -59,19 +57,10 @@ function Transactions() {
     }
   })]
 
-  const fetchTransactions = () => {
-    const fn = async() => {
-      const url = "http://localhost:5000/transaction/getTransactions/"
-      const response = await axios.get(url,{withCredentials:true})
-      console.log(response.data.transactions)
-      dispatch(actions.setTransactionList(response.data.transactions))
-    }
-    fn();
-  }
 
-
-  useEffect(fetchTransactions,[])
-
+  const trasactionsCount = transactionList.length
+  const totalIncome = transactionList.filter(each => each.transactionType === "Income").reduce((a,b) => (a+b.amount),0)
+  const totalExpense = transactionList.filter(each => each.transactionType === "Expense").reduce((a,b) => (a+b.amount),0)
   return (
     <div>
       {isTransactionModalOpen && <TransactionModal/> }
@@ -90,21 +79,21 @@ function Transactions() {
             <div className='mb-6'>
                 <h1 className='text-[#3A3A3A] text-[18px]'>Total Transactions</h1>
             </div>
-            <h1 className='text-[25px] font-[600]'>10</h1>
+            <h1 className='text-[25px] font-[600]'>{trasactionsCount}</h1>
             <p className='text-[14px] text-gray-500'>Filtered Results</p>
         </div>
         <div className='bg-[#FFFAF4] w-[33%] p-5 border-2 border-[#DDDFDE] rounded-lg group shadow'>
             <div className='mb-6'>
                 <h1 className='text-green-600 text-[18px]'>Total Income</h1>
             </div>
-            <h1 className='text-[25px] text-green-600 font-[700]'>₹5,375.5</h1>
+            <h1 className='text-[25px] text-green-600 font-[500]'>₹{totalIncome}</h1>
             <p className='text-[14px] text-gray-500'>From Filtered Transactions</p>
         </div>
         <div className='bg-[#FFFAF4] w-[33%] p-5 border-2 border-[#DDDFDE] rounded-lg group shadow'>
             <div className='mb-6'>
                 <h1 className='text-red-600 text-[18px]'>Total Expenses</h1>
             </div>
-            <h1 className='text-[25px] font-[600]'>₹417.99</h1>
+            <h1 className='text-[25px] text-red-500 font-[500]'>₹{totalExpense}</h1>
             <p className='text-[14px] text-gray-500'>From Filtered Transactions</p>
         </div>
       </div>

@@ -3,11 +3,13 @@ import { useSelector,useDispatch } from 'react-redux'
 import slice from '../redux/slices'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 const actions = slice.actions 
 
 function Signin() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const gradientStyle = {
     background: 'radial-gradient(circle, #FFFBF3, #da6e39)',
@@ -31,19 +33,16 @@ function Signin() {
       username:loginUsername,
       password:loginPassword,
     }
-    const url = "http://localhost:5000/auth/login"
-    // const options = {
-    //   method: "POST",
-    //   headers:{
-    //     "Content-Type" : "application/json",
-    //   },
-    //   body: JSON.stringify(details)
-    // }
-
-    // const response = await fetch(url,options)
-    // const data = await response.json()
-    const data = await axios.post(url,details,{withCredentials:true})
-    console.log(data);
+    try{
+      const url = "http://localhost:5000/auth/login"
+      await axios.post(url,details,{withCredentials:true})
+      // dispatch(actions.setLoginErr())
+      navigate('/',{replace:true})
+      
+    }catch(err){
+      dispatch(actions.setLoginErr())
+      console.error(`Error during the login: ${err}`)
+    }
   }
 
 

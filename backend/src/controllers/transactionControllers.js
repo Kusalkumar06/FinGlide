@@ -32,7 +32,7 @@ export const createTransaction = async(req,res) => {
 
 export const getTransactions = async(req,res) => {
   try{
-    const allTransactions = await TransactionModel.find({userId:req.user.userId}).populate("accountId fromAccountId toAccountId categoryId")
+    const allTransactions = await TransactionModel.find({userId:req.user.userId}).populate("accountId fromAccountId toAccountId categoryId").sort({date: -1})
 
     res.status(201).json({
       message: "All Transactions fetched",

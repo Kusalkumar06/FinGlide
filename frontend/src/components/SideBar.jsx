@@ -4,8 +4,16 @@ import { IoHomeOutline,IoWalletOutline,IoSettingsOutline } from "react-icons/io5
 import { LuTags,LuChartPie } from "react-icons/lu";
 import { LiaCreditCardSolid } from "react-icons/lia";
 import { TbReportSearch } from "react-icons/tb";
-
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 function SideBar() {
+  const navigate = useNavigate()
+  const handleLogout = async() => {
+    const url = "http://localhost:5000/auth/logout"
+    await axios.post(url,{withCredintials:true})
+    navigate('/login')
+  }
+
   return (
     <div className='flex'>
       <div className='border-r-1 w-75 h-screen bg-gradient-to-b from-orange-100 via-white to-orange-100 flex flex-col fixed top-0 left-0 z-50'>
@@ -57,7 +65,7 @@ function SideBar() {
             <IoSettingsOutline size={20} className='text-[ #505050]' />
             <p className='ml-3 text-[18px] '>Settings</p>
           </NavLink>
-          <button className='w-[100%] bg-[#F96C4A] text-white p-1 text-[18px] rounded cursor-pointer'>Logout</button>
+          <button onClick={handleLogout} className='w-[100%] bg-[#F96C4A] text-white p-1 text-[18px] rounded cursor-pointer'>Logout</button>
         </div>
       </div>
 

@@ -3,7 +3,6 @@ import { MdOutlineDelete,MdOutlineEdit } from "react-icons/md";
 import { useSelector,useDispatch } from 'react-redux'
 import slice from '../redux/slices'
 import axios from "axios"
-import { useEffect } from 'react';
 import { CategoryModal } from './AddModals';
 import { categoryIcons } from './Utilities';
 import { EditCategoryModal } from './EditModals';
@@ -21,17 +20,7 @@ function Categories() {
   const {activeCategoryTab,categoryList,isCategoryModalOpen,editCategory} = useSelector((store) => (
     store.sliceState
   ))
-
-  const fetchCategories = () => {
-    const fn = async () => {
-      const url = "http://localhost:5000/category/getCategories/"
-      const response = await axios.get(url,{withCredentials:true})
-      console.log(response.data.Categories)
-      dispatch(actions.setCategoryList(response.data.Categories))
-    }
-    fn()
-  }
-  useEffect(fetchCategories,[])
+  console.log(categoryList)
 
   const category_list = (categoryList || []).filter((eachCate) => eachCate.categoryType === activeCategoryTab)
 
@@ -47,6 +36,10 @@ function Categories() {
 
     dispatch(actions.setCategoryList(categories.data.Categories))
   }
+
+  const incomeCategories = categoryList.filter((each) => "Income" === each.categoryType).length
+  const expenseCategories = categoryList.filter((each) => "Expense" === each.categoryType).length
+
   return (
     <div>
       {isCategoryModalOpen && <CategoryModal/>}
@@ -68,7 +61,7 @@ function Categories() {
             <p className='text-[#3A3A3A] text-[14px]'>Categories for tracking your income sources</p>
           </div>
           <div>
-            <h1 className='text-[24px] font-[500]'>4</h1>
+            <h1 className='text-[24px] font-[500]'>{incomeCategories}</h1>
             <p className='text-[#3A3A3A] text-[14px]'>Active Categories</p>
           </div>
         </div>
@@ -78,7 +71,7 @@ function Categories() {
             <p className='text-[#3A3A3A] text-[14px]'>Categories for tracking your expenses</p>
           </div>
           <div>
-            <h1 className='text-[24px] font-[500]'>8</h1>
+            <h1 className='text-[24px] font-[500]'>{expenseCategories}</h1>
             <p className='text-[#3A3A3A] text-[14px]'>Active Categories</p>
           </div>
         </div>

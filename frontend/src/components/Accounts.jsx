@@ -2,7 +2,6 @@ import React from 'react'
 import { MdOutlineDelete,MdOutlineEdit } from "react-icons/md";
 import axios from "axios"
 import { useSelector,useDispatch } from 'react-redux'
-import { useEffect } from 'react';
 import slice from '../redux/slices';
 import { AccountModal } from './AddModals';
 import { EditAccountModal } from './EditModals';
@@ -16,16 +15,7 @@ function Accounts() {
     return store.sliceState
   })
 
-  const fetchAccounts = () => {
-    const fn = async () => {
-      const url = "http://localhost:5000/account/getAccounts/"
-      const response = await axios.get(url,{withCredentials:true})
-      console.log(response.data.accounts)
-      dispatch(actions.setAccountList(response.data.accounts))
-    }
-    fn()
-  }
-  useEffect(fetchAccounts,[])
+  
 
   const deleteAccount = async(id) => {
     const url = `http://localhost:5000/account/delete/${id}`
@@ -60,7 +50,7 @@ function Accounts() {
         </div>
         <div>
           <h1 className='text-[#D66C39] text-[25px] font-[500]'>₹{totalAmount}</h1>
-          <p className='text-[12px]'>Across 5 accounts</p>
+          <p className='text-[12px]'>Across {accountList.length} accounts</p>
         </div>
       </div>
 

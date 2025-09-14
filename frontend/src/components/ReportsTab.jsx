@@ -6,27 +6,21 @@ import axios from "axios";
 import { useSelector,useDispatch } from "react-redux";
 import { useEffect } from "react";
 import slice from "../redux/slices";
+import { scaleSequential } from "d3-scale";
+import { interpolateRainbow } from "d3-scale-chromatic";
+import { accountIcons } from "./Utilities";
 
 const actions = slice.actions
 
-
-
 export  function PieChartCategory() {
-  const dispatch = useDispatch()
 
   const {pieData} = useSelector((store) => {
     return store.sliceState
   })
+  const rainbowColor = scaleSequential(interpolateRainbow).domain([0, pieData.length]);
+  const totalAmount = pieData.reduce((sum, entry) => sum + entry.total, 0);
 
-  const fetchLineData = () => {
-      const fn = async () => {
-        const url = "http://localhost:5000/category/getPieData/"
-        const response = await axios.get(url,{withCredentials:true})
-        dispatch(actions.setPieData(response.data.transactionData))
-      }
-      fn()
-    }
-    useEffect(fetchLineData,[])
+  const topSpendingCategories = [...pieData].sort((a,b) => b.total-a.total).slice(0,6);
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
@@ -46,7 +40,7 @@ export  function PieChartCategory() {
   };
 
   return (
-    <div className="">
+    <div className="flex justify-around">
       <div className="flex flex-col bg-[#FFFAF4] border-1 border-[#DDDFDE] shadow-lg rounded-2xl justify-center items-center rounded-2xl p-4 w-full max-w-md mr-3">
         <div className="self-start">
           <h2 className="text-lg font-semibold text-gray-700">Expenses by Category</h2>
@@ -69,7 +63,7 @@ export  function PieChartCategory() {
 
           >
             {pieData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color}/>
+              <Cell key={`cell-${index}`} fill={rainbowColor(index)}/>
             ))}
           </Pie>
 
@@ -77,28 +71,40 @@ export  function PieChartCategory() {
           <Legend verticalAlign="bottom" height={50} />
         </PieChart> 
       </div>
+      <div className="flex flex-col bg-[#FFFAF4] border-1 border-[#DDDFDE] shadow-lg rounded-2xl rounded-2xl p-4 w-full max-w-md mr-3">
+        <div className="self-start">
+          <h2 className="text-lg font-semibold text-gray-700">Top Spending Categories</h2>
+          <p className="text-[#8E5660]">Your highest expense categories this period.</p>
+        </div>
+        <ul className="space-y-4 p-4 pl-7 list-disc list-outside marker:text-orange-400 marker:text-[20px]">
+          {
+            topSpendingCategories.map((eachCat,index) => {
+              return (
+                <li key={index}>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h1 className="text-[20px] font-[500] text-[#3A3A3A]">{eachCat.name}</h1>
+                    </div>
+                    <div className="text-end">
+                      <h1 className="text-[18px] font-[500]">₹{eachCat.total}</h1>
+                      <p className="text-[12px] text-[#8E5660]">{((eachCat.total/totalAmount)*100 ).toFixed(2)}%</p>
+                    </div>
+                  </div>
+                </li>
+              )
+            })
+          }
+        </ul>
+      </div>
     </div>
   );
 }
 
 export  function LineChartInVsEx() {
-  const dispatch = useDispatch()
 
   const {linedata} = useSelector((store) => {
     return store.sliceState
   })
-
-  const fetchLineData = () => {
-      const fn = async () => {
-        const url = "http://localhost:5000/transaction/yearlySummary/"
-        const response = await axios.get(url,{withCredentials:true})
-        console.log(response.data.summary)
-        dispatch(actions.setLineData(response.data.summary))
-      }
-      fn()
-    }
-    useEffect(fetchLineData,[])
-    // console.log(linedata)
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
@@ -143,13 +149,27 @@ export  function LineChartInVsEx() {
 export function BarChartSpVsBud(){
 
   const dispatch = useDispatch();
-
-
-  const {speVsbudYear,speVsbudMonth,spendVsBudgetData} = useSelector((store) => {
+  const {speVsbudYear,speVsbudMonth,spendVsBudgetData,transactionList,budgetList} = useSelector((store) => {
     return store.sliceState;
   })
 
-  console.log(speVsbudMonth,speVsbudYear)
+  const categories = {};
+  const budgetCategoryIds = new Set(budgetList.map(b => b.categoryId.toString()));
+  let categoryAnalysisList = transactionList.filter(tx => tx.transactionType === "Expense" && budgetCategoryIds.has(tx.categoryId._id.toString())) 
+  categoryAnalysisList = categoryAnalysisList.forEach(tx => {
+    if (!categories[tx.categoryId._id]) {
+      categories[tx.categoryId._id] = {name:tx.categoryId.name, total: 0, count: 0 };
+    }
+    categories[tx.categoryId._id].total += tx.amount;
+    categories[tx.categoryId._id].count += 1;
+  });
+
+  categoryAnalysisList = Object.entries(categories).map(([categoryId, {name, total, count }]) => ({
+    categoryId,
+    name,
+    total,
+    count
+  }));
 
   const fetchSpendVsBudget = () => {
       const fn = async () => {
@@ -160,17 +180,15 @@ export function BarChartSpVsBud(){
       }
       fn()
     }
-    useEffect(fetchSpendVsBudget,[])
-
-    console.log(spendVsBudgetData)
+    useEffect(fetchSpendVsBudget,[speVsbudMonth,speVsbudYear])
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-2 shadow-lg rounded-md text-sm">
           <p className="font-semibold">{label}</p>
-          <p>${payload[0].value} Budget</p>
-          <p>${payload[1].value} Spent</p>
+          <p>₹{payload[0].value} Budget</p>
+          <p>₹{payload[1].value} Spent</p>
         </div>
       );
     }
@@ -207,45 +225,36 @@ export function BarChartSpVsBud(){
         </div>
         <ResponsiveContainer width="100%" height={350}>
           <BarChart data={spendVsBudgetData} barGap={8}>
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="1 1" />
             <XAxis dataKey="categoryName" fontSize={10}/>
             <YAxis />
             <Tooltip content={<CustomTooltip />} />
             <Legend />
-            <Bar dataKey="budget" fill="#888888" name="Budget" />
-            <Bar dataKey="spent" fill="#ff6600" name="Spent" />
+            <Bar dataKey="budget" fill="#888888" name="Budget" barSize={30}/>
+            <Bar dataKey="spent" fill="#ff6600" name="Spent" barSize={30}/>
           </BarChart>
         </ResponsiveContainer>
       </div>
-
 
       <div className="shadow-lg flex-1 bg-[#FFFAF4] rounded-2xl p-4 border-1 border-[#DDDFDE]">
         <div className="self-start mb-5">
             <h2 className="text-lg font-semibold text-gray-700">Category Analysis</h2>
             <p className="text-[#8E5660]">Detailed breakdown of spending by category.</p>
         </div>
-        <div className='my-3 space-y-1'>
-          <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-1 rounded-lg'>
-            <div>
-              <h1 className='text-[#433C3E] text-[20px]'>Grocery Store</h1>
-              <p className='text-[12px] text-gray-700'>65 Transactions</p>
-            </div>
-            <h1 className='text-green-700 text-[18px]'>₹15,750.5</h1>
-          </div>
-          <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-1 rounded-lg'>
-            <div>
-              <h1 className='text-[#433C3E] text-[20px]'>Grocery Store</h1>
-              <p className='text-[12px] text-gray-700'>29 Transactions</p>
-            </div>
-            <h1 className='text-green-700 text-[18px]'>₹15,750.5</h1>
-          </div>
-          <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-1 rounded-lg'>
-            <div>
-              <h1 className='text-[#433C3E] text-[20px]'>Grocery Store</h1>
-              <p className='text-[12px] text-gray-700'>48 Transactions</p>
-            </div>
-            <h1 className='text-green-700 text-[18px]'>₹15,750.5</h1>
-          </div>
+        <div className='my-3 space-y-2'>
+          {
+            categoryAnalysisList.map((each) => {
+              return (
+                <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-2 rounded-lg'>
+                  <div>
+                    <h1 className="text-[#433c3E] text-[18px] font-[500]">{each.name}</h1>
+                    <p className='text-[12px] text-gray-700'>{each.count} Transactions</p>
+                  </div>
+                  <h1 className='text-green-700 text-[18px] font-[500]'>₹{each.total}</h1>
+                </div>
+              )
+            })
+          }
         </div>
       </div>
     </div>
@@ -257,7 +266,7 @@ export function BarChartInVsEx() {
 
   const dispatch = useDispatch()
 
-  const {expVsInc} = useSelector((store) => {
+  const {expVsInc,transactionList} = useSelector((store) => {
     return store.sliceState
   })
 
@@ -286,23 +295,63 @@ export function BarChartInVsEx() {
     }
     return null;
   };
+
+  const currentYear = new Date().getFullYear();
+  let income = 0, expenses = 0;
+
+  transactionList.forEach(tx => {
+    const year = new Date(tx.date).getFullYear();
+    if (year === currentYear) {
+      if (tx.transactionType === "Income") income += tx.amount;
+      if (tx.transactionType === "Expense") expenses += tx.amount;
+    }
+  });
+  const financialInsights = [
+    {name: "Income",value: income},
+    {name: "Expense",value: expenses},
+    {name: "Savings",value: income - expenses},
+    {name: "Savings Rate",value: income ? (((income - expenses) / income) * 100).toFixed(2) : 0},
+  ]
   return (
-    <div className="bg-[#FFFAF4] border-1 border-[#DDDFDE] rounded-2xl p-4 w-[730px] max-w-4xl flex-1">
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold text-gray-700">Monthly Income vs Expenses</h2>
-        <p className="text-[#8E5660]">Monthly comparison over the past year</p>
+    <div className="flex gap-2">
+      <div className="bg-[#FFFAF4] border-1 border-[#DDDFDE] rounded-2xl p-4 w-[730px] max-w-4xl ">
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-gray-700">Monthly Income vs Expenses</h2>
+          <p className="text-[#8E5660]">Monthly comparison over the past year</p>
+        </div>
+        <ResponsiveContainer width="100%" height={350}>
+          <BarChart data={expVsInc} margin={{ top: 20, left: 0, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend height={36} />
+            <Bar dataKey="income" fill="#0088FE" barSize={15} />
+            <Bar dataKey="expense" fill="#FF8042" barSize={15} />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
-      <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={expVsInc} margin={{ top: 20, left: 0, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend height={36} />
-          <Bar dataKey="income" fill="#0088FE" barSize={15} />
-          <Bar dataKey="expense" fill="#FF8042" barSize={15} />
-        </BarChart>
-      </ResponsiveContainer>
+
+      <div className="bg-[#FFFAF4] border-1 border-[#DDDFDE] rounded-2xl p-4 flex-1">
+        <div className="self-start mb-5">
+          <h2 className="text-lg font-semibold text-gray-700">Financial Insights</h2>
+          <p className="text-[#8E5660]">Income and expenses for this year.</p>
+        </div>
+        <div className="space-y-6 p-4">
+          {
+            financialInsights.map((each,index) => {
+              return (
+                <div key={index}>
+                  <div className="flex items-center justify-between">
+                    <h1 className="text-[#433c3E] text-[18px] font-[500]">{each.name}:</h1>
+                    <h1 className='text-green-700 text-[18px] font-[500]'><span>{each.name == "Savings Rate" ? "" : "₹"}</span>{each.value}<span>{each.name == "Savings Rate" ? "%" : ""}</span></h1>
+                  </div>
+                </div>
+              )
+            })
+          }
+        </div>
+      </div>
     </div>
   );
 }
@@ -337,36 +386,107 @@ export function AreaGraphAccount  () {
     }
     return null;
   };
+  const {accountList} = useSelector((store) => {
+    return store.sliceState
+  })
+  const accounts = accountList.filter((each) => each.balance > 0).slice(0,3)
 
+  let assets = 0, liabilities = 0;
+  accountList.forEach(acc => {
+    if (acc.accountType === "creditCard" || acc.type === "loan") {
+      liabilities += acc.balance;
+    } else {
+      assets += acc.balance;
+    }
+  });
+
+  const assetsAndLiabilities =  [
+    {name: "Assets",value: assets},
+    {name: "Liabilities",value: liabilities},
+    {name: "Networth",value: assets - liabilities}
+  ]
   return (
-    <div className="flex flex-col bg-[#FFFAF4] shadow-lg rounded-2xl justify-center items-center rounded-2xl p-4 w-full mr-3">
-      <h2 className="text-lg font-semibold text-gray-700 self-start">Account Balance Trends</h2>
-      <p className="text-gray-500 text-sm mb-4 self-start">How your account balances have changed over time</p>
-      <ResponsiveContainer width="100%" height={300}>
-        <AreaChart data={areadata} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-          <defs>
-            <linearGradient id="colorChecking" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#8884d8"  />
-              <stop offset="95%" stopColor="#8884d8" />
-            </linearGradient>
-            <linearGradient id="colorSavings" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#82ca9d"  />
-              <stop offset="95%" stopColor="#82ca9d" />
-            </linearGradient>
-            <linearGradient id="colorinvestment" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#ffc658" />
-              <stop offset="95%" stopColor="#ffc658"/>
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip content={<CustomTooltip />} />
-          <Area type="monotone" dataKey="checking" stackId="1" stroke="#8884d8" fill="url(#colorChecking)" />
-          <Area type="monotone" dataKey="savings" stackId="1" stroke="#82ca9d" fill="url(#colorSavings)" />
-          <Area type="monotone" dataKey="investment" stackId="1" stroke="#ffc658" fill="url(#colorinvestment)" />
-        </AreaChart>
-      </ResponsiveContainer>
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-col bg-[#FFFAF4] shadow-lg rounded-2xl justify-center items-center rounded-2xl p-4 w-full mr-3">
+        <h2 className="text-lg font-semibold text-gray-700 self-start">Account Balance Trends</h2>
+        <p className="text-gray-500 text-sm mb-4 self-start">How your account balances have changed over time</p>
+        <ResponsiveContainer width="100%" height={300}>
+          <AreaChart data={areadata} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id="colorChecking" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#8884d8"  />
+                <stop offset="95%" stopColor="#8884d8" />
+              </linearGradient>
+              <linearGradient id="colorSavings" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#82ca9d"  />
+                <stop offset="95%" stopColor="#82ca9d" />
+              </linearGradient>
+              <linearGradient id="colorinvestment" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#ffc658" />
+                <stop offset="95%" stopColor="#ffc658"/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip content={<CustomTooltip />} />
+            <Area type="monotone" dataKey="checking" stackId="1" stroke="#8884d8" fill="url(#colorChecking)" />
+            <Area type="monotone" dataKey="savings" stackId="1" stroke="#82ca9d" fill="url(#colorSavings)" />
+            <Area type="monotone" dataKey="investment" stackId="1" stroke="#ffc658" fill="url(#colorinvestment)" />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className='flex items-stretch gap-4'>
+        <div className='flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl border-2 border-[#DDDFDE] p-4 flex flex-col'>
+          <div>
+            <h1 className="text-lg font-semibold text-gray-700">Account Performance</h1>
+            <p className="text-[#8E5660]">How your accounts have changed over time.</p>
+          </div>
+          <div className='my-3 space-y-2'>
+            {
+              accounts.map((acc) => {
+                const IconComponent = accountIcons.find((eachIcon) => eachIcon.id === acc.icon)
+                return (
+                  <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-3 rounded-lg'>
+                    <div className='flex'>
+                      <div className='w-12 h-12 rounded-full mx-2 flex items-center justify-center' style={{backgroundColor: IconComponent.color}}>
+                        <IconComponent.icon color='white'/>
+                      </div>
+                      <div>
+                        <h1 className='text-[#433C3E] text-[20px]'>{acc.name}</h1>
+                        <p className='text-[12px] text-gray-700'>{acc.accountType}</p>
+                      </div>
+                    </div>
+                    <h1 className='text-green-700 text-[18px]'>₹{acc.balance}</h1>
+                  </div>
+                )
+              })
+            }
+          </div>
+        </div>
+
+        <div className='flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl border-2 border-[#DDDFDE] p-4 flex flex-col'>
+          <div>
+            <h1 className="text-lg font-semibold text-gray-700">Net Worth Breakdown</h1>
+            <p className="text-[#8E5660]">Your assets and liabilities.</p>
+          </div>
+          <div className='my-3 space-y-5'>
+            {
+              assetsAndLiabilities.map((each,index) => {
+                return (
+                  <div key={index}>
+                    <div className="flex items-center justify-between">
+                      <h1 className="text-[#433c3E] text-[18px] font-[500]">{each.name}:</h1>
+                      <h1 className={`${each.value >= 0 ? 'text-green-500' : 'text-red-500'} text-[22px] font-[500]`}><span>{each.name == "Savings Rate" ? "" : "₹"}</span>{each.value}<span>{each.name == "Savings Rate" ? "%" : ""}</span></h1>
+                    </div>
+                  </div>
+                )
+              })
+            }
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

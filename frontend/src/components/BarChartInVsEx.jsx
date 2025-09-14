@@ -1,23 +1,7 @@
 import React from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { useSelector } from "react-redux";
 
-// Example monthly data
-const data = [
-  { month: "Jan", income: 5000, expenses: 4000 },
-  { month: "Feb", income: 4500, expenses: 3800 },
-  { month: "Mar", income: 5200, expenses: 4300 },
-  { month: "Apr", income: 4800, expenses: 3900 },
-  { month: "May", income: 6000, expenses: 4700 },
-  { month: "Jun", income: 5500, expenses: 4500 },
-  { month: "Jul", income: 5000, expenses: 4200 },
-  { month: "Aug", income: 5300, expenses: 4600 },
-  { month: "Sep", income: 5800, expenses: 4900 },
-  { month: "Oct", income: 6000, expenses: 5000 },
-  { month: "Nov", income: 6200, expenses: 5100 },
-  { month: "Dec", income: 6500, expenses: 5200 },
-];
-
-// Custom Tooltip
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     return (
@@ -34,6 +18,10 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 export default function BarChartInVsEx() {
+
+  const {expVsInc} = useSelector((store) => {
+    return store.sliceState
+  })
   return (
     <div className="bg-[#FFFAF4] rounded-2xl p-4 w-[730px] max-w-4xl flex-1">
       <div className="mb-4">
@@ -41,7 +29,7 @@ export default function BarChartInVsEx() {
         <p className="text-[#8E5660]">Monthly comparison over the past year</p>
       </div>
       <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={data} margin={{ top: 20, left: 0, bottom: 5 }}>
+        <BarChart data={expVsInc} margin={{ top: 20, left: 0, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" />
           <YAxis />

@@ -67,21 +67,19 @@ export const getBudgets = async(req,res) => {
         }},
         {$group : {_id:null , total: {$sum : "$amount"}}},
       ])
-      // console.log(spentAggre)
-      // console.log(query)
 
       const spent = spentAggre.length > 0 ? spentAggre[0].total : 0;
-
-      if (spent === 0 ) continue;
 
       results.push({
         budgetId: budget._id,
         category: budget.categoryId.name,
         categoryId: budget.categoryId._id,
+        icon: budget.categoryId.icon,
         limit: budget.limit,
         spent,
         remaining: budget.limit - spent,
         progress: (spent / budget.limit) * 100,
+        period: budget.period,
       });
     }
 
