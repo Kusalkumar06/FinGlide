@@ -46,10 +46,10 @@ export const CategoryModal = () => {
     try{
       const categoryDetails = addCategoryForm
       
-      const url = "http://localhost:5000/category/createCategory/";
+      const url = "https://finglide.onrender.com/category/createCategory/";
       await axios.post(url,categoryDetails,{withCredentials:true})
     
-      const updatedCategories = await axios.get("http://localhost:5000/category/getCategories/",{withCredentials:true})
+      const updatedCategories = await axios.get("https://finglide.onrender.com/category/getCategories/",{withCredentials:true})
       dispatch(actions.setCategoryList(updatedCategories.data.Categories))
       dispatch(actions.setIsCategoryModalOpen())
       
@@ -135,10 +135,10 @@ export const AccountModal = () => {
       const accountDetails = addAccountForm
       console.log(accountDetails)
       
-      const url = "http://localhost:5000/account/createAccount/";
+      const url = "https://finglide.onrender.com/account/createAccount/";
       await axios.post(url,accountDetails,{withCredentials:true})
     
-      const updatedCategories = await axios.get("http://localhost:5000/account/getAccounts/",{withCredentials:true})
+      const updatedCategories = await axios.get("https://finglide.onrender.com/account/getAccounts/",{withCredentials:true})
       dispatch(actions.setAccountList(updatedCategories.data.accounts))
       dispatch(actions.setIsAccountModalOpen())
       
@@ -239,10 +239,10 @@ export const TransactionModal = () => {
       const transactionDetails = addTransactionForm
       console.log(transactionDetails)
       
-      const url = "http://localhost:5000/transaction/createTransaction/";
+      const url = "https://finglide.onrender.com/transaction/createTransaction/";
       await axios.post(url,transactionDetails,{withCredentials:true})
     
-      const updatedTransactions = await axios.get("http://localhost:5000/transaction/getTransactions/",{withCredentials:true})
+      const updatedTransactions = await axios.get("https://finglide.onrender.com/transaction/getTransactions/",{withCredentials:true})
       dispatch(actions.setTransactionList(updatedTransactions.data.transactions))
       dispatch(actions.setIsTransactionModalOpen())
       
@@ -344,10 +344,10 @@ export const BudgetModal = () => {
     try{
       const budgetDetails = addBudgetForm
       
-      const url = "http://localhost:5000/budget/createBudget/";
+      const url = "https://finglide.onrender.com/budget/createBudget/";
       await axios.post(url,budgetDetails,{withCredentials:true})
     
-      const updatedCategories = await axios.get("http://localhost:5000/budget/getBudgets/",{withCredentials:true})
+      const updatedCategories = await axios.get("https://finglide.onrender.com/budget/getBudgets/",{withCredentials:true})
       dispatch(actions.setBudgetList(updatedCategories.data.Budgets))
       dispatch(actions.setAddBudgetForm({categoryId: "",limit: 0.00,period: "monthly",}))
       dispatch(actions.setIsBudgetModalOpen())

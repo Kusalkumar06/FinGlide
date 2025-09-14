@@ -29,10 +29,10 @@ function Categories() {
   const exButton = 'text-[#9F0712] text-[11px] bg-[#FFE2E2] py-[1px] px-2 rounded'
 
   const deleteCategory = async(id) => {
-    const url = `http://localhost:5000/category/delete/${id}`
+    const url = `https://finglide.onrender.com/category/delete/${id}`
     console.log(url)
     await axios.delete(url,{withCredentials:true})
-    const categories = await axios.get(`http://localhost:5000/category/getCategories/`,{withCredentials:true})
+    const categories = await axios.get(`https://finglide.onrender.com/category/getCategories/`,{withCredentials:true})
 
     dispatch(actions.setCategoryList(categories.data.Categories))
   }

@@ -173,7 +173,7 @@ export function BarChartSpVsBud(){
 
   const fetchSpendVsBudget = () => {
       const fn = async () => {
-        const url = `http://localhost:5000/budget/spendVsBudget?month=${speVsbudMonth}&year=${speVsbudYear}`
+        const url = `https://finglide.onrender.com/budget/spendVsBudget?month=${speVsbudMonth}&year=${speVsbudYear}`
         const response = await axios.get(url,{withCredentials:true})
         // console.log(response.data.accounts)
         dispatch(actions.setspendVsBudget(response.data.data))
@@ -272,7 +272,7 @@ export function BarChartInVsEx() {
 
   const fetchLineData = () => {
       const fn = async () => {
-        const url = "http://localhost:5000/transaction/expVsincYearly/"
+        const url = "https://finglide.onrender.com/transaction/expVsincYearly/"
         const response = await axios.get(url,{withCredentials:true})
         console.log(response.data.summary)
         dispatch(actions.setexpVsInc(response.data.summary))

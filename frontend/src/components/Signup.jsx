@@ -35,7 +35,7 @@ function Signup() {
         password : registerPassword,
         email :registerEmail,
     }
-    const url = "http://localhost:5000/auth/register";
+    const url = "https://finglide.onrender.com/auth/register";
     const options = {
         method : "POST",
         headers:{

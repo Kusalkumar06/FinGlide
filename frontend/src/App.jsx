@@ -23,10 +23,10 @@ function App() {
   const fetchAllDetails = async() => {
     try{
       const [accountResponse,categoryResponse,transactionResponse,budgetResponse] = await Promise.all([
-          axios.get("http://localhost:5000/account/getAccounts/",{withCredentials:true}),
-          axios.get("http://localhost:5000/category/getCategories/",{withCredentials:true}),
-          axios.get("http://localhost:5000/transaction/getTransactions/",{withCredentials:true}),
-          axios.get("http://localhost:5000/budget/getBudgets/",{withCredentials:true})
+          axios.get("https://finglide.onrender.com/account/getAccounts/",{withCredentials:true}),
+          axios.get("https://finglide.onrender.com/category/getCategories/",{withCredentials:true}),
+          axios.get("https://finglide.onrender.com/transaction/getTransactions/",{withCredentials:true}),
+          axios.get("https://finglide.onrender.com/budget/getBudgets/",{withCredentials:true})
       ])
       dispatch(actions.setAccountList(accountResponse.data.accounts))
       dispatch(actions.setCategoryList(categoryResponse.data.Categories))
@@ -41,8 +41,8 @@ function App() {
   const fetchAllReportsDetails = async() => {
     try{
       const [pieDataResponse,lineDataResponse] = await Promise.all([
-        axios.get("http://localhost:5000/category/getPieData/",{withCredentials:true}),
-        axios.get("http://localhost:5000/transaction/yearlySummary/",{withCredentials:true})
+        axios.get("https://finglide.onrender.com/category/getPieData/",{withCredentials:true}),
+        axios.get("https://finglide.onrender.com/transaction/yearlySummary/",{withCredentials:true})
       ])
       dispatch(actions.setPieData(pieDataResponse.data.transactionData))
       dispatch(actions.setLineData(lineDataResponse.data.summary))

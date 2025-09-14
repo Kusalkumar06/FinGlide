@@ -18,10 +18,10 @@ function Accounts() {
   
 
   const deleteAccount = async(id) => {
-    const url = `http://localhost:5000/account/delete/${id}`
+    const url = `https://finglide.onrender.com/account/delete/${id}`
     await axios.delete(url,{withCredentials:true})
 
-    const accounts = await axios.get(`http://localhost:5000/account/getAccounts/`,{withCredentials:true})
+    const accounts = await axios.get(`https://finglide.onrender.com/account/getAccounts/`,{withCredentials:true})
 
     dispatch(actions.setAccountList(accounts.data.accounts))
   }

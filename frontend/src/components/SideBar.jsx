@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 function SideBar() {
   const navigate = useNavigate()
   const handleLogout = async() => {
-    const url = "http://localhost:5000/auth/logout"
+    const url = "https://finglide.onrender.com/auth/logout"
     await axios.post(url,{withCredintials:true})
     navigate('/login')
   }
