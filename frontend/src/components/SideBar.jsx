@@ -10,7 +10,7 @@ function SideBar() {
   const navigate = useNavigate()
   const handleLogout = async() => {
     const url = "https://finglide.onrender.com/auth/logout"
-    await axios.post(url,{withCredintials:true})
+    await axios.post(url,{withCredentials:true})
     navigate('/login')
   }
 
