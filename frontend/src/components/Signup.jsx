@@ -76,7 +76,7 @@ function Signup() {
             <input className='border-1 rounded p-2 outline-none' required placeholder='Create a password' type='password' value={registerPassword} onChange={handlePassword}/>
           </div>
           <div className='flex flex-col justify-center'>
-            <button className='p-1 rounded bg-[#D86D38] text-[#FFFBF3] font-[600]'>Sign Up</button>
+            <button className='p-1 rounded bg-[#D86D38] text-[#FFFBF3] font-[600] cursor-pointer'>Sign Up</button>
           </div>
           {registerErr && <p className='text-red-400 my-2'>*User Already exists. Please try another Name</p>}
         </form>

@@ -68,7 +68,7 @@ function Signin() {
             <input className='border-1 rounded p-1 outline-none' required placeholder='Enter password' type='password' value={loginPassword} onChange={handlePassword}/>
           </div>
           <div className='flex flex-col justify-center'>
-            <button className='p-1 rounded bg-[#D86D38] text-[#FFFBF3] font-[600]'>Sign in</button>
+            <button className='p-1 rounded bg-[#D86D38] text-[#FFFBF3] font-[600] cursor-pointer'>Sign in</button>
           </div>
           {loginErr && <p className='text-red-400 my-2'>*Invalid Credentials</p>}
         </form>

@@ -39,7 +39,7 @@ const slice = createSlice({
       registerName: "",
       registerEmail: "",
       registerPassword: "",
-      registerErr: true,
+      registerErr: false,
 
       activeCategoryTab: "Expense",
 

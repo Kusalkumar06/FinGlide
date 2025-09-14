@@ -243,9 +243,9 @@ export function BarChartSpVsBud(){
         </div>
         <div className='my-3 space-y-2'>
           {
-            categoryAnalysisList.map((each) => {
+            categoryAnalysisList.map((each,index) => {
               return (
-                <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-2 rounded-lg'>
+                <div key={index} className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-2 rounded-lg'>
                   <div>
                     <h1 className="text-[#433c3E] text-[18px] font-[500]">{each.name}</h1>
                     <p className='text-[12px] text-gray-700'>{each.count} Transactions</p>
@@ -264,22 +264,9 @@ export function BarChartSpVsBud(){
 
 export function BarChartInVsEx() {
 
-  const dispatch = useDispatch()
-
   const {expVsInc,transactionList} = useSelector((store) => {
     return store.sliceState
   })
-
-  const fetchLineData = () => {
-      const fn = async () => {
-        const url = "https://finglide.onrender.com/transaction/expVsincYearly/"
-        const response = await axios.get(url,{withCredentials:true})
-        console.log(response.data.summary)
-        dispatch(actions.setexpVsInc(response.data.summary))
-      }
-      fn()
-    }
-    useEffect(fetchLineData,[])
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {

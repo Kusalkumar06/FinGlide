@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
+import Loader from "./Loader";
 
 function ProtectedRoute({ children }) {
   const [authenticated, setAuthenticated] = useState(false);
@@ -25,7 +26,7 @@ function ProtectedRoute({ children }) {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+   return <Loader/>
   }
 
   return authenticated ? children : <Navigate to="/login" replace />;

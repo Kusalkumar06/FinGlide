@@ -40,14 +40,14 @@ function App() {
 
   const fetchAllReportsDetails = async() => {
     try{
-      const [pieDataResponse,lineDataResponse] = await Promise.all([
+      const [pieDataResponse,lineDataResponse,expVsIncResponse] = await Promise.all([
         axios.get("https://finglide.onrender.com/category/getPieData/",{withCredentials:true}),
-        axios.get("https://finglide.onrender.com/transaction/yearlySummary/",{withCredentials:true})
+        axios.get("https://finglide.onrender.com/transaction/yearlySummary/",{withCredentials:true}),
+        axios.get("https://finglide.onrender.com/transaction/expVsincYearly/",{withCredentials:true}),
       ])
       dispatch(actions.setPieData(pieDataResponse.data.transactionData))
       dispatch(actions.setLineData(lineDataResponse.data.summary))
-
-      
+      dispatch(actions.setexpVsInc(expVsIncResponse.data.summary))
     }catch(err){
       console.log(`Error during fetching Reports Details, Error: ${err}`)
     }
