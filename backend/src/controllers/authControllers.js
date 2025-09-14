@@ -73,9 +73,9 @@ export const login = async (req,res) => {
 
                 res.cookie("authToken", jwtToken, {
                     httpOnly: true,   
-                    secure: false, 
+                    secure: true, 
                     sameSite: "none",
-                    maxAge: 24 * 60 * 60 * 1000,//[ 1 day]
+                    maxAge: 7 * 24 * 60 * 60 * 1000,//[ 7 day]
                 }).json({
                     message: "Login Successfull.",
                 }) 
@@ -98,7 +98,7 @@ export const check = async(req,res) => {
 export const logout = async(req,res) => {
     res.clearCookie("authToken",{
         httpOnly: true,
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        sameSite: true  ,
         secure:process.env.NODE_ENV === "production",
     })
 
