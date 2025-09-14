@@ -36,7 +36,7 @@ export default function BarChartInVsEx() {
           <Tooltip content={<CustomTooltip />} />
           <Legend height={36} />
           <Bar dataKey="income" fill="#0088FE" barSize={15} />
-          <Bar dataKey="expenses" fill="#FF8042" barSize={15} />
+          <Bar dataKey="expense" fill="#FF8042" barSize={15} />
         </BarChart>
       </ResponsiveContainer>
     </div>
