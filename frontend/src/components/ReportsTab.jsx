@@ -301,7 +301,7 @@ export function BarChartInVsEx() {
   ]
   return (
     <div className="flex gap-2">
-      <div className="bg-[#FFFAF4] border-1 border-[#DDDFDE] rounded-2xl p-4 w-[600px] xl:w-[730px] max-w-4xl ">
+      <div className="bg-[#FFFAF4] border-1 border-[#DDDFDE] rounded-2xl p-4 w-[730px] max-w-4xl ">
         <div className="mb-4">
           <h2 className="text-lg font-semibold text-gray-700">Monthly Income vs Expenses</h2>
           <p className="text-[#8E5660]">Monthly comparison over the past year</p>

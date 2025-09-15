@@ -42,7 +42,7 @@ function DashBoard() {
           <button onClick={()=>dispatch(actions.setIsTransactionModalOpen())} className='bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer'>+ Add Transaction</button>
         </div>
       </div>
-      <div className='flex justify-between mb-3 gap-4'>
+      <div className='flex justify-between mb-3'>
         <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
           <div className='flex justify-between items-center'>
             <p>Total Balance</p>
@@ -86,7 +86,7 @@ function DashBoard() {
       </div>
 
       <div className='flex items-stretch gap-4 my-3'>
-        <div className="flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl flex flex-col border-2 border-[#DDDFDE]">
+        <div className="flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl flex flex-col border-2 border-[#DDDFDE] ">
           <PieChartCategory/>
         </div>
         <div className="flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl flex flex-col border-2 border-[#DDDFDE]">

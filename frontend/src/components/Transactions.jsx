@@ -202,15 +202,18 @@ function Transactions() {
           }
         </div>
         
-        <div className="flex justify-center items-center mb-[30px] md:mb-[50px]">
-          {pageNum > 1 && (
-              <HiArrowLeftCircle size={24} onClick={() => dispatch(actions.setPageNum(pageNum - 1))} className='cursor-pointer'/>
-          )}
-          <p className="mx-5">{pageNum} / {totalPages}</p>
-          {pageNum < 5 && (
-            <HiArrowRightCircle size={24} onClick={() => dispatch(actions.setPageNum(pageNum + 1))} className='cursor-pointer'/>
-          )}
-        </div>
+        {
+          totalPages > 1 && 
+            <div className="flex justify-center items-center mb-[30px] md:mb-[50px]">
+              {pageNum > 1 && (
+                  <HiArrowLeftCircle size={24} onClick={() => dispatch(actions.setPageNum(pageNum - 1))} className='cursor-pointer'/>
+              )}
+              <p className="mx-5">{pageNum} / {totalPages}</p>
+              {pageNum < totalPages && (
+                <HiArrowRightCircle size={24} onClick={() => dispatch(actions.setPageNum(pageNum + 1))} className='cursor-pointer'/>
+              )}
+            </div>
+        }
       </div>
     </div>
   )

@@ -15,8 +15,8 @@ function SideBar() {
   }
 
   return (
-    <div className='flex w-screen h-screen'>
-      <div className='border-r-1 w-60 xl:w-75 h-screen bg-gradient-to-b from-orange-100 via-white to-orange-100 flex flex-col fixed top-0 left-0 z-50'>
+    <div className='flex'>
+      <div className='border-r-1 w-75 h-screen bg-gradient-to-b from-orange-100 via-white to-orange-100 flex flex-col fixed top-0 left-0 z-50'>
         {/* {Logo container} */}
         <div className='flex p-5 px-3 xl:px-9'>
           <div className='rounded-[50%] p-1 bg-[#da6e39] mr-1'>
@@ -71,7 +71,7 @@ function SideBar() {
 
 
 
-      <div className='flex-1 p-6 ml-60 xl:ml-75 overflow-x-auto'>
+      <div className='flex-1 p-6 ml-75'>
         <Outlet/>
       </div>
     </div>
