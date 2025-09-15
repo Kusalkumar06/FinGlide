@@ -60,7 +60,6 @@ export  function PieChartCategory() {
             animationDuration={1000}
             animationEasing="ease-out"
             animationBegin={0}
-
           >
             {pieData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={rainbowColor(index)}/>
@@ -352,7 +351,7 @@ export function AreaGraphAccount  () {
         <div className="bg-white p-2 shadow-lg rounded-md border text-sm">
           {payload.map((entry) => (
             <p key={entry.name} className="text-black font-semibold">
-              {entry.name}: ${entry.value.toLocaleString()}
+              {entry.name}: ₹{entry.value.toLocaleString()}
             </p>
           ))}
         </div>
@@ -367,7 +366,7 @@ export function AreaGraphAccount  () {
 
   const fetchSpendVsBudget = () => {
     const fn = async () => {
-      const url = `http://localhost:5000/account/monthlySummary?year=2025`
+      const url = `https://finglide.onrender.com/account/monthlySummary?year=2025`
       const response = await axios.get(url,{withCredentials:true})
       // console.log(response.data.accounts)
       dispatch(actions.setAreaData(response.data.summary))
