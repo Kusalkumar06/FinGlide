@@ -23,7 +23,7 @@ export default function BarChartInVsEx() {
     return store.sliceState
   })
   return (
-    <div className="bg-[#FFFAF4] rounded-2xl p-4 w-[730px] max-w-4xl flex-1">
+    <div className="bg-[#FFFAF4] rounded-2xl p-4 w-[580px] xl:w-[730px] max-w-4xl flex-1">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-gray-700">Monthly Income vs Expenses</h2>
         <p className="text-[#8E5660]">Monthly comparison over the past year</p>

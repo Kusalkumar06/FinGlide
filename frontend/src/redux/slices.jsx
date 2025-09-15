@@ -49,6 +49,7 @@ const slice = createSlice({
         searchTransactionType: "All",
         searchCategory: "All"
       },
+      pageNum: 1,
 
 
       activeReportsTab: 'OVERVIEW',
@@ -61,6 +62,7 @@ const slice = createSlice({
       pieData : [],
       linedata: linedata,
       expVsInc: barData,
+      areaData: [],
 
       speVsbudMonth: new Date().getMonth() +1,
       speVsbudYear: new Date().getFullYear(),
@@ -154,6 +156,12 @@ const slice = createSlice({
         const {field,value} = data.payload;
         state.filterOptions[field] = value;
       },
+      setFilterOptions:(state,data) => {
+        state.filterOptions = data.payload;
+      },
+      setPageNum:(state,data) =>{
+        state.pageNum = data.payload
+      },
 
       setReportsTab:(state,data) => {
         state.activeReportsTab = data.payload;
@@ -180,6 +188,9 @@ const slice = createSlice({
       },
       setexpVsInc: (state,data) => {
         state.expVsInc = data.payload;
+      },
+      setAreaData: (state,data) => {
+        state.areaData = data.payload;
       },
 
       setspeVsBudMonth: (state,data) => {

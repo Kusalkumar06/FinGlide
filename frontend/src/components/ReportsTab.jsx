@@ -172,15 +172,15 @@ export function BarChartSpVsBud(){
   }));
 
   const fetchSpendVsBudget = () => {
-      const fn = async () => {
-        const url = `https://finglide.onrender.com/budget/spendVsBudget?month=${speVsbudMonth}&year=${speVsbudYear}`
-        const response = await axios.get(url,{withCredentials:true})
-        // console.log(response.data.accounts)
-        dispatch(actions.setspendVsBudget(response.data.data))
-      }
-      fn()
+    const fn = async () => {
+      const url = `https://finglide.onrender.com/budget/spendVsBudget?month=${speVsbudMonth}&year=${speVsbudYear}`
+      const response = await axios.get(url,{withCredentials:true})
+      // console.log(response.data.accounts)
+      dispatch(actions.setspendVsBudget(response.data.data))
     }
-    useEffect(fetchSpendVsBudget,[speVsbudMonth,speVsbudYear])
+    fn()
+  }
+  useEffect(fetchSpendVsBudget,[speVsbudMonth,speVsbudYear])
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -301,7 +301,7 @@ export function BarChartInVsEx() {
   ]
   return (
     <div className="flex gap-2">
-      <div className="bg-[#FFFAF4] border-1 border-[#DDDFDE] rounded-2xl p-4 w-[730px] max-w-4xl ">
+      <div className="bg-[#FFFAF4] border-1 border-[#DDDFDE] rounded-2xl p-4 w-[600px] xl:w-[730px] max-w-4xl ">
         <div className="mb-4">
           <h2 className="text-lg font-semibold text-gray-700">Monthly Income vs Expenses</h2>
           <p className="text-[#8E5660]">Monthly comparison over the past year</p>
@@ -343,22 +343,9 @@ export function BarChartInVsEx() {
   );
 }
 
-const areadata = [
-  { month: "Jan", checking: 15000, savings: 5000, investment: 5000 },
-  { month: "Feb", checking: 13200, savings: 7800, investment: 6000 },
-  { month: "Mar", checking: 12500, savings: 6000, investment: 7000 },
-  { month: "Apr", checking: 13800, savings: 6500, investment: 8000 },
-  { month: "May", checking: 14500, savings: 6800, investment: 9000 },
-  { month: "Jun", checking: 15500, savings: 7000, investment: 10000 },
-  { month: "Jul", checking: 16000, savings: 7500, investment: 12000 },
-  { month: "Aug", checking: 16800, savings: 7700, investment: 13000 },
-  { month: "Sep", checking: 17200, savings: 7900, investment: 14000 },
-  { month: "Oct", checking: 17500, savings: 8000, investment: 15000 },
-  { month: "Nov", checking: 17800, savings: 8100, investment: 15000 },
-  { month: "Dec", checking: 18000, savings: 8200, investment: 10000 },
-];
 
 export function AreaGraphAccount  () {
+  const dispatch = useDispatch()
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (
@@ -373,10 +360,22 @@ export function AreaGraphAccount  () {
     }
     return null;
   };
-  const {accountList} = useSelector((store) => {
+  const {accountList,areaData} = useSelector((store) => {
     return store.sliceState
   })
   const accounts = accountList.filter((each) => each.balance > 0).slice(0,3)
+
+  const fetchSpendVsBudget = () => {
+    const fn = async () => {
+      const url = `http://localhost:5000/account/monthlySummary?year=2025`
+      const response = await axios.get(url,{withCredentials:true})
+      // console.log(response.data.accounts)
+      dispatch(actions.setAreaData(response.data.summary))
+    }
+    fn()
+  }
+  console.log(areaData)
+  useEffect(fetchSpendVsBudget,[])
 
   let assets = 0, liabilities = 0;
   accountList.forEach(acc => {
@@ -398,7 +397,7 @@ export function AreaGraphAccount  () {
         <h2 className="text-lg font-semibold text-gray-700 self-start">Account Balance Trends</h2>
         <p className="text-gray-500 text-sm mb-4 self-start">How your account balances have changed over time</p>
         <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={areadata} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+          <AreaChart data={areaData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="colorChecking" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#8884d8"  />
@@ -417,9 +416,9 @@ export function AreaGraphAccount  () {
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip content={<CustomTooltip />} />
-            <Area type="monotone" dataKey="checking" stackId="1" stroke="#8884d8" fill="url(#colorChecking)" />
-            <Area type="monotone" dataKey="savings" stackId="1" stroke="#82ca9d" fill="url(#colorSavings)" />
-            <Area type="monotone" dataKey="investment" stackId="1" stroke="#ffc658" fill="url(#colorinvestment)" />
+            <Area type="monotone" dataKey="Cash in Hand" stackId="1" stroke="#8884d8" fill="url(#colorChecking)" />
+            <Area type="monotone" dataKey="Everyday Wallet" stackId="1" stroke="#82ca9d" fill="url(#colorSavings)" />
+            <Area type="monotone" dataKey="SBI Savings" stackId="1" stroke="#ffc658" fill="url(#colorinvestment)" />
           </AreaChart>
         </ResponsiveContainer>
       </div>

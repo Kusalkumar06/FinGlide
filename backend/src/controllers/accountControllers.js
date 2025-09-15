@@ -75,8 +75,9 @@ export const monthlySummary = async(req,res) => {
   try{
     const userId = new mongoose.Types.ObjectId(req.user.userId)
     const year = parseInt(req.query.year)
-    console.log(userId,year)
-    const accounts = await AccountModel.find({userId});
+    // console.log(userId,year)
+    let accounts = await AccountModel.find({userId});
+    accounts = accounts.filter((each) => each.balance > 0).slice(0,3)
     if(!accounts){
       return res.status(400).json({
         message: `No account fetched during the fetching the accounts summary. summary: ${accounts}`
@@ -87,6 +88,7 @@ export const monthlySummary = async(req,res) => {
     accounts.forEach(account => {
       accountMap[account._id.toString()] = account.name;
     })
+    console.log(accounts)
 
     const transactions = await TransactionModel.aggregate([
       {
@@ -110,7 +112,7 @@ export const monthlySummary = async(req,res) => {
       }
     ])
 
-    console.log(transactions)
+    // console.log(transactions)
 
     const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const summary = months.map((eachmonth) => {      

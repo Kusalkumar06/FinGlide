@@ -6,6 +6,8 @@ import { categoryIcons } from './Utilities';
 import { TransactionModal } from './AddModals';
 import Select from "react-select"
 import { ArrowBigRight } from "lucide-react";
+import { HiArrowRightCircle,HiArrowLeftCircle } from "react-icons/hi2";
+
 
 const customStyles = {
     option: (provided, state) => ({
@@ -39,7 +41,7 @@ const actions = slice.actions
 function Transactions() {
 
   const dispatch = useDispatch()
-  const {transactionList,isTransactionModalOpen,categoryList,accountList,filterOptions} = useSelector((store) => {
+  const {transactionList,isTransactionModalOpen,categoryList,accountList,filterOptions,pageNum} = useSelector((store) => {
     return store.sliceState
   })
 
@@ -57,10 +59,39 @@ function Transactions() {
     }
   })]
 
+  console.log(filterOptions)
 
-  const trasactionsCount = transactionList.length
-  const totalIncome = transactionList.filter(each => each.transactionType === "Income").reduce((a,b) => (a+b.amount),0)
-  const totalExpense = transactionList.filter(each => each.transactionType === "Expense").reduce((a,b) => (a+b.amount),0)
+  let transactions = transactionList.filter((each) => (each.description.toLowerCase()).includes(filterOptions.searchTransaction.toLowerCase()))
+  if (filterOptions.searchAccount !== "All"){
+    transactions = transactions.filter((each) => (each.accountId?._id.toString() === filterOptions.searchAccount || each.fromAccountId?._id.toString() === filterOptions.searchAccount || each.toAccountId?._id.toString() === filterOptions.searchAccount))
+  }
+  if (filterOptions.searchTransactionType !== "All"){
+    transactions = transactions.filter((each) => each.transactionType === filterOptions.searchTransactionType)
+  }
+  if (filterOptions.searchCategory !== "All"){
+    transactions = transactions.filter((each) => each.categoryId?._id === filterOptions.searchCategory)
+  }
+
+  const clearFilters = () => {
+    dispatch(actions.setFilterOptions({
+        searchTransaction: '',
+        searchAccount: 'All',
+        searchTransactionType: "All",
+        searchCategory: "All"
+      }))
+  }
+
+
+  const trasactionsCount = transactions.length
+  const totalIncome = transactions.filter(each => each.transactionType === "Income").reduce((a,b) => (a+b.amount),0)
+  const totalExpense = transactions.filter(each => each.transactionType === "Expense").reduce((a,b) => (a+b.amount),0)
+
+  const totalPages = Math.ceil(transactions.length/6);
+  let startIndex = (pageNum -1)*6;
+  let endIndex = startIndex + 6
+
+  const filterTransactions = transactions.slice(startIndex,endIndex);
+
   return (
     <div>
       {isTransactionModalOpen && <TransactionModal/> }
@@ -111,7 +142,7 @@ function Transactions() {
                 <Select className='w-44' value={transactionTypes.find(opt => opt.value === filterOptions.searchTransactionType) || null} onChange={(option) => dispatch(actions.setFilterOptionsField({ field: "searchTransactionType", value: option.value }))} options={transactionTypes} styles={customStyles}  defaultValue={transactionTypes[0]} maxMenuHeight={150}/>
                 <Select className='w-44' value={categoryTypes.find(opt => opt.value === filterOptions.searchCategory) || null} onChange={(option) => dispatch(actions.setFilterOptionsField({ field: "searchCategory", value: option.value }))} options={categoryTypes} styles={customStyles}  defaultValue={categoryTypes[0]} maxMenuHeight={150}/>
                 <Select className='w-44' value={accountTypes.find(opt => opt.value === filterOptions.searchAccount)} onChange={(option) => dispatch(actions.setFilterOptionsField({ field: "searchAccount", value: option.value }))} options={accountTypes} styles={customStyles}  defaultValue={accountTypes[0]} maxMenuHeight={150}/>
-            <button className='p-2 w-35 bg-white rounded-md border border-gray-300 p-2 text-sm font-medium text-gray-700 shadow-sm cursor-pointer'>clear filters</button>
+            <button onClick={clearFilters} className='p-2 w-35 bg-white rounded-md border border-gray-300 p-2 text-sm font-medium text-gray-700 shadow-sm cursor-pointer'>clear filters</button>
         </div>
       </div>
 
@@ -120,9 +151,9 @@ function Transactions() {
           <h1 className='text-[#3A3A3A] font-[600] text-[18px]'>Recent Transactions</h1>
           <p className='text-[15px] text-[#6D6C6A]'>Your latest financial activity</p>
         </div>
-        <div className='space-y-4'>
+        <div className='space-y-4 mb-4'>
           {
-            transactionList.map((each,index) => {
+            filterTransactions.map((each,index) => {
               let button
               let IconComponent = {icon: ArrowBigRight , color: "blue"}
               if(each.transactionType === "Expense")
@@ -169,6 +200,16 @@ function Transactions() {
               )
             })
           }
+        </div>
+        
+        <div className="flex justify-center items-center mb-[30px] md:mb-[50px]">
+          {pageNum > 1 && (
+              <HiArrowLeftCircle size={24} onClick={() => dispatch(actions.setPageNum(pageNum - 1))} className='cursor-pointer'/>
+          )}
+          <p className="mx-5">{pageNum} / {totalPages}</p>
+          {pageNum < 5 && (
+            <HiArrowRightCircle size={24} onClick={() => dispatch(actions.setPageNum(pageNum + 1))} className='cursor-pointer'/>
+          )}
         </div>
       </div>
     </div>
