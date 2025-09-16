@@ -14,6 +14,19 @@ function SideBar() {
     navigate('/login',{replace:true})
   }
 
+  const handleDelete = async() => {
+    try{
+      const url = "https://finglide.onrender.com/auth/deleteuser";
+      await axios.delete(url,{withCredentials:true});
+
+      alert("Account deleted successfully.")
+      navigate("/register",{replace:true})
+    }catch(err){
+      console.error("Delete account error:", err);
+      alert("Failed to delete account. Please try again.");
+    }
+  }
+
   return (
     <div className='flex'>
       <div className='border-r-1 w-75 h-screen bg-gradient-to-b from-orange-100 via-white to-orange-100 flex flex-col fixed top-0 left-0 z-50'>
@@ -61,11 +74,12 @@ function SideBar() {
         </div>
 
         <div className='px-2 py-1 mt-auto gap-1 space-y-2'>
-          <NavLink to='/' className='self-end flex items-center justify-start p-2 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
+          {/* <NavLink to='/' className='self-end flex items-center justify-start p-2 hover:bg-[#F96C4A] text-[#505050] hover:text-white rounded'>
             <IoSettingsOutline size={20} className='text-[ #505050]' />
             <p className='ml-3 text-[18px] '>Settings</p>
-          </NavLink>
+          </NavLink> */}
           <button onClick={handleLogout} className='w-[100%] bg-[#F96C4A] text-white p-1 text-[18px] rounded cursor-pointer'>Logout</button>
+          <button onClick={handleDelete} className='w-[100%] bg-[#F96C4A] text-white p-1 text-[18px] rounded cursor-pointer'>Delete Account</button>
         </div>
       </div>
 

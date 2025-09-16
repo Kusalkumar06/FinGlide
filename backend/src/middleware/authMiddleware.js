@@ -18,13 +18,13 @@ export const authenticate = async (req,res,next) => {
       })
     }
     const verified = jwt.verify(token,secretCode)
-    console.log(verified)
     const userDetails = await UserModel.findOne({username: verified.username})
     if (!userDetails){
       return res.status(400).json({
         message: "user not found."
       })
     }
+    console.log(userDetails._id)
     req.user = {userId: userDetails._id.toString(), username: userDetails.username}
     next();
   } catch (err){

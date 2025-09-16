@@ -109,3 +109,33 @@ export const logout = async(req,res) => {
         success:true,
     })
 }
+
+export const deleteUser = async(req,res) => {
+    try{
+        const userId = req.user.userId;
+
+        const deletedUser = await UserModel.findOneAndDelete({_id:userId});
+
+        if (!deletedUser){
+            return res.status(404).json({
+                message: `user not found`,
+            })
+        }
+
+        res.clearCookie('authToken',{
+            httpOnly:true,
+            secure:true,
+            sameSite: "none",
+            path:'/',
+        })
+
+        res.status(200).json({
+            message: `User and all releted data is deleted successfully.`
+        })
+
+    } catch(err){
+        res.status(501).json({
+            message: `Server error during deleting the User: ${err}`
+        })
+    }
+}
