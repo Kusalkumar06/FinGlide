@@ -99,8 +99,8 @@ export const check = async(req,res) => {
 export const logout = async(req,res) => {
     res.clearCookie("authToken",{
         httpOnly: true,
-        sameSite: true  ,
-        secure: "none",
+        sameSite: "none"  ,
+        secure: true,
         path:"/",
     })
 

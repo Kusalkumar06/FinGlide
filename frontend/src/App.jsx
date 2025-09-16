@@ -59,13 +59,13 @@ function App() {
   return (
     <div>
       <Routes>
-        <Route path='/' element={<SideBar/>}>
-          <Route index element={<ProtectedRoute><DashBoard/></ProtectedRoute>}></Route>
-          <Route path='/categories/' element={<ProtectedRoute><Categories/></ProtectedRoute>}></Route>
-          <Route path='/accounts' element={<ProtectedRoute><Accounts/></ProtectedRoute>}></Route>
-          <Route path='/transactions' element ={<ProtectedRoute><Transactions/></ProtectedRoute>}></Route>
-          <Route path='/budgets' element ={<ProtectedRoute><Budgets/></ProtectedRoute>}></Route>
-          <Route path='/reports' element ={<ProtectedRoute><Reports/></ProtectedRoute>}></Route>
+        <Route path='/' element={<ProtectedRoute><SideBar/></ProtectedRoute>}>
+          <Route index element={<DashBoard/>}></Route>
+          <Route path='/categories/' element={<Categories/>}></Route>
+          <Route path='/accounts' element={<Accounts/>}></Route>
+          <Route path='/transactions' element ={<Transactions/>}></Route>
+          <Route path='/budgets' element ={<Budgets/>}></Route>
+          <Route path='/reports' element ={<Reports/>}></Route>
         </Route>
         <Route path='/register/' element={<Signup />}></Route>
         <Route path='/login/' element={<Signin />}></Route>
