@@ -11,7 +11,7 @@ import Budgets from './components/Budgets'
 import Reports from './components/Reports'
 import { useEffect } from 'react'
 import axios from 'axios'
-import { useDispatch } from 'react-redux'
+import { useDispatch,useSelector } from 'react-redux'
 import slice from './redux/slices'
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -19,6 +19,9 @@ import ProtectedRoute from './components/ProtectedRoute'
 const actions = slice.actions
 function App() {
   const dispatch = useDispatch()
+  const {isUserLoggedIn} = useSelector((store) => {
+    return store.sliceState
+  })
 
   const fetchAllDetails = async() => {
     try{
@@ -36,7 +39,7 @@ function App() {
       console.log(`Error during fetching Details,Error: ${err}`)
     }
   }
-  useEffect(() => { fetchAllDetails() },[dispatch])
+  useEffect(() => { fetchAllDetails() },[dispatch,isUserLoggedIn])
 
   const fetchAllReportsDetails = async() => {
     try{
@@ -53,7 +56,7 @@ function App() {
     }
   }
 
-  useEffect(() => {fetchAllReportsDetails()},[dispatch])
+  useEffect(() => {fetchAllReportsDetails()},[dispatch,isUserLoggedIn])
   
 
   return (

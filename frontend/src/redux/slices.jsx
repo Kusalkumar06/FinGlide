@@ -32,6 +32,7 @@ const barData = [
 const slice = createSlice({
     name: "slice",
     initialState:{
+      isUserLoggedIn:0,
       loginUsername: "",
       loginPassword: "",
       loginErr: false,
@@ -125,6 +126,9 @@ const slice = createSlice({
       addBudgetCategoryError: false,
     },
     reducers:{
+      setIsUserLoggedIn: (state) => {
+        state.isUserLoggedIn = state.isUserLoggedIn + 1;
+      },
       loginusername: (state,data) => {
         state.loginUsername = data.payload;
       },
