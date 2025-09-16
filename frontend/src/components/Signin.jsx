@@ -62,7 +62,7 @@ function Signin() {
         <form className='my-5' onSubmit={handleSubmit}>
           <div className='flex flex-col mb-6'>
             <label className='mb-2 text-[#473624] font-[600] text-[18px]'>Username</label>
-            <input className='border-1 rounded p-1 outline-none ' required placeholder='Enter username' type='text' value={loginUsername} onChange={handleUsername}/>
+            <input className='border-1 rounded p-1 outline-none ' name='username' required placeholder='Enter username' type='text' value={loginUsername} onChange={handleUsername}/>
           </div>
           <div className='flex flex-col mb-7'>
             <label className='mb-2 text-[#473624] font-[600] text-[18px]'>Password</label>
