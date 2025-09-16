@@ -2,11 +2,14 @@ import React from 'react'
 import { useSelector,useDispatch } from 'react-redux'
 import slice from '../redux/slices'
 import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 const actions = slice.actions
 
 function Signup() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const gradientStyle = {
     background: 'radial-gradient(circle, #FFFBF3, #da6e39)',
@@ -36,17 +39,9 @@ function Signup() {
         email :registerEmail,
     }
     const url = "https://finglide.onrender.com/auth/register";
-    const options = {
-        method : "POST",
-        headers:{
-            "Content-Type" : "application/json"
-        },
-        body: JSON.stringify(details),
-    }
-    const response = await fetch(url,options);
-    const data = await response.json()
-    console.log(data)
-    console.log(response)
+    const data = await axios.post(url,details)
+    if (!data.error ) 
+        navigate("/login",{replace:true});
   }
 
 
