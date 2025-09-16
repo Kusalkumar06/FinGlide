@@ -19,7 +19,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 const actions = slice.actions
 function App() {
   const dispatch = useDispatch()
-  const {isUserLoggedIn} = useSelector((store) => {
+  const {isUserLoggedIn,transactionList} = useSelector((store) => {
     return store.sliceState
   })
 
@@ -39,7 +39,7 @@ function App() {
       console.log(`Error during fetching Details,Error: ${err}`)
     }
   }
-  useEffect(() => { fetchAllDetails() },[dispatch,isUserLoggedIn])
+  useEffect(() => { fetchAllDetails() },[dispatch,isUserLoggedIn,transactionList])
 
   const fetchAllReportsDetails = async() => {
     try{

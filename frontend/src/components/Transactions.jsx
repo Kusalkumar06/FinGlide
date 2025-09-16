@@ -7,6 +7,8 @@ import { TransactionModal } from './AddModals';
 import Select from "react-select"
 import { ArrowBigRight } from "lucide-react";
 import { HiArrowRightCircle,HiArrowLeftCircle } from "react-icons/hi2";
+import { MdOutlineDelete,MdOutlineEdit } from "react-icons/md";
+import axios from 'axios';
 
 
 const customStyles = {
@@ -44,6 +46,15 @@ function Transactions() {
   const {transactionList,isTransactionModalOpen,categoryList,accountList,filterOptions,pageNum} = useSelector((store) => {
     return store.sliceState
   })
+
+  const deleteTransaction = async(id) => {
+    const url = `https://finglide.onrender.com/transaction/delete/${id}`
+    await axios.delete(url,{withCredentials:true})
+
+    const updatedTransactions = await axios.get(`https://finglide.onrender.com/transaction/getTransactions/`,{withCredentials:true})
+
+    dispatch(actions.setTransactionList(updatedTransactions.data.transactions))
+  }
 
   const transactionTypes = [{value: "All",label: "All Types"},{value: "Expense",label: "Expense"},{value: "Income",label: "Income"},{value: "Transfer",label: "Transfer"}]
   const categoryTypes = [{value: "All",label: "All Categories"},...categoryList.map((category) => {
@@ -165,7 +176,7 @@ function Transactions() {
               if (each.transactionType === "Income" || each.transactionType === "Expense")
                  IconComponent = categoryIcons.find((eachIcon) => eachIcon.id === each.categoryId.icon)
               return (
-                <div key={index} className='border-2 border-[#DDDFDE] bg-white rounded p-3 flex gap-4 items-center'>
+                <div key={index} className='border-2 border-[#DDDFDE] bg-white rounded p-3 flex gap-4 items-center group'>
                   <div className='w-12 h-12 rounded-full mx-2 flex items-center justify-center' style={{backgroundColor: IconComponent.color}}>
                     <IconComponent.icon color='white'/>
                   </div>
@@ -191,10 +202,21 @@ function Transactions() {
                         <p className='text-[#494847] text-[15px]'>{each.notes}</p>
                       </div>  
                     </div>
-                    {each.transactionType === "Expense" ? 
-                      <p className={`text-[22px] font-[500] text-red-600`}><span>- </span>₹{each.amount}</p> 
-                      : <p className={`text-[22px] font-[500] ${each.transactionType==="Transfer" ? 'text-blue-600':'text-green-500'}`}>₹{each.amount}</p>
-                    }
+                    <div className=''>
+                      {each.transactionType === "Expense" ? 
+                        <p className={`text-[22px] font-[500] text-red-600`}><span>- </span>₹{each.amount}</p> 
+                        : <p className={`text-[22px] font-[500] ${each.transactionType==="Transfer" ? 'text-blue-600':'text-green-500'}`}>₹{each.amount}</p>
+                      }
+                      <div className='opacity-0 group-hover:opacity-100 flex gap-4'>
+                        {/* <button onClick={() => dispatch(actions.setEditTransaction(each))} className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'>
+                          <MdOutlineEdit size={15}/>
+                        </button> */}
+                        <button onClick={() => deleteTransaction(each._id)} className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer ml-auto'> 
+                          <MdOutlineDelete size={17} />
+                        </button>
+                      </div>
+                    </div>
+      
                   </div>
                 </div>
               )

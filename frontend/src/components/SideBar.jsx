@@ -16,11 +16,14 @@ function SideBar() {
 
   const handleDelete = async() => {
     try{
-      const url = "https://finglide.onrender.com/auth/deleteuser";
-      await axios.delete(url,{withCredentials:true});
+      if (!window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+        return;
+      }
+      // const url = "https://finglide.onrender.com/auth/deleteuser";
+      // await axios.delete(url,{withCredentials:true});
 
       alert("Account deleted successfully.")
-      navigate("/register",{replace:true})
+      // navigate("/register",{replace:true})
     }catch(err){
       console.error("Delete account error:", err);
       alert("Failed to delete account. Please try again.");

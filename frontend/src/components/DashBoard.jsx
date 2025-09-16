@@ -50,7 +50,7 @@ function DashBoard() {
           </div>
           <div>
             <h1 className='text-[25px] font-[600]'>₹{income-expenses}</h1>
-            <p className='flex items-center text-[12px]'><FaArrowTrendUp color='green' />+12.5% from last month</p>
+            {/* <p className='flex items-center text-[12px]'><FaArrowTrendUp color='green' />+12.5% from last month</p> */}
           </div>
         </div>
         <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
