@@ -9,6 +9,7 @@ import { ArrowBigRight } from "lucide-react";
 import { HiArrowRightCircle,HiArrowLeftCircle } from "react-icons/hi2";
 import { MdOutlineDelete,MdOutlineEdit } from "react-icons/md";
 import axios from 'axios';
+import EmptyView from './EmptyView';
 
 
 const customStyles = {
@@ -162,7 +163,7 @@ function Transactions() {
           <h1 className='text-[#3A3A3A] font-[600] text-[18px]'>Recent Transactions</h1>
           <p className='text-[15px] text-[#6D6C6A]'>Your latest financial activity</p>
         </div>
-        <div className='space-y-4 mb-4'>
+        {filterTransactions.length > 0 ? <div className='space-y-4 mb-4'>
           {
             filterTransactions.map((each,index) => {
               let button
@@ -222,7 +223,7 @@ function Transactions() {
               )
             })
           }
-        </div>
+        </div> : <EmptyView message={"No transactions recorded yet."}/>}
         
         {
           totalPages > 1 && 

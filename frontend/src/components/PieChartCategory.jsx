@@ -3,6 +3,7 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { useSelector } from "react-redux";
 import { scaleSequential } from "d3-scale";
 import { interpolateRainbow } from "d3-scale-chromatic";
+import EmptyView from "./EmptyView";
 
 export default function PieChartCategory() {
 
@@ -28,12 +29,12 @@ export default function PieChartCategory() {
     return null;
   };
   return (
-    <div className="flex flex-col justify-center items-center rounded-2xl p-4 w-full max-w-md mr-3">
+    <div className="flex flex-col justify-center items-center rounded-2xl p-4 w-full h-full max-w-md mr-3">
       <div className="self-start">
         <h2 className="text-lg font-semibold text-gray-700">Expenses by Category</h2>
         <p className="text-[#8E5660]">Your spending breakdown for this month.</p>
       </div>
-      <PieChart width={350} height={350} stroke="none">
+      { pieData.length > 0 ? <PieChart width={350} height={350} stroke="none">
         <Pie
           data={pieData}
           cx="50%"
@@ -57,6 +58,8 @@ export default function PieChartCategory() {
         <Tooltip content={<CustomTooltip />} animationDuration={0} />
         <Legend verticalAlign="bottom" height={50} />
       </PieChart> 
+      :  <EmptyView message={"No expenses to display yet."}/>
+      }
     </div>
   );
 }

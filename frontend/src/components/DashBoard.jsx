@@ -8,6 +8,7 @@ import { categoryIcons,accountIcons } from './Utilities';
 import {ArrowBigRight} from "lucide-react"
 import { TransactionModal } from './AddModals';
 import slice from '../redux/slices';
+import EmptyView from './EmptyView';
 
 const actions = slice.actions
 function DashBoard() {
@@ -100,7 +101,7 @@ function DashBoard() {
             <h1 className="text-lg font-semibold text-gray-700">Account Overview</h1>
             <p className="text-[#8E5660]">Your account balances at a glance.</p>
           </div>
-          <div className='my-3 space-y-2'>
+          { accounts.length > 0 ?  <div className='my-3 space-y-2'>
             {
               accounts.map((acc,index) => {
                 const IconComponent = accountIcons.find((eachIcon) => eachIcon.id === acc.icon)
@@ -120,7 +121,7 @@ function DashBoard() {
                 )
               })
             }
-          </div>
+          </div> : <EmptyView message={"All your accounts are empty. Add funds to get started."}/>}
         </div>
 
         <div className='flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl border-2 border-[#DDDFDE] p-4 flex flex-col'>
@@ -128,7 +129,8 @@ function DashBoard() {
             <h1 className="text-lg font-semibold text-gray-700">Recent Transactions</h1>
             <p className="text-[#8E5660]">Your Latest financial activity.</p>
           </div>
-          <div className='my-3 space-y-1'>
+          { transactions.length > 0 ?
+            <div className='my-3 space-y-1'>
             {
               transactions.map((each,index) => {
               let button
@@ -177,7 +179,7 @@ function DashBoard() {
               )
             })
             }
-          </div>
+          </div> : <EmptyView message={"No transactions recorded yet."}/>}
         </div>
       </div>
     </div>

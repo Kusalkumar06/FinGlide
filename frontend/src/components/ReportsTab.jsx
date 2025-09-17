@@ -9,6 +9,8 @@ import slice from "../redux/slices";
 import { scaleSequential } from "d3-scale";
 import { interpolateRainbow } from "d3-scale-chromatic";
 import { accountIcons } from "./Utilities";
+import EmptyView from "./EmptyView";
+
 
 const actions = slice.actions
 
@@ -46,7 +48,7 @@ export  function PieChartCategory() {
           <h2 className="text-lg font-semibold text-gray-700">Expenses by Category</h2>
           <p className="text-[#8E5660]">Your spending breakdown for this month.</p>
         </div>
-        <PieChart width={350} height={350} stroke="none">
+        {pieData.length > 0 ? <PieChart width={350} height={350} stroke="none">
           <Pie
             data={pieData}
             cx="50%"
@@ -68,14 +70,14 @@ export  function PieChartCategory() {
 
           <Tooltip content={<CustomTooltip />} animationDuration={0} />
           <Legend verticalAlign="bottom" height={50} />
-        </PieChart> 
+        </PieChart> : <EmptyView message={"No expenses to display yet."}/>}
       </div>
       <div className="flex flex-col bg-[#FFFAF4] border-1 border-[#DDDFDE] shadow-lg rounded-2xl rounded-2xl p-4 w-full max-w-md mr-3">
         <div className="self-start">
           <h2 className="text-lg font-semibold text-gray-700">Top Spending Categories</h2>
           <p className="text-[#8E5660]">Your highest expense categories this period.</p>
         </div>
-        <ul className="space-y-4 p-4 pl-7 list-disc list-outside marker:text-orange-400 marker:text-[20px]">
+        {topSpendingCategories.length > 0 ? <ul className="space-y-4 p-4 pl-7 list-disc list-outside marker:text-orange-400 marker:text-[20px]">
           {
             topSpendingCategories.map((eachCat,index) => {
               return (
@@ -93,7 +95,7 @@ export  function PieChartCategory() {
               )
             })
           }
-        </ul>
+        </ul> : <EmptyView message={"No expenses to display yet."}/>}
       </div>
     </div>
   );
@@ -126,7 +128,7 @@ export  function LineChartInVsEx() {
           <h2 className="text-lg font-semibold text-gray-700">Monthly Income, Expenses & Savings</h2>
           <p className="text-[#8E5660]">Income, expenses, and savings over the past year.</p>
         </div>
-        <div>
+        {!linedata.every((each) => each.income === 0 && each.expense === 0 && each.savings === 0) ? <div>
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={linedata} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -139,7 +141,7 @@ export  function LineChartInVsEx() {
               <Line type="monotone" dataKey="savings" stroke="#00C49F" strokeWidth={2} dot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </div> : <EmptyView message={"No income, expenses, or savings data available yet. Start adding transactions to see your trends."}/>}
       </div>
     </div>
   );
@@ -222,7 +224,7 @@ export function BarChartSpVsBud(){
               </div>
             </div>
         </div>
-        <ResponsiveContainer width="100%" height={350}>
+        {spendVsBudgetData.length > 0 ? <ResponsiveContainer width="100%" height={350}>
           <BarChart data={spendVsBudgetData} barGap={8}>
             <CartesianGrid strokeDasharray="1 1" />
             <XAxis dataKey="categoryName" fontSize={10}/>
@@ -232,7 +234,7 @@ export function BarChartSpVsBud(){
             <Bar dataKey="budget" fill="#888888" name="Budget" barSize={30}/>
             <Bar dataKey="spent" fill="#ff6600" name="Spent" barSize={30}/>
           </BarChart>
-        </ResponsiveContainer>
+        </ResponsiveContainer> : <EmptyView message={"No budget data available yet. Set budgets and add expenses to compare your spending."}/>}
       </div>
 
       <div className="shadow-lg flex-1 bg-[#FFFAF4] rounded-2xl p-4 border-1 border-[#DDDFDE]">
@@ -240,7 +242,7 @@ export function BarChartSpVsBud(){
             <h2 className="text-lg font-semibold text-gray-700">Category Analysis</h2>
             <p className="text-[#8E5660]">Detailed breakdown of spending by category.</p>
         </div>
-        <div className='my-3 space-y-2'>
+        {categoryAnalysisList.length > 0 ? <div className='my-3 space-y-2'>
           {
             categoryAnalysisList.map((each,index) => {
               return (
@@ -254,7 +256,7 @@ export function BarChartSpVsBud(){
               )
             })
           }
-        </div>
+        </div> : <EmptyView message={"No category data to display yet. Add expenses to see a detailed breakdown."}/>}
       </div>
     </div>
     
@@ -305,7 +307,7 @@ export function BarChartInVsEx() {
           <h2 className="text-lg font-semibold text-gray-700">Monthly Income vs Expenses</h2>
           <p className="text-[#8E5660]">Monthly comparison over the past year</p>
         </div>
-        <ResponsiveContainer width="100%" height={350}>
+        {!expVsInc.every((each) => each.income === 0 && each.expense === 0) ? <ResponsiveContainer width="100%" height={350}>
           <BarChart data={expVsInc} margin={{ top: 20, left: 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
@@ -315,7 +317,7 @@ export function BarChartInVsEx() {
             <Bar dataKey="income" fill="#0088FE" barSize={15} />
             <Bar dataKey="expense" fill="#FF8042" barSize={15} />
           </BarChart>
-        </ResponsiveContainer>
+        </ResponsiveContainer> : <EmptyView message={"No income or expense records available in this year."}/>}
       </div>
 
       <div className="bg-[#FFFAF4] border-1 border-[#DDDFDE] rounded-2xl p-4 flex-1">
@@ -323,7 +325,7 @@ export function BarChartInVsEx() {
           <h2 className="text-lg font-semibold text-gray-700">Financial Insights</h2>
           <p className="text-[#8E5660]">Income and expenses for this year.</p>
         </div>
-        <div className="space-y-6 p-4">
+        {!expVsInc.every((each) => each.income === 0 && each.expense === 0) > 0 ? <div className="space-y-6 p-4">
           {
             financialInsights.map((each,index) => {
               return (
@@ -336,7 +338,7 @@ export function BarChartInVsEx() {
               )
             })
           }
-        </div>
+        </div> : <EmptyView message={"No financial data available yet. Add income and expenses to view insights for this year"}/>}
       </div>
     </div>
   );

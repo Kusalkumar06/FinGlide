@@ -82,7 +82,7 @@ function SideBar() {
             <p className='ml-3 text-[18px] '>Settings</p>
           </NavLink> */}
           <button onClick={handleLogout} className='w-[100%] bg-[#F96C4A] text-white p-1 text-[18px] rounded cursor-pointer'>Logout</button>
-          <button onClick={handleDelete} className='w-[100%] bg-[#F96C4A] text-white p-1 text-[18px] rounded cursor-pointer'>Delete Account</button>
+          <button onClick={handleDelete} className='w-[100%] bg-[#F96C4A] text-white p-1 text-[18px] rounded cursor-pointer mb-2'>Delete Account</button>
         </div>
       </div>
 
