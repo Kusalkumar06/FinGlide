@@ -3,7 +3,7 @@ import axios from "axios";
 import { Navigate } from "react-router-dom";
 import Loader from "./Loader";
 
-function ProtectedRoute({ children }) {
+export function ProtectedRoute({ children }) {
   const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -32,4 +32,28 @@ function ProtectedRoute({ children }) {
   return authenticated ? children : <Navigate to="/login" replace />;
 }
 
-export default ProtectedRoute;
+export function PublicRoute({ children }) {
+  const [authenticated, setAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const url = "https://finglide.onrender.com/auth/check";
+        await axios.get(url, { withCredentials: true });
+        setAuthenticated(true);
+      } catch {
+        setAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  if (loading) return <Loader />;
+
+  return authenticated ? <Navigate to="/" replace /> : children;
+}
+
+

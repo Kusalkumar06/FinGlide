@@ -13,7 +13,7 @@ import { useEffect } from 'react'
 import axios from 'axios'
 import { useDispatch,useSelector } from 'react-redux'
 import slice from './redux/slices'
-import ProtectedRoute from './components/ProtectedRoute'
+import {ProtectedRoute, PublicRoute} from './components/ProtectedRoute'
 
 
 const actions = slice.actions
@@ -56,7 +56,7 @@ function App() {
     }
   }
 
-  useEffect(() => {fetchAllReportsDetails()},[dispatch,isUserLoggedIn])
+  useEffect(() => {fetchAllReportsDetails()},[dispatch,isUserLoggedIn,transactionList])
   
 
   return (
@@ -70,8 +70,8 @@ function App() {
           <Route path='/budgets' element ={<Budgets/>}></Route>
           <Route path='/reports' element ={<Reports/>}></Route>
         </Route>
-        <Route path='/register/' element={<Signup />}></Route>
-        <Route path='/login/' element={<Signin />}></Route>
+        <Route path='/register/' element={<PublicRoute><Signup /></PublicRoute>}></Route>
+        <Route path='/login/' element={<PublicRoute><Signin /></PublicRoute>}></Route>
       </Routes>
     </div>
   )
