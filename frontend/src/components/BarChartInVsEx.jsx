@@ -23,6 +23,7 @@ export default function BarChartInVsEx() {
   const {expVsInc} = useSelector((store) => {
     return store.sliceState
   })
+  
   return (
     <div className="bg-[#FFFAF4] rounded-2xl p-4 w-[730px] h-full max-w-4xl flex-1">
       <div className="mb-4">

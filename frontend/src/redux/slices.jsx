@@ -32,7 +32,7 @@ const barData = [
 const slice = createSlice({
     name: "slice",
     initialState:{
-      isUserLoggedIn:0,
+      isUserLoggedIn:false,
       loginUsername: "",
       loginPassword: "",
       loginErr: false,
@@ -126,8 +126,8 @@ const slice = createSlice({
       addBudgetCategoryError: false,
     },
     reducers:{
-      setIsUserLoggedIn: (state) => {
-        state.isUserLoggedIn = state.isUserLoggedIn + 1;
+      setIsUserLoggedIn: (state,data) => {
+        state.isUserLoggedIn = data.payload;
       },
       loginusername: (state,data) => {
         state.loginUsername = data.payload;
@@ -214,6 +214,9 @@ const slice = createSlice({
         const {field,value} = data.payload;
         state.addCategoryForm[field] = value;
       },
+      setEntireAddCategoryForm:(state,data) => {
+        state.addCategoryForm = data.payload
+      },
       
       setEditCategory: (state,data) => {
         state.editCategory = data.payload;
@@ -222,7 +225,7 @@ const slice = createSlice({
         const { field, value } = data.payload;
         state.editCategoryForm[field] = value;
       },
-      setEntireCategoryForm:(state,data) => {
+      setEntireEditCategoryForm:(state,data) => {
         state.editCategoryForm = data.payload
       },
 
@@ -232,6 +235,9 @@ const slice = createSlice({
       setAddAccountForm: (state,data) => {
         const {field,value} = data.payload;
         state.addAccountForm[field] = value;
+      },
+      setEntireAddAccountForm: (state,data) => {
+        state.addAccountForm = data.payload
       },
 
       setEditAccount: (state,data) => {
@@ -251,6 +257,9 @@ const slice = createSlice({
       setAddTransactionForm: (state,data) => {
         const {field,value} = data.payload;
         state.addTransactionForm[field] = value;
+      },
+      setEntireAddTransactionForm: (state,data) => {
+        state.addTransactionForm = data.payload
       },
 
       setIsBudgetModalOpen: (state) => {

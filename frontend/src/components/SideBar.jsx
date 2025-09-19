@@ -1,16 +1,22 @@
 import React from 'react'
-import { Link, NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
 import { IoHomeOutline,IoWalletOutline,IoSettingsOutline } from "react-icons/io5";
 import { LuTags,LuChartPie } from "react-icons/lu";
 import { LiaCreditCardSolid } from "react-icons/lia";
 import { TbReportSearch } from "react-icons/tb";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import slice from '../redux/slices';
+
+const actions = slice.actions
 function SideBar() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const handleLogout = async() => {
     const url = "https://finglide.onrender.com/auth/logout"
     await axios.post(url,{},{withCredentials:true})
+    dispatch(actions.setIsUserLoggedIn(false))
     navigate('/login',{replace:true})
   }
 

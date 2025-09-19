@@ -42,8 +42,9 @@ export function PublicRoute({ children }) {
         const url = "https://finglide.onrender.com/auth/check";
         await axios.get(url, { withCredentials: true });
         setAuthenticated(true);
-      } catch {
+      } catch (err){
         setAuthenticated(false);
+        console.error(err)
       } finally {
         setLoading(false);
       }

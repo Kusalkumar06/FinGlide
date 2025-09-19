@@ -5,6 +5,7 @@ import { MdOutlineCancel } from "react-icons/md";
 import Select from 'react-select'
 import { categoryIcons,accountIcons } from "./Utilities";
 import axios from "axios";
+import { FetchAppData } from "./FetchAppData";
 
 const customStyles = {
     option: (provided, state) => ({
@@ -52,6 +53,12 @@ export const CategoryModal = () => {
       const updatedCategories = await axios.get("https://finglide.onrender.com/category/getCategories/",{withCredentials:true})
       dispatch(actions.setCategoryList(updatedCategories.data.Categories))
       dispatch(actions.setIsCategoryModalOpen())
+      dispatch(actions.setEntireAddCategoryForm({
+        name: "",
+        categoryType: "Expense",
+        icon: "home",
+        description: ""
+      }))
       
     }catch(err){
       console.error(`Error during adding the category.`,err)   
@@ -68,7 +75,7 @@ export const CategoryModal = () => {
                 <h1 className="text-[#3A3A3A] font-[500] text-[23px]">Add New Category</h1>
                 <p className="text-[#5A5A5A] text-[14px]">Create a new category to organize your transactions.</p>
               </div>
-              <MdOutlineCancel size={25} onClick={() => {dispatch(actions.setIsCategoryModalOpen());}}  className="self-start mt-3 cursor-pointer text-[#555B5A] hover:text-red-600" />
+              <MdOutlineCancel size={25} onClick={() => {dispatch(actions.setIsCategoryModalOpen()); dispatch(actions.setEntireAddCategoryForm({ name: "", categoryType: "Expense", icon: "home", description: "" }))}}  className="self-start mt-3 cursor-pointer text-[#555B5A] hover:text-red-600" />
             </div>
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col mb-5">
@@ -111,13 +118,7 @@ export const CategoryModal = () => {
     )
 }
 
-export const AccountModal = () => {
-  const {isAccountModalOpen,addAccountForm} = useSelector((store) => {
-   return  store.sliceState
-  })
-  
-  const dispatch = useDispatch()
-  const accountOptions = [
+const accountOptions = [
   { value: "wallet", label: "Wallet" },
   { value: "bank", label: "Bank" },
   { value: "card", label: "Card" },
@@ -127,6 +128,12 @@ export const AccountModal = () => {
   { value: "creditCard", label: "Credit Card" }
 ];
 
+export const AccountModal = () => {
+  const {isAccountModalOpen,addAccountForm} = useSelector((store) => {
+   return  store.sliceState
+  })
+  
+  const dispatch = useDispatch()
 
   const handleSubmit = async(event) => {
     event.preventDefault();
@@ -141,6 +148,14 @@ export const AccountModal = () => {
       const updatedCategories = await axios.get("https://finglide.onrender.com/account/getAccounts/",{withCredentials:true})
       dispatch(actions.setAccountList(updatedCategories.data.accounts))
       dispatch(actions.setIsAccountModalOpen())
+      dispatch(actions.setEntireAddAccountForm({
+        name:"",
+        accountType: "wallet",
+        balance:0,
+        accountNumber:"",
+        institution: "",
+        icon: "cash",
+      }))
       
     }catch(err){
       console.error(`Error during adding the Account.`,err)   
@@ -157,7 +172,7 @@ export const AccountModal = () => {
                 <h1 className="text-[#3A3A3A] font-[500] text-[23px]">Add New Account</h1>
                 <p className="text-[#5A5A5A] text-[14px]">Create a new financial account to track your money.</p>
               </div>
-              <MdOutlineCancel size={25} onClick={() => {dispatch(actions.setIsAccountModalOpen());}}  className="self-start mt-3 cursor-pointer text-[#555B5A] hover:text-red-600" />
+              <MdOutlineCancel size={25} onClick={() => {dispatch(actions.setIsAccountModalOpen()); dispatch(actions.setEntireAddAccountForm({ name:"", accountType: "wallet", balance:0, accountNumber:"", institution: "", icon: "cash", }))}}  className="self-start mt-3 cursor-pointer text-[#555B5A] hover:text-red-600" />
             </div>
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col mb-3">
@@ -245,6 +260,19 @@ export const TransactionModal = () => {
       const updatedTransactions = await axios.get("https://finglide.onrender.com/transaction/getTransactions/",{withCredentials:true})
       dispatch(actions.setTransactionList(updatedTransactions.data.transactions))
       dispatch(actions.setIsTransactionModalOpen())
+      dispatch(actions.setEntireAddTransactionForm({
+        description:"",
+        transactionType: "Expense",
+        categoryId: "",
+        accountId: "",
+        fromAccountId: null,
+        toAccountId: null,
+        amount: 1,
+        notes: "",
+      }))
+      FetchAppData()
+      
+      
       
     }catch(err){
       console.error(`Error during adding the Transaction.`,err)   
@@ -261,7 +289,7 @@ export const TransactionModal = () => {
                 <h1 className="text-[#3A3A3A] font-[500] text-[23px]">Add New Transaction</h1>
                 <p className="text-[#5A5A5A] text-[14px]">Create a new category to organize your transactions.</p>
               </div>
-              <MdOutlineCancel size={25} onClick={() => {dispatch(actions.setIsTransactionModalOpen());}}  className="self-start mt-3 cursor-pointer text-[#555B5A] hover:text-red-600" />
+              <MdOutlineCancel size={25} onClick={() => {dispatch(actions.setIsTransactionModalOpen()); dispatch(actions.setEntireAddTransactionForm({ description:"", transactionType: "Expense", categoryId: "", accountId: "", fromAccountId: null, toAccountId: null, amount: 1, notes: "", }))}}  className="self-start mt-3 cursor-pointer text-[#555B5A] hover:text-red-600" />
             </div>
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col mb-5">
@@ -347,8 +375,8 @@ export const BudgetModal = () => {
       const url = "https://finglide.onrender.com/budget/createBudget/";
       await axios.post(url,budgetDetails,{withCredentials:true})
     
-      const updatedCategories = await axios.get("https://finglide.onrender.com/budget/getBudgets/",{withCredentials:true})
-      dispatch(actions.setBudgetList(updatedCategories.data.Budgets))
+      const updatedBudgets = await axios.get("https://finglide.onrender.com/budget/getBudgets/",{withCredentials:true})
+      dispatch(actions.setBudgetList(updatedBudgets.data.Budgets))
       dispatch(actions.setAddBudgetForm({categoryId: "",limit: 0.00,period: "monthly",}))
       dispatch(actions.setIsBudgetModalOpen())
     }catch(err){

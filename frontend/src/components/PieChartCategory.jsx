@@ -10,7 +10,7 @@ export default function PieChartCategory() {
   const {pieData} = useSelector((store) => {
       return store.sliceState
   })
-   const rainbowColor = scaleSequential(interpolateRainbow).domain([0, pieData.length]);
+  const rainbowColor = scaleSequential(interpolateRainbow).domain([0, pieData.length]);
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {

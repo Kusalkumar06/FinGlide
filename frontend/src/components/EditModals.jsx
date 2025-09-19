@@ -41,7 +41,7 @@ export const EditCategoryModal = (props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(actions.setEntireCategoryForm({
+    dispatch(actions.setEntireEditCategoryForm({
       name: category.name,
       categoryType: category.categoryType,
       icon: category.icon,

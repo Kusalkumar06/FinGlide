@@ -40,6 +40,9 @@ function Signup() {
     }
     const url = "https://finglide.onrender.com/auth/register";
     const data = await axios.post(url,details)
+    dispatch(actions.registername(""))
+    dispatch(actions.registeremail(''))
+    dispatch(actions.registerpassword(''))
     if (!data.error ) 
         navigate("/login",{replace:true});
   }

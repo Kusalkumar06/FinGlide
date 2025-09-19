@@ -37,7 +37,9 @@ function Signin() {
       // const url = "http://localhost:5000/auth/login"
       const url = "https://finglide.onrender.com/auth/login";
       await axios.post(url,details,{withCredentials:true})
-      dispatch(actions.setIsUserLoggedIn())
+      dispatch(actions.setIsUserLoggedIn(true))
+      dispatch(actions.loginusername(""))
+      dispatch(actions.loginpassword(''))
       navigate('/',{replace:true})
       
     }catch(err){

@@ -7,12 +7,23 @@ import { BudgetModal } from './AddModals';
 import { categoryIcons } from './Utilities';
 import {TriangleAlert,CircleCheckBig,CircleX} from 'lucide-react'
 import EmptyView from './EmptyView';
+import axios from 'axios';
+
 const actions = slice.actions
 function Budgets() {
   const dispatch = useDispatch();
   const {isBudgetModalOpen,budgetList} = useSelector((store) => {
     return store.sliceState
   })
+
+  const deleteBudget = async(budgetId) => {
+    const url = `https://finglide.onrender.com/budget/delete/${budgetId}`
+    console.log(url)
+    await axios.delete(url,{withCredentials:true})
+    const updatedBudgets = await axios.get(`https://finglide.onrender.com/budget/getbudgets/`,{withCredentials:true})
+
+    dispatch(actions.setBudgetList(updatedBudgets.data.Budgets))
+  }
 
 
 
@@ -53,7 +64,7 @@ function Budgets() {
                   <div className='w-[40%]'>
                     <ProgressBar value={spentPercent} />
                   </div>
-                  <p className='text-[12px]'>{spentPercent}% of budget</p>
+                  <p className='text-[12px]'>{spentPercent > 0 ? spentPercent : 0}% of budget</p>
               </div>
             </div>
           </div>
@@ -77,7 +88,6 @@ function Budgets() {
           {
               budgetList.map((each,index) => {
                 const IconComponent = categoryIcons.find((eachIcon) => eachIcon.id === each.icon)
-                console.log(IconComponent)
                 return (
                     <div key={index} className='bg-[#FFFAF4] w-[370px] p-4 border-2 border-[#DDDFDE] rounded-lg group shadow'>
                       <div className='flex gap-4 items-center mb-6'>
@@ -89,10 +99,10 @@ function Budgets() {
                               <button className='text-gray-500 text-[11px] border py-[1px] px-2 rounded'>{each.period}</button>
                           </div>
                           <div className='opacity-0 group-hover:opacity-100 flex gap-4 ml-auto'>
-                            <button className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'>
+                            {/* <button className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'>
                               <MdOutlineEdit size={15}/>
-                            </button>
-                            <button className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'> 
+                            </button> */}
+                            <button onClick={() => deleteBudget(each.budgetId)} className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'> 
                               <MdOutlineDelete size={17} />
                             </button>
                           </div>
@@ -106,7 +116,7 @@ function Budgets() {
                             <p className={`${each.progress <= 80 ? "text-green-500" : "text-yellow-500"} text-[18px]`}>{each.progress <= 80 ? "On Track" : "Near Limit"}</p>
                           }
                         </div>
-                        <p>{each.progress.toFixed(2)}%</p>
+                        {/* <p>{each.progress.toFixed(2)}%</p> */}
                       </div>
                       <div className='mb-3'>
                         <ProgressBar value={each.progress}/>

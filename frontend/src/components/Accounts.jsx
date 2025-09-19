@@ -15,8 +15,6 @@ function Accounts() {
     return store.sliceState
   })
 
-  
-
   const deleteAccount = async(id) => {
     const url = `https://finglide.onrender.com/account/delete/${id}`
     await axios.delete(url,{withCredentials:true})
