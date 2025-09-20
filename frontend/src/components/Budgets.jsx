@@ -116,7 +116,7 @@ function Budgets() {
                             <p className={`${each.progress <= 80 ? "text-green-500" : "text-yellow-500"} text-[18px]`}>{each.progress <= 80 ? "On Track" : "Near Limit"}</p>
                           }
                         </div>
-                        {/* <p>{each.progress.toFixed(2)}%</p> */}
+                        <p>{each.progress.toFixed(2)}%</p>
                       </div>
                       <div className='mb-3'>
                         <ProgressBar value={each.progress}/>
