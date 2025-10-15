@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../middleware/authMiddleware.js";
-import { createAccount,getAccounts,updateAccount,deleteAccount,monthlySummary } from "../controllers/accountControllers.js";
+import { createAccount,getAccounts,updateAccount,deleteAccount } from "../controllers/accountControllers.js";
 
 const accountRouter = Router()
 
@@ -8,7 +8,7 @@ accountRouter.post('/createAccount',authenticate,createAccount)
 
 accountRouter.get('/getAccounts',authenticate,getAccounts)
 
-accountRouter.get('/monthlySummary',authenticate,monthlySummary)
+// accountRouter.get('/monthlySummary',authenticate,monthlySummary)
 
 accountRouter.put('/update/:id',authenticate,updateAccount)
 
