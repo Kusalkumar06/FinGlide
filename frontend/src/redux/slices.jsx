@@ -35,7 +35,7 @@ const slice = createSlice({
       isUserLoggedIn:false,
       loginUsername: "",
       loginPassword: "",
-      loginErr: false,
+      loginErr: "",
 
       registerName: "",
       registerEmail: "",
@@ -135,8 +135,8 @@ const slice = createSlice({
       loginpassword:(state,data) => {
         state.loginPassword = data.payload;
       },
-      setLoginErr:(state) => {
-        state.loginErr = !state.loginErr
+      setLoginErr:(state,data) => {
+        state.loginErr = data.payload
       },
       
       registername: (state,data) => {

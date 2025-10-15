@@ -43,8 +43,8 @@ function Signin() {
       navigate('/',{replace:true})
       
     }catch(err){
-      dispatch(actions.setLoginErr())
-      console.error(`Error during the login: ${err}`)
+      dispatch(actions.setLoginErr(err.response.data.message))
+      console.error(`Error during the login: ${err.response.data.message}`)
     }
   }
 
@@ -73,7 +73,7 @@ function Signin() {
           <div className='flex flex-col justify-center'>
             <button className='p-1 rounded bg-[#D86D38] text-[#FFFBF3] font-[600] cursor-pointer'>Sign in</button>
           </div>
-          {loginErr && <p className='text-red-400 my-2'>*Invalid Credentials</p>}
+          {loginErr && <p className='text-red-400 my-2'>*{loginErr}</p>}
         </form>
         <div>
           <p className='text-[#414141] text-[17px]'>Don't have an account? <Link to="/register/" className='text-blue-500'>Sign up</Link></p>

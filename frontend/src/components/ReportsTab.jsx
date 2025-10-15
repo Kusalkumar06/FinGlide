@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import slice from "../redux/slices";
 import { scaleSequential } from "d3-scale";
 import { interpolateRainbow } from "d3-scale-chromatic";
-import { accountIcons } from "./Utilities";
+// import { accountIcons } from "./Utilities";
 import EmptyView from "./EmptyView";
 
 
@@ -345,135 +345,135 @@ export function BarChartInVsEx() {
 }
 
 
-export function AreaGraphAccount  () {
-  const dispatch = useDispatch()
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white p-2 shadow-lg rounded-md border text-sm">
-          {payload.map((entry) => (
-            <p key={entry.name} className="text-black font-semibold">
-              {entry.name}: ₹{entry.value.toLocaleString()}
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
-  const {accountList,areaData} = useSelector((store) => {
-    return store.sliceState
-  })
-  const accounts = accountList.filter((each) => each.balance > 0).slice(0,3)
+// export function AreaGraphAccount  () {
+//   const dispatch = useDispatch()
+//   const CustomTooltip = ({ active, payload }) => {
+//     if (active && payload && payload.length) {
+//       return (
+//         <div className="bg-white p-2 shadow-lg rounded-md border text-sm">
+//           {payload.map((entry) => (
+//             <p key={entry.name} className="text-black font-semibold">
+//               {entry.name}: ₹{entry.value.toLocaleString()}
+//             </p>
+//           ))}
+//         </div>
+//       );
+//     }
+//     return null;
+//   };
+//   const {accountList,areaData} = useSelector((store) => {
+//     return store.sliceState
+//   })
+//   const accounts = accountList.filter((each) => each.balance > 0).slice(0,3)
 
-  const fetchSpendVsBudget = () => {
-    const fn = async () => {
-      const url = `https://finglide.onrender.com/account/monthlySummary?year=2025`
-      const response = await axios.get(url,{withCredentials:true})
-      // console.log(response.data.accounts)
-      dispatch(actions.setAreaData(response.data.summary))
-    }
-    fn()
-  }
-  console.log(areaData)
-  useEffect(fetchSpendVsBudget,[])
+//   const fetchAreaData = () => {
+//     const fn = async () => {
+//       const url = `https://finglide.onrender.com/account/monthlySummary?year=2025`
+//       const response = await axios.get(url,{withCredentials:true})
+//       console.log(response.data.summary)
+//       dispatch(actions.setAreaData(response.data.summary))
+//     }
+//     fn()
+//   }
+//   console.log(areaData)
+//   useEffect(fetchAreaData,[])
 
-  let assets = 0, liabilities = 0;
-  accountList.forEach(acc => {
-    if (acc.accountType === "creditCard" || acc.type === "loan") {
-      liabilities += acc.balance;
-    } else {
-      assets += acc.balance;
-    }
-  });
+//   let assets = 0, liabilities = 0;
+//   accountList.forEach(acc => {
+//     if (acc.accountType === "creditCard" || acc.type === "loan") {
+//       liabilities += acc.balance;
+//     } else {
+//       assets += acc.balance;
+//     }
+//   });
 
-  const assetsAndLiabilities =  [
-    {name: "Assets",value: assets},
-    {name: "Liabilities",value: liabilities},
-    {name: "Networth",value: assets - liabilities}
-  ]
-  return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-col bg-[#FFFAF4] shadow-lg rounded-2xl justify-center items-center rounded-2xl p-4 w-full mr-3">
-        <h2 className="text-lg font-semibold text-gray-700 self-start">Account Balance Trends</h2>
-        <p className="text-gray-500 text-sm mb-4 self-start">How your account balances have changed over time</p>
-        <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={areaData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-            <defs>
-              <linearGradient id="colorChecking" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8884d8"  />
-                <stop offset="95%" stopColor="#8884d8" />
-              </linearGradient>
-              <linearGradient id="colorSavings" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#82ca9d"  />
-                <stop offset="95%" stopColor="#82ca9d" />
-              </linearGradient>
-              <linearGradient id="colorinvestment" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#ffc658" />
-                <stop offset="95%" stopColor="#ffc658"/>
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip content={<CustomTooltip />} />
-            <Area type="monotone" dataKey="Cash in Hand" stackId="1" stroke="#8884d8" fill="url(#colorChecking)" />
-            <Area type="monotone" dataKey="Everyday Wallet" stackId="1" stroke="#82ca9d" fill="url(#colorSavings)" />
-            <Area type="monotone" dataKey="SBI Savings" stackId="1" stroke="#ffc658" fill="url(#colorinvestment)" />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
+//   const assetsAndLiabilities =  [
+//     {name: "Assets",value: assets},
+//     {name: "Liabilities",value: liabilities},
+//     {name: "Networth",value: assets - liabilities}
+//   ]
+//   return (
+//     <div className="flex flex-col gap-3">
+//       <div className="flex flex-col bg-[#FFFAF4] shadow-lg rounded-2xl justify-center items-center rounded-2xl p-4 w-full mr-3">
+//         <h2 className="text-lg font-semibold text-gray-700 self-start">Account Balance Trends</h2>
+//         <p className="text-gray-500 text-sm mb-4 self-start">How your account balances have changed over time</p>
+//         <ResponsiveContainer width="100%" height={300}>
+//           <AreaChart data={areaData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+//             <defs>
+//               <linearGradient id="colorChecking" x1="0" y1="0" x2="0" y2="1">
+//                 <stop offset="5%" stopColor="#8884d8"  />
+//                 <stop offset="95%" stopColor="#8884d8" />
+//               </linearGradient>
+//               <linearGradient id="colorSavings" x1="0" y1="0" x2="0" y2="1">
+//                 <stop offset="5%" stopColor="#82ca9d"  />
+//                 <stop offset="95%" stopColor="#82ca9d" />
+//               </linearGradient>
+//               <linearGradient id="colorinvestment" x1="0" y1="0" x2="0" y2="1">
+//                 <stop offset="5%" stopColor="#ffc658" />
+//                 <stop offset="95%" stopColor="#ffc658"/>
+//               </linearGradient>
+//             </defs>
+//             <CartesianGrid strokeDasharray="3 3" />
+//             <XAxis dataKey="month" />
+//             <YAxis />
+//             <Tooltip content={<CustomTooltip />} />
+//             <Area type="monotone" dataKey="Cash in Hand" stackId="1" stroke="#8884d8" fill="url(#colorChecking)" />
+//             <Area type="monotone" dataKey="Everyday Wallet" stackId="1" stroke="#82ca9d" fill="url(#colorSavings)" />
+//             <Area type="monotone" dataKey="SBI Savings" stackId="1" stroke="#ffc658" fill="url(#colorinvestment)" />
+//           </AreaChart>
+//         </ResponsiveContainer>
+//       </div>
 
-      <div className='flex items-stretch gap-4'>
-        <div className='flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl border-2 border-[#DDDFDE] p-4 flex flex-col'>
-          <div>
-            <h1 className="text-lg font-semibold text-gray-700">Account Performance</h1>
-            <p className="text-[#8E5660]">How your accounts have changed over time.</p>
-          </div>
-          <div className='my-3 space-y-2'>
-            {
-              accounts.map((acc) => {
-                const IconComponent = accountIcons.find((eachIcon) => eachIcon.id === acc.icon)
-                return (
-                  <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-3 rounded-lg'>
-                    <div className='flex'>
-                      <div className='w-12 h-12 rounded-full mx-2 flex items-center justify-center' style={{backgroundColor: IconComponent.color}}>
-                        <IconComponent.icon color='white'/>
-                      </div>
-                      <div>
-                        <h1 className='text-[#433C3E] text-[20px]'>{acc.name}</h1>
-                        <p className='text-[12px] text-gray-700'>{acc.accountType}</p>
-                      </div>
-                    </div>
-                    <h1 className='text-green-700 text-[18px]'>₹{acc.balance}</h1>
-                  </div>
-                )
-              })
-            }
-          </div>
-        </div>
+//       <div className='flex items-stretch gap-4'>
+//         <div className='flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl border-2 border-[#DDDFDE] p-4 flex flex-col'>
+//           <div>
+//             <h1 className="text-lg font-semibold text-gray-700">Account Performance</h1>
+//             <p className="text-[#8E5660]">How your accounts have changed over time.</p>
+//           </div>
+//           <div className='my-3 space-y-2'>
+//             {
+//               accounts.map((acc) => {
+//                 const IconComponent = accountIcons.find((eachIcon) => eachIcon.id === acc.icon)
+//                 return (
+//                   <div className='flex items-center justify-between bg-[#FFFAF4] border-2 border-[#DDDFDE] p-3 rounded-lg'>
+//                     <div className='flex'>
+//                       <div className='w-12 h-12 rounded-full mx-2 flex items-center justify-center' style={{backgroundColor: IconComponent.color}}>
+//                         <IconComponent.icon color='white'/>
+//                       </div>
+//                       <div>
+//                         <h1 className='text-[#433C3E] text-[20px]'>{acc.name}</h1>
+//                         <p className='text-[12px] text-gray-700'>{acc.accountType}</p>
+//                       </div>
+//                     </div>
+//                     <h1 className='text-green-700 text-[18px]'>₹{acc.balance}</h1>
+//                   </div>
+//                 )
+//               })
+//             }
+//           </div>
+//         </div>
 
-        <div className='flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl border-2 border-[#DDDFDE] p-4 flex flex-col'>
-          <div>
-            <h1 className="text-lg font-semibold text-gray-700">Net Worth Breakdown</h1>
-            <p className="text-[#8E5660]">Your assets and liabilities.</p>
-          </div>
-          <div className='my-3 space-y-5'>
-            {
-              assetsAndLiabilities.map((each,index) => {
-                return (
-                  <div key={index}>
-                    <div className="flex items-center justify-between">
-                      <h1 className="text-[#433c3E] text-[18px] font-[500]">{each.name}:</h1>
-                      <h1 className={`${each.value >= 0 ? 'text-green-500' : 'text-red-500'} text-[22px] font-[500]`}><span>{each.name == "Savings Rate" ? "" : "₹"}</span>{each.value}<span>{each.name == "Savings Rate" ? "%" : ""}</span></h1>
-                    </div>
-                  </div>
-                )
-              })
-            }
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+//         <div className='flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl border-2 border-[#DDDFDE] p-4 flex flex-col'>
+//           <div>
+//             <h1 className="text-lg font-semibold text-gray-700">Net Worth Breakdown</h1>
+//             <p className="text-[#8E5660]">Your assets and liabilities.</p>
+//           </div>
+//           <div className='my-3 space-y-5'>
+//             {
+//               assetsAndLiabilities.map((each,index) => {
+//                 return (
+//                   <div key={index}>
+//                     <div className="flex items-center justify-between">
+//                       <h1 className="text-[#433c3E] text-[18px] font-[500]">{each.name}:</h1>
+//                       <h1 className={`${each.value >= 0 ? 'text-green-500' : 'text-red-500'} text-[22px] font-[500]`}><span>{each.name == "Savings Rate" ? "" : "₹"}</span>{each.value}<span>{each.name == "Savings Rate" ? "%" : ""}</span></h1>
+//                     </div>
+//                   </div>
+//                 )
+//               })
+//             }
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }

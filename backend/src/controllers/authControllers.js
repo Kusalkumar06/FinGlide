@@ -55,7 +55,7 @@ export const login = async (req,res) => {
     try{
         if (!exsisting_user){
             return res.status(400).json({
-                message: "User not registered yet.",
+                message: "User is not registered yet.",
             })
         } else {
             const validPassword = await bcrypt.compare(password, exsisting_user.password);

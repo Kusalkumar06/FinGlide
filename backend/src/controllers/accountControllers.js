@@ -71,91 +71,94 @@ export const deleteAccount = async(req,res) => {
   }
 }
 
-export const monthlySummary = async(req,res) => {
-  try{
-    const userId = new mongoose.Types.ObjectId(req.user.userId)
-    const year = parseInt(req.query.year)
-    // console.log(userId,year)
-    let accounts = await AccountModel.find({userId});
-    accounts = accounts.filter((each) => each.balance > 0).slice(0,3)
-    if(!accounts){
-      return res.status(400).json({
-        message: `No account fetched during the fetching the accounts summary. summary: ${accounts}`
-      })
-    }
+// export const monthlySummary = async(req,res) => {
+//   try{
+//     const userId = new mongoose.Types.ObjectId(req.user.userId)
+//     const year = parseInt(req.query.year)
+//     // console.log(userId,year)
+//     let accounts = await AccountModel.find({userId});
+//     accounts = accounts.filter((each) => each.balance > 0).slice(0,3)
+//     if(!accounts){
+//       return res.status(400).json({
+//         message: `No account fetched during the fetching the accounts summary. summary: ${accounts}`
+//       })
+//     }
 
-    const accountMap = {};
-    accounts.forEach(account => {
-      accountMap[account._id.toString()] = account.name;
-    })
-    console.log(accounts)
+//     const accountMap = {};
+//     accounts.forEach(account => {
+//       accountMap[account._id.toString()] = account.name;
+//     })
+//     console.log(accounts)
 
-    const transactions = await TransactionModel.aggregate([
-      {
-        $match :{
-          userId: userId,
-          date: {
-            $gte : new Date(`${year}-01-01`),
-            $lte : new Date(`${year}-12-31`)
-          }
-        }
-      },
-      {
-        $project: {
-          month: {$month : "$date"},
-          amount: 1,
-          transactionType: 1,
-          accountId: 1,
-          fromAccountId: 1,
-          toAccountId: 1,
-        }
-      }
-    ])
+//     const transactions = await TransactionModel.aggregate([
+//       {
+//         $match :{
+//           userId: userId,
+//           date: {
+//             $gte : new Date(`${year}-01-01`),
+//             $lte : new Date(`${year}-12-31`)
+//           }
+//         }
+//       },
+//       {
+//         $project: {
+//           month: {$month : "$date"},
+//           amount: 1,
+//           transactionType: 1,
+//           accountId: 1,
+//           fromAccountId: 1,
+//           toAccountId: 1,
+//         }
+//       }
+//     ])
 
-    // console.log(transactions)
+//     // console.log(transactions)
 
-    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    const summary = months.map((eachmonth) => {      
-      let base = { month: eachmonth };
-      accounts.forEach(acc => {
-        base[acc.name] = 0;
-      });
-      return base;
-    })
-    const balances = {}
-    accounts.forEach(acc => {
-      balances[acc._id.toString()] = 0;
-    })
+//     const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+//     const summary = months.map((eachmonth) => {      
+//       let base = { month: eachmonth };
+//       accounts.forEach(acc => {
+//         base[acc.name] = 0;
+//       });
+//       return base;
+//     })
+//     const balances = {}
+//     accounts.forEach(acc => {
+//       balances[acc._id.toString()] = 0;
+//     })
 
-    transactions.forEach(eachTransac => {
-      const monthIndex = eachTransac.month - 1;
-      if (eachTransac.transactionType === "Income" && eachTransac.accountId){
-        balances[eachTransac.accountId.toString()] += eachTransac.amount; 
-      } else if( eachTransac.transactionType === "Expense" && eachTransac.accountId) {
-        balances[eachTransac.accountId.toString()] -= eachTransac.amount;
-      } else if(eachTransac.transactionType === "Transfer" && eachTransac.fromAccountId && eachTransac.toAccountId) {
-        balances[eachTransac.fromAccountId.toString()] -= eachTransac.amount;
-        balances[eachTransac.toAccountId.toString()] += eachTransac.amount;
-      }
+//     transactions.forEach(eachTransac => {
+//       const monthIndex = eachTransac.month - 1;
+//       if (eachTransac.transactionType === "Income" && eachTransac.accountId){
+//         balances[eachTransac.accountId.toString()] += eachTransac.amount; 
+//       } else if( eachTransac.transactionType === "Expense" && eachTransac.accountId) {
+//         balances[eachTransac.accountId.toString()] -= eachTransac.amount;
+//       } else if(eachTransac.transactionType === "Transfer" && eachTransac.fromAccountId && eachTransac.toAccountId) {
+//         balances[eachTransac.fromAccountId.toString()] -= eachTransac.amount;
+//         balances[eachTransac.toAccountId.toString()] += eachTransac.amount;
+//       }
 
-      let namedBalances = {};
-      Object.keys(balances).forEach(id => {
-        namedBalances[accountMap[id]] = balances[id] 
-      })
+//       let namedBalances = {};
+//       Object.keys(balances).forEach(id => {
+//         const name = accountMap[id];
+//         if (name) {
+//           namedBalances[name] = balances[id];
+//         }
+//       })
 
-      summary[monthIndex] = {
-        ...summary[monthIndex],
-        ...namedBalances
-      };
-    })
+//       summary[monthIndex] = {
+//         ...summary[monthIndex],
+//         ...namedBalances
+//       };
+//     })
 
-    res.status(201).json({
-      message: "Monthly accounts summary fetched successfully.",
-      summary: summary,
-    })
-  } catch(err){
-    res.status(500).json({
-      message: `Error during fetching the account summary ${err}.`
-    })
-  }
-}
+//     res.status(201).json({
+//       message: "Monthly accounts summary fetched successfully.",
+//       summary: summary,
+//     })
+//   } catch(err){
+//     res.status(500).json({
+//       message: `Error during fetching the account summary ${err}.`
+//     })
+//   }
+// }

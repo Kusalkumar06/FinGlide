@@ -3,7 +3,7 @@ import { CiCalendar } from "react-icons/ci";
 import { FaArrowTrendUp,FaArrowTrendDown } from "react-icons/fa6";
 import { useSelector,useDispatch } from 'react-redux';
 import slice from '../redux/slices';
-import {BarChartSpVsBud,AreaGraphAccount,PieChartCategory,LineChartInVsEx,BarChartInVsEx} from './ReportsTab';
+import {BarChartSpVsBud,PieChartCategory,LineChartInVsEx,BarChartInVsEx} from './ReportsTab';
 
 const reportTabs = [
   {
@@ -18,10 +18,10 @@ const reportTabs = [
     "id": "TRENDS",
     "display": "Trends"
   },
-  {
-    "id": "ACCOUNTS",
-    "display": "Accounts"
-  }
+  // {
+  //   "id": "ACCOUNTS",
+  //   "display": "Accounts"
+  // }
 ]
 
 const analysis = [
@@ -37,10 +37,10 @@ const analysis = [
     "id": "TRENDS",
     "display": <BarChartInVsEx/>
   },
-  {
-    "id": "ACCOUNTS",
-    "display": <AreaGraphAccount/>
-  }
+  // {
+  //   "id": "ACCOUNTS",
+  //   "display": <AreaGraphAccount/>
+  // }
 ]
 
 const actions = slice.actions
