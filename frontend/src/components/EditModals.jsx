@@ -4,7 +4,7 @@ const actions = slice.actions
 import { MdOutlineCancel } from "react-icons/md";
 import Select from 'react-select'
 import { categoryIcons,accountIcons } from "./Utilities";
-import axios from "axios";
+import api from "../api/axios";
 import { useEffect } from "react";
 
 const customStyles = {
@@ -55,10 +55,10 @@ export const EditCategoryModal = (props) => {
     event.preventDefault();
     try{
       const categoryDetails = editCategoryForm
-      const url = `https://finglide.onrender.com/category/update/${category._id}`;
-      await axios.put(url,categoryDetails,{withCredentials:true})
+      const url = `/category/update/${category._id}`;
+      await api.put(url,categoryDetails,{withCredentials:true})
 
-      const updatedCategories = await axios.get("https://finglide.onrender.com/category/getCategories/",{withCredentials:true})
+      const updatedCategories = await api.get("/category/getCategories/",{withCredentials:true})
       dispatch(actions.setCategoryList(updatedCategories.data.Categories))
       dispatch(actions.setEditCategory(null))
     }catch(err){
@@ -156,10 +156,10 @@ export const EditAccountModal = (props) => {
       const accountDetails = editAccountForm
       console.log(accountDetails)
       
-      const url = `https://finglide.onrender.com/account/update/${editAccount._id}`;
-      await axios.put(url,accountDetails,{withCredentials:true})
+      const url = `/account/update/${editAccount._id}`;
+      await api.put(url,accountDetails,{withCredentials:true})
     
-      const updatedCategories = await axios.get("https://finglide.onrender.com/account/getAccounts/",{withCredentials:true})
+      const updatedCategories = await api.get("/account/getAccounts/",{withCredentials:true})
       dispatch(actions.setAccountList(updatedCategories.data.accounts))
       dispatch(actions.setEditAccount(null))
       

@@ -1,6 +1,6 @@
 import React from 'react'
 import { MdOutlineDelete,MdOutlineEdit } from "react-icons/md";
-import axios from "axios"
+import api from '../api/axios';
 import { useSelector,useDispatch } from 'react-redux'
 import slice from '../redux/slices';
 import { AccountModal } from './AddModals';
@@ -16,10 +16,10 @@ function Accounts() {
   })
 
   const deleteAccount = async(id) => {
-    const url = `https://finglide.onrender.com/account/delete/${id}`
-    await axios.delete(url,{withCredentials:true})
+    const url = `/account/delete/${id}`
+    await api.delete(url,{withCredentials:true})
 
-    const accounts = await axios.get(`https://finglide.onrender.com/account/getAccounts/`,{withCredentials:true})
+    const accounts = await api.get(`/account/getAccounts/`,{withCredentials:true})
 
     dispatch(actions.setAccountList(accounts.data.accounts))
   }
@@ -31,33 +31,33 @@ function Accounts() {
   return (
     <div>
       {isAccountModalOpen && <AccountModal/>}
-      <div className='flex items-center justify-between mb-5'>
+      <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5'>
         <div>
-          <h1 className='text-[#3A3A3A] text-[28px] font-[500]'>Accounts</h1>
+          <h1 className='text-[#3A3A3A] text-2xl sm:text-[28px] font-[500]'>Accounts</h1>
           <p className='text-[14px] text-[#3B3F40]'>Manage your financial accounts and view balances.</p>
         </div>
         <div>
-          <button onClick={() => dispatch(actions.setIsAccountModalOpen())} className='bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer'>+ Add Account</button>
+          <button onClick={() => dispatch(actions.setIsAccountModalOpen())} className='bg-[#D96D38] text-white text-base sm:text-[18px] p-2 rounded px-5 cursor-pointer hover:bg-[#e05a38] transition-colors whitespace-nowrap'>+ Add Account</button>
         </div>
       </div>
 
-      <div  className='flex justify-between items-center bg-[#FFFAF4] rounded-lg shadow-lg p-4 border-2 border-[#DDDFDE] my-5' >
+      <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-[#FFFAF4] rounded-lg shadow-lg p-4 border-2 border-[#DDDFDE] my-5'>
         <div>
           <h1 className='text-[#36353A] font-[500] text-[18px]'>Total Net Worth</h1>
           <p className='text-[#813C7F] text-[14px]'>Combined balance across all accounts</p>
         </div>
-        <div>
+        <div className='sm:text-right'>
           <h1 className='text-[#D66C39] text-[25px] font-[500]'>₹{totalAmount}</h1>
           <p className='text-[12px]'>Across {accountList.length} accounts</p>
         </div>
       </div>
 
-      <div className='flex flex-wrap gap-4 justify-between'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
         {
           accountList.map((account,index) => {
             const IconComponent = accountIcons.find((eachIcon) => eachIcon.id === account.icon)
             return(
-            <div key={index} className='bg-[#FFFAF4] w-[380px] p-4 border-2 border-[#DDDFDE] rounded-lg group shadow'>
+            <div key={index} className='bg-[#FFFAF4] p-4 border-2 border-[#DDDFDE] rounded-lg group shadow'>
               <div className='mb-5 flex items-center justify-between'>
                 <div className='flex gap-2'>
                   <div className='w-12 h-12 rounded-full mx-2 flex items-center justify-center' style={{backgroundColor: IconComponent.color}}>

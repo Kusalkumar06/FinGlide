@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Navigate } from "react-router-dom";
 import Loader from "./Loader";
+import api from "../api/axios";
 
 export function ProtectedRoute({ children }) {
   const [authenticated, setAuthenticated] = useState(false);
@@ -10,8 +10,8 @@ export function ProtectedRoute({ children }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const url = "https://finglide.onrender.com/auth/check";
-        await axios.get(url, { withCredentials: true });
+        const url = "/auth/check";
+        await api.get(url, { withCredentials: true });
 
         setAuthenticated(true);
       } catch (err) {
@@ -39,8 +39,8 @@ export function PublicRoute({ children }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const url = "https://finglide.onrender.com/auth/check";
-        await axios.get(url, { withCredentials: true });
+        const url = "/auth/check";
+        await api.get(url, { withCredentials: true });
         setAuthenticated(true);
       } catch (err){
         setAuthenticated(false);

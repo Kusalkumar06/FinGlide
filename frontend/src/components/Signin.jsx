@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector,useDispatch } from 'react-redux'
 import slice from '../redux/slices'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
+import api from '../api/axios'
 import { useNavigate } from 'react-router-dom'
 
 const actions = slice.actions 
@@ -34,9 +34,8 @@ function Signin() {
       password:loginPassword,
     }
     try{
-      // const url = "http://localhost:5000/auth/login"
-      const url = "https://finglide.onrender.com/auth/login";
-      await axios.post(url,details,{withCredentials:true})
+      const url = '/auth/login'
+      await api.post(url,details,{withCredentials:true})
       dispatch(actions.setIsUserLoggedIn(true))
       dispatch(actions.loginusername(""))
       dispatch(actions.loginpassword(''))

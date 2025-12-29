@@ -19,28 +19,34 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 export default function BarChartInVsEx() {
+  const { expVsInc } = useSelector(store => store.sliceState)
 
-  const {expVsInc} = useSelector((store) => {
-    return store.sliceState
-  })
-  
   return (
-    <div className="bg-[#FFFAF4] rounded-2xl p-4 w-[730px] h-full max-w-4xl flex-1">
+    <div className="bg-[#FFFAF4] rounded-2xl p-4 w-full h-full flex-1 min-w-0">
       <div className="mb-4">
-        <h2 className="text-lg font-semibold text-gray-700">Monthly Income vs Expenses</h2>
-        <p className="text-[#8E5660]">Monthly comparison over the past year</p>
+        <h2 className="text-lg font-semibold text-gray-700">
+          Monthly Income vs Expenses
+        </h2>
+        <p className="text-[#8E5660]">
+          Monthly comparison over the past year
+        </p>
       </div>
-      {!expVsInc.every((each) => each.income === 0 && each.expense === 0) ? <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={expVsInc} margin={{ top: 20, left: 0, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend height={36} />
-          <Bar dataKey="income" fill="#0088FE" barSize={15} />
-          <Bar dataKey="expense" fill="#FF8042" barSize={15} />
-        </BarChart>
-      </ResponsiveContainer> : <EmptyView message={"No income or expense records available in this year."}/>}
+
+      {!expVsInc.every(e => e.income === 0 && e.expense === 0) ? (
+        <ResponsiveContainer width="100%" height={350}>
+          <BarChart data={expVsInc} margin={{ top: 20, left: 0, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend />
+            <Bar dataKey="income" fill="#0088FE" barSize={18} />
+            <Bar dataKey="expense" fill="#FF8042" barSize={18} />
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <EmptyView message="No income or expense records available in this year." />
+      )}
     </div>
-  );
+  )
 }

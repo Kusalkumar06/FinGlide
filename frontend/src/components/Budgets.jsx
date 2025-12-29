@@ -7,7 +7,7 @@ import { BudgetModal } from './AddModals';
 import { categoryIcons } from './Utilities';
 import {TriangleAlert,CircleCheckBig,CircleX} from 'lucide-react'
 import EmptyView from './EmptyView';
-import axios from 'axios';
+import api from '../api/axios'
 
 const actions = slice.actions
 function Budgets() {
@@ -17,37 +17,38 @@ function Budgets() {
   })
 
   const deleteBudget = async(budgetId) => {
-    const url = `https://finglide.onrender.com/budget/delete/${budgetId}`
+    const url = `/budget/delete/${budgetId}`
     console.log(url)
-    await axios.delete(url,{withCredentials:true})
-    const updatedBudgets = await axios.get(`https://finglide.onrender.com/budget/getbudgets/`,{withCredentials:true})
+    await api.delete(url,{withCredentials:true})
+    const updatedBudgets = await api.get(`/budget/getbudgets/`,{withCredentials:true})
 
     dispatch(actions.setBudgetList(updatedBudgets.data.Budgets))
   }
 
 
-
+  console.log(budgetList);
   const totalBudget = budgetList.reduce((a,b) => (a+b.limit),0)
   const totalSpent = budgetList.reduce((a,b) => (a+b.spent),0)
-  const budgetAlerts = budgetList.filter((each) => each.percentage > 80)
+  const budgetAlerts = budgetList.filter((each) => each.progress > 80)
   const spentPercent = ((totalSpent/totalBudget) *100).toFixed(2)
   const overBudgets = budgetList.filter((each) => each.percentage > 100).length
+  console.log(budgetAlerts);
 
   return (
     <div>
       {isBudgetModalOpen && <BudgetModal/>}
-      <div className='flex items-center justify-between mb-5'>
+      <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5'>
         <div>
-          <h1 className='text-[#3A3A3A] text-[28px] font-[500]'>Budgets</h1>
+          <h1 className='text-[#3A3A3A] text-2xl sm:text-[28px] font-[500]'>Budgets</h1>
           <p className='text-[14px] text-[#3B3F40]'>Set spending limits and track your progress.</p>
         </div>
         <div>
-          <button onClick={() => dispatch(actions.setIsBudgetModalOpen())} className='bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer'>+ Add Budget</button>
+          <button onClick={() => dispatch(actions.setIsBudgetModalOpen())} className='bg-[#D96D38] text-white text-base sm:text-[18px] p-2 rounded px-5 cursor-pointer hover:bg-[#e05a38] transition-colors whitespace-nowrap'>+ Add Budget</button>
         </div>
       </div>
       {budgetList.length > 0 ? <div>
-        <div className='flex justify-between mb-5 gap-4'>
-          <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-5'>
+          <div className='flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
             <div className='flex justify-between items-center'>
               <p>Total Budget</p>
             </div>
@@ -56,7 +57,7 @@ function Budgets() {
               <p className='flex items-center text-[12px]'>Monthly Limit</p>
             </div>
           </div>
-          <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
+          <div className='flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
             <p>Total Spent</p>
             <div>
               <h1 className='text-[25px] font-[600]'>₹{totalSpent}</h1>
@@ -68,14 +69,14 @@ function Budgets() {
               </div>
             </div>
           </div>
-          <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
+          <div className='flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
               <p className='text-red-600'>Over Budget</p>
             <div>
               <h1 className='text-[25px] text-red-600 font-[600]'>{overBudgets}</h1>
               <p className='flex items-center text-[12px]'>Categories exceeded</p>
             </div>
           </div>
-          <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
+          <div className='flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
             <p className='text-yellow-600'>Near Limit</p>
             <div>
               <h1 className='text-[25px] text-yellow-600 font-[600]'>{budgetAlerts.length}</h1>
@@ -84,12 +85,12 @@ function Budgets() {
           </div>
         </div>
 
-        <div className='flex flex-wrap gap-4 mb-3'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-3'>
           {
               budgetList.map((each,index) => {
                 const IconComponent = categoryIcons.find((eachIcon) => eachIcon.id === each.icon)
                 return (
-                    <div key={index} className='bg-[#FFFAF4] w-[370px] p-4 border-2 border-[#DDDFDE] rounded-lg group shadow'>
+                    <div key={index} className='bg-[#FFFAF4] p-4 border-2 border-[#DDDFDE] rounded-lg group shadow'>
                       <div className='flex gap-4 items-center mb-6'>
                           <div className='w-12 h-12 rounded-full mx-2 flex items-center justify-center' style={{backgroundColor: IconComponent.color}}>
                             <IconComponent.icon color='white'/>
@@ -142,6 +143,7 @@ function Budgets() {
             <h1 className='text-[20px] font-[500]'>Budget Alerts</h1>
           </div>
           <div className='space-y-4'>
+            
               { budgetAlerts.length > 0 ? 
                 budgetAlerts.map((each,index) => (
                   <div key={index} className='flex justify-between bg-white rounded-lg p-2'>
@@ -150,7 +152,7 @@ function Budgets() {
                       <h1 className='text-[18px] font-[400]'>{each.category}</h1>
                     </div>
                     <div>
-                      <h1 className='text-yellow-500'>{each.remaining > 0 ? `${each.percentage}% of budget is used` : `₹${Math.abs(each.remaining)}  over budget`}</h1>
+                      <h1 className='text-yellow-500'>{each.remaining > 0 ? `${each.progress}% of budget is used` : `₹${Math.abs(each.remaining)}  over budget`}</h1>
                     </div>
                   </div>
                 )) : <div className='text-center'><p>All budgets are on track.</p></div>

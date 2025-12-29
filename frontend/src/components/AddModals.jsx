@@ -1,11 +1,12 @@
 import { useDispatch,useSelector } from "react-redux"
 import slice from "../redux/slices"
-const actions = slice.actions
 import { MdOutlineCancel } from "react-icons/md";
 import Select from 'react-select'
 import { categoryIcons,accountIcons } from "./Utilities";
-import axios from "axios";
+import api from "../api/axios";
 import { FetchAppData } from "./FetchAppData";
+
+const actions = slice.actions
 
 const customStyles = {
     option: (provided, state) => ({
@@ -47,10 +48,10 @@ export const CategoryModal = () => {
     try{
       const categoryDetails = addCategoryForm
       
-      const url = "https://finglide.onrender.com/category/createCategory/";
-      await axios.post(url,categoryDetails,{withCredentials:true})
+      const url = "/category/createCategory/";
+      await api.post(url,categoryDetails,{withCredentials:true})
     
-      const updatedCategories = await axios.get("https://finglide.onrender.com/category/getCategories/",{withCredentials:true})
+      const updatedCategories = await api.get("/category/getCategories/",{withCredentials:true})
       dispatch(actions.setCategoryList(updatedCategories.data.Categories))
       dispatch(actions.setIsCategoryModalOpen())
       dispatch(actions.setEntireAddCategoryForm({
@@ -142,10 +143,10 @@ export const AccountModal = () => {
       const accountDetails = addAccountForm
       console.log(accountDetails)
       
-      const url = "https://finglide.onrender.com/account/createAccount/";
-      await axios.post(url,accountDetails,{withCredentials:true})
+      const url = "/account/createAccount/";
+      await api.post(url,accountDetails,{withCredentials:true})
     
-      const updatedCategories = await axios.get("https://finglide.onrender.com/account/getAccounts/",{withCredentials:true})
+      const updatedCategories = await api.get("/account/getAccounts/",{withCredentials:true})
       dispatch(actions.setAccountList(updatedCategories.data.accounts))
       dispatch(actions.setIsAccountModalOpen())
       dispatch(actions.setEntireAddAccountForm({
@@ -254,10 +255,10 @@ export const TransactionModal = () => {
       const transactionDetails = addTransactionForm
       console.log(transactionDetails)
       
-      const url = "https://finglide.onrender.com/transaction/createTransaction/";
-      await axios.post(url,transactionDetails,{withCredentials:true})
+      const url = "api/transaction/createTransaction/";
+      await api.post(url,transactionDetails,{withCredentials:true})
     
-      const updatedTransactions = await axios.get("https://finglide.onrender.com/transaction/getTransactions/",{withCredentials:true})
+      const updatedTransactions = await api.get("api/transaction/getTransactions/",{withCredentials:true})
       dispatch(actions.setTransactionList(updatedTransactions.data.transactions))
       dispatch(actions.setIsTransactionModalOpen())
       dispatch(actions.setEntireAddTransactionForm({
@@ -372,10 +373,10 @@ export const BudgetModal = () => {
     try{
       const budgetDetails = addBudgetForm
       
-      const url = "https://finglide.onrender.com/budget/createBudget/";
-      await axios.post(url,budgetDetails,{withCredentials:true})
+      const url = "api/budget/createBudget/";
+      await api.post(url,budgetDetails,{withCredentials:true})
     
-      const updatedBudgets = await axios.get("https://finglide.onrender.com/budget/getBudgets/",{withCredentials:true})
+      const updatedBudgets = await api.get("api/budget/getBudgets/",{withCredentials:true})
       dispatch(actions.setBudgetList(updatedBudgets.data.Budgets))
       dispatch(actions.setAddBudgetForm({categoryId: "",limit: 0.00,period: "monthly",}))
       dispatch(actions.setIsBudgetModalOpen())

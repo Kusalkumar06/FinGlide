@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSelector,useDispatch } from "react-redux";
-import axios from "axios";
+import api from "../api/axios";
 import slice from "../redux/slices";
 
 const actions = slice.actions
@@ -13,10 +13,10 @@ export const FetchAppData = () => {
   const fetchAllDetails = async() => {
     try{
       const [accountResponse,categoryResponse,transactionResponse,budgetResponse] = await Promise.all([
-          axios.get("https://finglide.onrender.com/account/getAccounts/",{withCredentials:true}),
-          axios.get("https://finglide.onrender.com/category/getCategories/",{withCredentials:true}),
-          axios.get("https://finglide.onrender.com/transaction/getTransactions/",{withCredentials:true}),
-          axios.get("https://finglide.onrender.com/budget/getBudgets/",{withCredentials:true})
+          api.get("/account/getAccounts/",{withCredentials:true}),
+          api.get("/category/getCategories/",{withCredentials:true}),
+          api.get("/transaction/getTransactions/",{withCredentials:true}),
+          api.get("/budget/getBudgets/",{withCredentials:true})
       ])
       dispatch(actions.setAccountList(accountResponse.data.accounts))
       dispatch(actions.setCategoryList(categoryResponse.data.Categories))
@@ -31,9 +31,9 @@ export const FetchAppData = () => {
   const fetchAllReportsDetails = async() => {
     try{
       const [pieDataResponse,lineDataResponse,expVsIncResponse] = await Promise.all([
-        axios.get("https://finglide.onrender.com/category/getPieData/",{withCredentials:true}),
-        axios.get("https://finglide.onrender.com/transaction/yearlySummary/",{withCredentials:true}),
-        axios.get("https://finglide.onrender.com/transaction/expVsincYearly/",{withCredentials:true}),
+        api.get("/category/getPieData/",{withCredentials:true}),
+        api.get("/transaction/yearlySummary/",{withCredentials:true}),
+        api.get("/transaction/expVsincYearly/",{withCredentials:true}),
       ])
       dispatch(actions.setPieData(pieDataResponse.data.transactionData))
       dispatch(actions.setLineData(lineDataResponse.data.summary))

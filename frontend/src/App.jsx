@@ -3,7 +3,7 @@ import { Routes,Route } from 'react-router-dom'
 import Signin from './components/Signin'
 import Signup from './components/Signup'
 import DashBoard from './components/DashBoard'
-import SideBar from './components/SideBar'
+import Layout from './components/Layout'
 import Categories from './components/Categories'
 import Accounts from './components/Accounts'
 import Transactions from './components/Transactions'
@@ -18,7 +18,7 @@ function App() {
   return (
     <div>
       <Routes>
-        <Route path='/' element={<ProtectedRoute><SideBar/></ProtectedRoute>}>
+        <Route path='/' element={<ProtectedRoute><Layout/></ProtectedRoute>}>
           <Route index element={<DashBoard/>}></Route>
           <Route path='/categories/' element={<Categories/>}></Route>
           <Route path='/accounts' element={<Accounts/>}></Route>

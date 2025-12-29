@@ -2,7 +2,7 @@ import React from 'react'
 import { MdOutlineDelete,MdOutlineEdit } from "react-icons/md";
 import { useSelector,useDispatch } from 'react-redux'
 import slice from '../redux/slices'
-import axios from "axios"
+import api from '../api/axios';
 import { CategoryModal } from './AddModals';
 import { categoryIcons } from './Utilities';
 import { EditCategoryModal } from './EditModals';
@@ -29,10 +29,10 @@ function Categories() {
   const exButton = 'text-[#9F0712] text-[11px] bg-[#FFE2E2] py-[1px] px-2 rounded'
 
   const deleteCategory = async(id) => {
-    const url = `https://finglide.onrender.com/category/delete/${id}`
+    const url = `/category/delete/${id}`
     console.log(url)
-    await axios.delete(url,{withCredentials:true})
-    const categories = await axios.get(`https://finglide.onrender.com/category/getCategories/`,{withCredentials:true})
+    await api.delete(url,{withCredentials:true})
+    const categories = await api.get(`/category/getCategories/`,{withCredentials:true})
 
     dispatch(actions.setCategoryList(categories.data.Categories))
   }
@@ -44,18 +44,18 @@ function Categories() {
     <div>
       {isCategoryModalOpen && <CategoryModal/>}
       
-      <div className='flex items-center justify-between mb-5'>
+      <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5'>
         <div>
-          <h1 className='text-[#3A3A3A] text-[28px] font-[500]'>Categories</h1>
+          <h1 className='text-[#3A3A3A] text-2xl sm:text-[28px] font-[500]'>Categories</h1>
           <p className='text-[14px] text-[#3B3F40]'>Organize your income and expense categories.</p>
         </div>
         <div>
-          <button onClick={() => dispatch(actions.setIsCategoryModalOpen())} className='bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer'>+ Add Category</button>
+          <button onClick={() => dispatch(actions.setIsCategoryModalOpen())} className='bg-[#D96D38] text-white text-base sm:text-[18px] p-2 rounded px-5 cursor-pointer hover:bg-[#e05a38] transition-colors whitespace-nowrap'>+ Add Category</button>
         </div>
       </div>
 
-      <div className='flex gap-4 my-5'>
-        <div className='w-[50%] p-4 bg-[#FFFAF4] rounded-lg border-2 border-[#DDDFDE] shadow'>
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4 my-5'>
+        <div className='p-4 bg-[#FFFAF4] rounded-lg border-2 border-[#DDDFDE] shadow'>
           <div className='mb-5'>
             <h1 className='text-[20px] text-green-500 font-[500]'>Income Categories</h1>
             <p className='text-[#3A3A3A] text-[14px]'>Categories for tracking your income sources</p>
@@ -65,7 +65,7 @@ function Categories() {
             <p className='text-[#3A3A3A] text-[14px]'>Active Categories</p>
           </div>
         </div>
-        <div className='w-[50%] p-4 bg-[#FFFAF4] rounded-lg border-2 border-[#DDDFDE] shadow'>
+        <div className='p-4 bg-[#FFFAF4] rounded-lg border-2 border-[#DDDFDE] shadow'>
           <div className='mb-5'>
             <h1 className='text-[20px] text-red-600 font-[500]'>Expense Categories</h1>
             <p className='text-[#3A3A3A] text-[14px]'>Categories for tracking your expenses</p>
@@ -78,19 +78,19 @@ function Categories() {
       </div>
 
       <div className='flex justify-center my-5'>
-        <div className='flex justify-between w-[800px] bg-[#FFFAF4] px-3 py-2 rounded-lg'>
-          <button className={`${activeCategoryTab == "Expense" ? "bg-white shadow" : ""} py-1 px-3 w-[45%] rounded`} onClick={() => dispatch(actions.toggleCategoryTab(categoriesTabs.expense))}>Expense Categories</button>
-          <button className={`${activeCategoryTab == "Income" ? "bg-white shadow" : ""} py-1 px-3 w-[45%] rounded`} onClick={() => dispatch(actions.toggleCategoryTab(categoriesTabs.income))}>Income Categories</button>
+        <div className='flex justify-between w-full max-w-3xl bg-[#FFFAF4] px-3 py-2 rounded-lg gap-2'>
+          <button className={`${activeCategoryTab == "Expense" ? "bg-white shadow" : ""} py-2 px-3 flex-1 rounded transition-all`} onClick={() => dispatch(actions.toggleCategoryTab(categoriesTabs.expense))}>Expense Categories</button>
+          <button className={`${activeCategoryTab == "Income" ? "bg-white shadow" : ""} py-2 px-3 flex-1 rounded transition-all`} onClick={() => dispatch(actions.toggleCategoryTab(categoriesTabs.income))}>Income Categories</button>
         </div>
       </div>
 
-      <div className='flex flex-wrap gap-4 justify-between'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
         {
           category_list.map((category,index) => {
 
             const IconComponent = categoryIcons.find((eachIcon) => eachIcon.id === category.icon)
             return (
-              <div key={index} className='bg-[#FFFAF4] w-[380px] p-5 border-2 border-[#DDDFDE] rounded-lg group shadow'>
+              <div key={index} className='bg-[#FFFAF4] p-5 border-2 border-[#DDDFDE] rounded-lg group shadow'>
                 <div className='mb-5 flex justify-between items-center'>
                   <div className='flex gap-4 items-center'>
                     <div className='w-12 h-12 rounded-full mx-2 flex items-center justify-center' style={{backgroundColor: IconComponent.color}}>

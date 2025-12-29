@@ -3,8 +3,7 @@ import { useSelector,useDispatch } from 'react-redux'
 import slice from '../redux/slices'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
-
+import api from '../api/axios'
 const actions = slice.actions
 
 function Signup() {
@@ -38,8 +37,8 @@ function Signup() {
         password : registerPassword,
         email :registerEmail,
     }
-    const url = "https://finglide.onrender.com/auth/register";
-    const data = await axios.post(url,details)
+    const url = "/auth/register";
+    const data = await api.post(url,details)
     dispatch(actions.registername(""))
     dispatch(actions.registeremail(''))
     dispatch(actions.registerpassword(''))

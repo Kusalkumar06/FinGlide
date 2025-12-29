@@ -34,27 +34,26 @@ function DashBoard() {
   return (
     <div>
       {isTransactionModalOpen && <TransactionModal/>}
-      <div className='flex items-center justify-between mb-5'>
+      <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5'>
         <div>
-          <h1 className='text-[#3A3A3A] text-[28px] font-[500]'>Dashboard</h1>
+          <h1 className='text-[#3A3A3A] text-2xl sm:text-[28px] font-[500]'>Dashboard</h1>
           <p className='text-[14px] text-[#3B3F40]'>Welcome back! Here's your financial overview.</p>
         </div>
         <div>
-          <button onClick={()=>dispatch(actions.setIsTransactionModalOpen())} className='bg-[#D96D38] text-white text-[18px] p-1 rounded px-5 cursor-pointer'>+ Add Transaction</button>
+          <button onClick={()=>dispatch(actions.setIsTransactionModalOpen())} className='bg-[#D96D38] text-white text-base sm:text-[18px] p-2 rounded px-5 cursor-pointer hover:bg-[#e05a38] transition-colors whitespace-nowrap'>+ Add Transaction</button>
         </div>
       </div>
-      <div className='flex justify-between mb-3'>
-        <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3'>
+        <div className='flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
           <div className='flex justify-between items-center'>
             <p>Total Balance</p>
             <IoWalletOutline size={20} color='#505050' />
           </div>
           <div>
             <h1 className='text-[25px] font-[600]'>₹{income-expenses}</h1>
-            {/* <p className='flex items-center text-[12px]'><FaArrowTrendUp color='green' />+12.5% from last month</p> */}
           </div>
         </div>
-        <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
+        <div className='flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
           <div className='flex justify-between items-center'>
             <p>Total Income</p>
             <p className='text-green-700'>↑</p>
@@ -64,7 +63,7 @@ function DashBoard() {
             <p className='flex items-center text-[12px]'>This month</p>
           </div>
         </div>
-        <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
+        <div className='flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
           <div className='flex justify-between items-center'>
             <p>Total Expenses</p>
             <p className='text-red-600'>↓</p>
@@ -74,7 +73,7 @@ function DashBoard() {
             <p className='flex items-center text-[12px]'>This month</p>
           </div>
         </div>
-        <div className='w-[275px] flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
+        <div className='flex flex-col gap-6 py-6 bg-[#FFFAF4] p-3 shadow border-1 border-[#DDDFDE] rounded-lg'>
           <div className='flex justify-between items-center'>
             <p>Net Income</p>
             <FaArrowTrendUp/>
@@ -86,16 +85,16 @@ function DashBoard() {
         </div>
       </div>
 
-      <div className='flex items-stretch gap-4 my-3'>
-        <div className="flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl flex flex-col border-2 border-[#DDDFDE] ">
+      <div className='flex flex-col lg:flex-row items-stretch gap-4 my-3'>
+        <div className="lg:basis-[38%] flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl flex flex-col border-2 border-[#DDDFDE]">
           <PieChartCategory/>
         </div>
-        <div className="flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl flex flex-col border-2 border-[#DDDFDE]">
+        <div className="lg:basis-[62%] flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl flex flex-col border-2 border-[#DDDFDE]">
           <BarChartInVsEx />
         </div>
       </div>
 
-      <div className='flex items-stretch gap-4'>
+      <div className='flex flex-col lg:flex-row items-stretch gap-4'>
         <div className='flex-1 bg-[#FFFAF4] shadow-lg rounded-2xl border-2 border-[#DDDFDE] p-4 flex flex-col'>
           <div>
             <h1 className="text-lg font-semibold text-gray-700">Account Overview</h1>
@@ -144,35 +143,35 @@ function DashBoard() {
               if (each.transactionType === "Income" || each.transactionType === "Expense")
                  IconComponent = categoryIcons.find((eachIcon) => eachIcon.id === each.categoryId.icon)
               return (
-                <div key={index} className='border-2 border-[#DDDFDE] bg-white rounded p-3 flex gap-4 items-center'>
-                  <div className='w-12 h-12 rounded-full mx-2 flex items-center justify-center' style={{backgroundColor: IconComponent.color}}>
+                <div key={index} className='border-2 border-[#DDDFDE] bg-white rounded p-3 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center'>
+                  <div className='w-12 h-12 rounded-full flex items-center justify-center shrink-0' style={{backgroundColor: IconComponent.color}}>
                     <IconComponent.icon color='white'/>
                   </div>
-                  <div className='flex items-center justify-between flex-1'>
-                    <div>
-                      <div className='flex gap-4 items-center'>
-                        <h1 className='text-[#3A3A3A] text-[18px] font-[500]'>{each.description}</h1>
+                  <div className='flex flex-col sm:flex-row sm:items-center justify-between flex-1 gap-2 min-w-0'>
+                    <div className='min-w-0'>
+                      <div className='flex flex-wrap gap-2 sm:gap-4 items-center mb-1'>
+                        <h1 className='text-[#3A3A3A] text-base sm:text-[18px] font-[500] break-words'>{each.description}</h1>
                         <p className={button}>{each.transactionType}</p>
                       </div>
-                      <div>
+                      <div className='min-w-0'>
                         { (each.transactionType === "Income" || each.transactionType === "Expense") ? 
-                          <ul className='flex gap-5'>
-                            <p className='text-[#494847] text-[12px]'>{each.categoryId.name}</p>
-                            <li className='text-[#494847] text-[12px] list-disc'>{each.accountId.name}</li>
-                            <li className='text-[#494847] text-[12px] list-disc'>{new Date(each.date).toDateString()}</li>
+                          <ul className='flex flex-wrap gap-2 sm:gap-5 text-[12px]'>
+                            <p className='text-[#494847]'>{each.categoryId.name}</p>
+                            <li className='text-[#494847] list-disc'>{each.accountId.name}</li>
+                            <li className='text-[#494847] list-disc'>{new Date(each.date).toDateString()}</li>
                           </ul>
-                          : <ul className='flex gap-5'>
-                              <p className='text-[#494847] text-[12px]'>From: {each.fromAccountId.name}</p>
-                              <p className='text-[#494847] text-[12px]'>To: {each.toAccountId.name}</p>
-                              <li className='text-[#494847] text-[12px] list-disc'>{new Date(each.date).toDateString()}</li>
+                          : <ul className='flex flex-wrap gap-2 sm:gap-5 text-[12px]'>
+                              <p className='text-[#494847]'>From: {each.fromAccountId.name}</p>
+                              <p className='text-[#494847]'>To: {each.toAccountId.name}</p>
+                              <li className='text-[#494847] list-disc'>{new Date(each.date).toDateString()}</li>
                             </ul>
                         }
-                        <p className='text-[#494847] text-[15px]'>{each.notes}</p>
+                        <p className='text-[#494847] text-sm sm:text-[15px] break-words'>{each.notes}</p>
                       </div>  
                     </div>
                     {each.transactionType === "Expense" ? 
-                      <p className={`text-[22px] font-[500] text-red-600`}><span>- </span>₹{each.amount}</p> 
-                      : <p className={`text-[22px] font-[500] ${each.transactionType==="Transfer" ? 'text-blue-600':'text-green-500'}`}>₹{each.amount}</p>
+                      <p className={`text-lg sm:text-[22px] font-[500] text-red-600 shrink-0 whitespace-nowrap`}><span>- </span>₹{each.amount}</p> 
+                      : <p className={`text-lg sm:text-[22px] font-[500] ${each.transactionType==="Transfer" ? 'text-blue-600':'text-green-500'} shrink-0 whitespace-nowrap`}>₹{each.amount}</p>
                     }
                   </div>
                 </div>

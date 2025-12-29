@@ -2,7 +2,7 @@ import {  BarChart,  Bar,  XAxis,  YAxis,  Tooltip,  Legend,  ResponsiveContaine
 import { PieChart, Pie, Cell, } from "recharts"; 
 import {AreaChart,Area} from "recharts";
 import {LineChart,Line} from "recharts";
-import axios from "axios";
+import api from "../api/axios";
 import { useSelector,useDispatch } from "react-redux";
 import { useEffect } from "react";
 import slice from "../redux/slices";
@@ -43,7 +43,7 @@ export  function PieChartCategory() {
 
   return (
     <div className="flex justify-around">
-      <div className="flex flex-col bg-[#FFFAF4] border-1 border-[#DDDFDE] shadow-lg rounded-2xl justify-center items-center rounded-2xl p-4 w-full max-w-md mr-3">
+      <div className="flex flex-col bg-[#FFFAF4] border-1 border-[#DDDFDE] shadow-lg justify-center items-center rounded-2xl p-4 w-full max-w-md mr-3">
         <div className="self-start">
           <h2 className="text-lg font-semibold text-gray-700">Expenses by Category</h2>
           <p className="text-[#8E5660]">Your spending breakdown for this month.</p>
@@ -72,7 +72,7 @@ export  function PieChartCategory() {
           <Legend verticalAlign="bottom" height={50} />
         </PieChart> : <EmptyView message={"No expenses to display yet."}/>}
       </div>
-      <div className="flex flex-col bg-[#FFFAF4] border-1 border-[#DDDFDE] shadow-lg rounded-2xl rounded-2xl p-4 w-full max-w-md mr-3">
+      <div className="flex flex-col bg-[#FFFAF4] border-1 border-[#DDDFDE] shadow-lg rounded-2xl p-4 w-full max-w-md mr-3">
         <div className="self-start">
           <h2 className="text-lg font-semibold text-gray-700">Top Spending Categories</h2>
           <p className="text-[#8E5660]">Your highest expense categories this period.</p>
@@ -174,8 +174,8 @@ export function BarChartSpVsBud(){
 
   const fetchSpendVsBudget = () => {
     const fn = async () => {
-      const url = `https://finglide.onrender.com/budget/spendVsBudget?month=${speVsbudMonth}&year=${speVsbudYear}`
-      const response = await axios.get(url,{withCredentials:true})
+      const url = `/budget/spendVsBudget?month=${speVsbudMonth}&year=${speVsbudYear}`
+      const response = await api.get(url,{withCredentials:true})
       // console.log(response.data.accounts)
       dispatch(actions.setspendVsBudget(response.data.data))
     }
@@ -368,8 +368,8 @@ export function BarChartInVsEx() {
 
 //   const fetchAreaData = () => {
 //     const fn = async () => {
-//       const url = `https://finglide.onrender.com/account/monthlySummary?year=2025`
-//       const response = await axios.get(url,{withCredentials:true})
+//       const url = `/account/monthlySummary?year=2025`
+//       const response = await api.get(url,{withCredentials:true})
 //       console.log(response.data.summary)
 //       dispatch(actions.setAreaData(response.data.summary))
 //     }
