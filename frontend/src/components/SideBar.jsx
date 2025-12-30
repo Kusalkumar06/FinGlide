@@ -20,7 +20,7 @@ function SideBar() {
   const dispatch = useDispatch()
 
   const handleLogout = async () => {
-    await api.post("/auth/login",{},{ withCredentials: true })
+    await api.post("/auth/logout",{},{ withCredentials: true })
     dispatch(actions.setIsUserLoggedIn(false))
     navigate('/login', { replace: true })
   }
