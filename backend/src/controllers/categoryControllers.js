@@ -6,7 +6,7 @@ export const createCategory = async(req,res) => {
   try{
     const {name, categoryType, icon, description} = req.body;
 
-    const exsisting_category = await CategoryModel.findOne({name})
+    const exsisting_category = await CategoryModel.findOne({name,userId:req.user.userId})
 
     if (exsisting_category){
         return res.status(400).json({
