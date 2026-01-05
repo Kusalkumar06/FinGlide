@@ -71,46 +71,98 @@ export const deleteCategory = async(req,res) => {
   }
 }
 
-export const getPieData = async(req,res) => {
-  try{
+// export const getPieData = async(req,res) => {
+//   try{
+//     const userId = new mongoose.Types.ObjectId(req.user.userId);
+//     const startDate = new Date();
+//     startDate.setDate(1);
+//     startDate.setHours(0, 0, 0, 0);
+
+//     const endDate = new Date();
+//     endDate.setMonth(endDate.getMonth() + 1);
+
+
+//     const transactions = await TransactionModel.aggregate([{
+//       $match: {
+//         userId: userId,
+//         transactionType: "Expense",
+//         date: { $gte: startDate, $lt: endDate },
+//       }},
+//       {
+//         $group:{_id: "$categoryId", total:{$sum: "$amount"}}
+//       }
+//     ])
+
+//     const results = await Promise.all(
+//       transactions.map(async(eachTransac) => {
+//         const category = await CategoryModel.findOne({userId,_id: eachTransac._id})
+//         return {
+//           name: category.name,
+//           total: eachTransac.total,
+//           color: category.color
+//         }
+//       })
+//     )
+
+//     res.status(200).json({
+//       transactionData : results
+//     })
+//   } catch(err){
+//     res.status(500).json({
+//       message: `Error during fetching the pieData ${err}`
+//     })
+//   }
+// }
+
+export const getPieData = async (req, res) => {
+  try {
     const userId = new mongoose.Types.ObjectId(req.user.userId);
-    const startDate = new Date();
-    startDate.setDate(1);
-    startDate.setHours(0, 0, 0, 0);
+    const { month = new Date().getMonth() + 1, year = new Date().getFullYear()} = req.query;
 
-    const endDate = new Date();
-    endDate.setMonth(endDate.getMonth() + 1);
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 1);
 
-
-    const transactions = await TransactionModel.aggregate([{
-      $match: {
-        userId: userId,
-        transactionType: "Expense",
-        date: { $gte: startDate, $lt: endDate },
-      }},
+    const results = await TransactionModel.aggregate([
       {
-        $group:{_id: "$categoryId", total:{$sum: "$amount"}}
-      }
-    ])
-
-    const results = await Promise.all(
-      transactions.map(async(eachTransac) => {
-        const category = await CategoryModel.findOne({userId,_id: eachTransac._id})
-        return {
-          name: category.name,
-          total: eachTransac.total,
-          color: category.color
-        }
-      })
-    )
+        $match: {
+          userId,
+          transactionType: "Expense",
+          date: { $gte: startDate, $lt: endDate },
+        },
+      },
+      {
+        $group: {
+          _id: "$categoryId",
+          total: { $sum: "$amount" },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: "$category" },
+      {
+        $project: {
+          _id: 0,
+          name: "$category.name",
+          total: 1,
+          color: "$category.color",
+        },
+      },
+      { $sort: { total: -1 } },
+    ]);
 
     res.status(200).json({
-      transactionData : results
-    })
-  } catch(err){
+      transactionData: results,
+    });
+  } catch (err) {
+    console.error("Pie data error:", err);
     res.status(500).json({
-      message: `Error during fetching the pieData ${err}`
-    })
+      message: "Error during fetching the pie data",
+    });
   }
-}
-
+};
