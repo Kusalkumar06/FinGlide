@@ -1,60 +1,55 @@
-import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import Loader from "./Loader";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import api from "../api/axios";
+import Loader from "./Loader";
+import { fetchCoreData,fetchReportsData } from "../redux/coreThunks";
 
 export function ProtectedRoute({ children }) {
   const [authenticated, setAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const url = "/auth/check";
-        await api.get(url, { withCredentials: true });
-
+        await api.get("/auth/check", { withCredentials: true });
         setAuthenticated(true);
-      } catch (err) {
-        console.error("Auth check failed:", err);
+      } catch {
         setAuthenticated(false);
       } finally {
-        setLoading(false);
+        setCheckingAuth(false);
       }
     };
 
     checkAuth();
   }, []);
 
-  if (loading) {
-   return <Loader/>
+  useEffect(() => {
+    if (authenticated) {
+      dispatch(fetchCoreData());
+      dispatch(fetchReportsData())
+    }
+  }, [authenticated, dispatch]);
+
+  if (checkingAuth) {
+    return <Loader />;
   }
 
   return authenticated ? children : <Navigate to="/login" replace />;
 }
 
+
+
 export function PublicRoute({ children }) {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const isUserLoggedIn = useSelector(
+    (state) => state.core.isUserLoggedIn
+  );
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const url = "/auth/check";
-        await api.get(url, { withCredentials: true });
-        setAuthenticated(true);
-      } catch (err){
-        setAuthenticated(false);
-        console.error(err)
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkAuth();
-  }, []);
-
-  if (loading) return <Loader />;
-
-  return authenticated ? <Navigate to="/" replace /> : children;
+  return isUserLoggedIn
+    ? <Navigate to="/" replace />
+    : children;
 }
 
 

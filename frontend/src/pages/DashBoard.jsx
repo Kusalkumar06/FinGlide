@@ -1,21 +1,22 @@
-import React from 'react'
+import React, {  useState } from 'react'
 import {IoWalletOutline } from "react-icons/io5";
 import { FaArrowTrendUp } from "react-icons/fa6";
-import PieChartCategory from "./PieChartCategory"
-import  BarChartInVsEx  from './BarChartInVsEx';
-import { useSelector,useDispatch } from 'react-redux';
-import { categoryIcons,accountIcons } from './Utilities';
+import PieChartCategory from "../components/PieChartCategory"
+import  BarChartInVsEx  from '../components/BarChartInVsEx';
+import { useSelector } from 'react-redux';
+import { categoryIcons,accountIcons } from '../components/utils/utilities';
 import {ArrowBigRight} from "lucide-react"
-import { TransactionModal } from './AddModals';
-import slice from '../redux/slices';
-import EmptyView from './EmptyView';
+import {AddTransactionModal}  from '../components/modals/add/AddTransactionModal';
+import EmptyView from '../components/EmptyView';
+import { selectAccounts, selectTransactions } from '../redux/selectors';
 
-const actions = slice.actions
+
 function DashBoard() {
-  const dispatch = useDispatch()
-  const {transactionList,accountList,isTransactionModalOpen} = useSelector((store) => {
-    return store.sliceState
-  })
+  const [isTransactionModalOpen,setIsTransactionModalOpen] = useState(false)
+
+  const transactionList = useSelector(selectTransactions)
+
+  const accountList = useSelector(selectAccounts)
 
   const accounts = accountList.filter((each) => each.balance > 0).slice(0,3)
 
@@ -33,14 +34,15 @@ function DashBoard() {
   });
   return (
     <div>
-      {isTransactionModalOpen && <TransactionModal/>}
+      {/* {isTransactionModalOpen && <TransactionModal />} */}
+        {isTransactionModalOpen && <AddTransactionModal onClose={() => setIsTransactionModalOpen(false)}/>}
       <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5'>
         <div>
           <h1 className='text-[#3A3A3A] text-2xl sm:text-[28px] font-[500]'>Dashboard</h1>
           <p className='text-[14px] text-[#3B3F40]'>Welcome back! Here's your financial overview.</p>
         </div>
         <div>
-          <button onClick={()=>dispatch(actions.setIsTransactionModalOpen())} className='bg-[#D96D38] text-white text-base sm:text-[18px] p-2 rounded px-5 cursor-pointer hover:bg-[#e05a38] transition-colors whitespace-nowrap'>+ Add Transaction</button>
+          <button onClick={()=>setIsTransactionModalOpen(true)} className='bg-[#D96D38] text-white text-base sm:text-[18px] p-2 rounded px-5 cursor-pointer hover:bg-[#e05a38] transition-colors whitespace-nowrap'>+ Add Transaction</button>
         </div>
       </div>
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3'>

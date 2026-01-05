@@ -1,51 +1,47 @@
 import React from 'react'
-import { useSelector,useDispatch } from 'react-redux'
-import slice from '../redux/slices'
+import { useState,useEffect } from 'react'
+import {useDispatch,useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import api from '../api/axios'
 import { useNavigate } from 'react-router-dom'
+import { loginUser } from '../redux/coreThunks'
 
-const actions = slice.actions 
 
 function Signin() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const [loginUsername,setUsername] = useState('')
+  const [loginPassword,setPassword] = useState('')
+
+  const  isUserLoggedIn  = useSelector((s) => s.core.isUserLoggedIn);
 
   const gradientStyle = {
     background: 'radial-gradient(circle, #FFFBF3, #da6e39)',
   };
 
-  const {loginUsername,loginPassword,loginErr} = useSelector((store) => {
-    return store.sliceState;
-  })
-
   const handleUsername = (event) => {
-    dispatch(actions.loginusername(event.target.value))
+    setUsername(event.target.value)
   }
 
   const handlePassword = (event) => {
-    dispatch(actions.loginpassword(event.target.value))
+    setPassword(event.target.value)
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const details = {
-      username:loginUsername,
-      password:loginPassword,
-    }
-    try{
-      const url = '/auth/login'
-      await api.post(url,details,{withCredentials:true})
-      dispatch(actions.setIsUserLoggedIn(true))
-      dispatch(actions.loginusername(""))
-      dispatch(actions.loginpassword(''))
-      navigate('/',{replace:true})
-      
-    }catch(err){
-      dispatch(actions.setLoginErr(err.response.data.message))
-      console.error(`Error during the login: ${err.response.data.message}`)
-    }
+    dispatch(
+      loginUser({
+        username: loginUsername,
+        password: loginPassword,
+      })
+    );
   }
+
+
+  useEffect(() => {
+    if (isUserLoggedIn) {
+      navigate("/", { replace: true });
+    }
+  }, [isUserLoggedIn, navigate]);
 
 
   return (
@@ -72,7 +68,6 @@ function Signin() {
           <div className='flex flex-col justify-center'>
             <button className='p-1 rounded bg-[#D86D38] text-[#FFFBF3] font-[600] cursor-pointer'>Sign in</button>
           </div>
-          {loginErr && <p className='text-red-400 my-2'>*{loginErr}</p>}
         </form>
         <div>
           <p className='text-[#414141] text-[17px]'>Don't have an account? <Link to="/register/" className='text-blue-500'>Sign up</Link></p>

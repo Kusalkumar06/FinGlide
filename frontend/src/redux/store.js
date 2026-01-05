@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import slice from "./slices";
+import coreReducer from "./coreSlice";
 
 const store = configureStore({
     reducer : {
-        sliceState: slice.reducer
+        core: coreReducer,
+        sliceState: coreReducer, 
     }
 })
 

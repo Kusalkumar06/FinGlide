@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { MdOutlineDelete,MdOutlineEdit } from "react-icons/md";
 import { useSelector,useDispatch } from 'react-redux'
-import slice from '../redux/slices'
-import api from '../api/axios';
-import { CategoryModal } from './AddModals';
-import { categoryIcons } from './Utilities';
-import { EditCategoryModal } from './EditModals';
+import { deleteCategoryThunk } from '../redux/coreThunks';
+import { AddCategoryModal } from '../components/modals/add/AddCategoryModal';
+import { categoryIcons } from '../components/utils/utilities';
+import { EditCategoryModal } from '../components/modals/edit/EditCategoryModal';
+import { selectCategories } from '../redux/selectors';
 
 
 const categoriesTabs = {
@@ -13,14 +13,13 @@ const categoriesTabs = {
   expense: "Expense",
 }
 
-const actions = slice.actions
-
 function Categories() {
   const dispatch = useDispatch()
-  const {activeCategoryTab,categoryList,isCategoryModalOpen,editCategory} = useSelector((store) => (
-    store.sliceState
-  ))
-  console.log(categoryList)
+  const categoryList = useSelector(selectCategories)
+  const [isAddCategoryOpen,setIsAddCategoryOpen] = useState(false)
+  const [activeCategoryTab,setActiveCategoryTab] = useState(categoriesTabs.expense)
+  const [editCategory,setEditCategory] = useState(null)
+  console.log(editCategory)
 
   const category_list = (categoryList || []).filter((eachCate) => eachCate.categoryType === activeCategoryTab)
 
@@ -28,21 +27,19 @@ function Categories() {
 
   const exButton = 'text-[#9F0712] text-[11px] bg-[#FFE2E2] py-[1px] px-2 rounded'
 
-  const deleteCategory = async(id) => {
-    const url = `/category/delete/${id}`
-    console.log(url)
-    await api.delete(url,{withCredentials:true})
-    const categories = await api.get(`/category/getCategories/`,{withCredentials:true})
-
-    dispatch(actions.setCategoryList(categories.data.Categories))
+  const deleteCategory = (id) => {
+    dispatch(deleteCategoryThunk(id));
   }
 
   const incomeCategories = categoryList.filter((each) => "Income" === each.categoryType).length
   const expenseCategories = categoryList.filter((each) => "Expense" === each.categoryType).length
 
+
   return (
     <div>
-      {isCategoryModalOpen && <CategoryModal/>}
+      {/* {isCategoryModalOpen && <CategoryModal/>} */}
+      {isAddCategoryOpen && <AddCategoryModal onClose={() => setIsAddCategoryOpen(false)}/>}
+      {editCategory && <EditCategoryModal category={editCategory} onClose={() => setEditCategory(null)}/>}
       
       <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5'>
         <div>
@@ -50,7 +47,7 @@ function Categories() {
           <p className='text-[14px] text-[#3B3F40]'>Organize your income and expense categories.</p>
         </div>
         <div>
-          <button onClick={() => dispatch(actions.setIsCategoryModalOpen())} className='bg-[#D96D38] text-white text-base sm:text-[18px] p-2 rounded px-5 cursor-pointer hover:bg-[#e05a38] transition-colors whitespace-nowrap'>+ Add Category</button>
+          <button onClick={() => setIsAddCategoryOpen(true)} className='bg-[#D96D38] text-white text-base sm:text-[18px] p-2 rounded px-5 cursor-pointer hover:bg-[#e05a38] transition-colors whitespace-nowrap'>+ Add Category</button>
         </div>
       </div>
 
@@ -79,8 +76,8 @@ function Categories() {
 
       <div className='flex justify-center my-5'>
         <div className='flex justify-between w-full max-w-3xl bg-[#FFFAF4] px-3 py-2 rounded-lg gap-2'>
-          <button className={`${activeCategoryTab == "Expense" ? "bg-white shadow" : ""} py-2 px-3 flex-1 rounded transition-all`} onClick={() => dispatch(actions.toggleCategoryTab(categoriesTabs.expense))}>Expense Categories</button>
-          <button className={`${activeCategoryTab == "Income" ? "bg-white shadow" : ""} py-2 px-3 flex-1 rounded transition-all`} onClick={() => dispatch(actions.toggleCategoryTab(categoriesTabs.income))}>Income Categories</button>
+          <button className={`${activeCategoryTab == "Expense" ? "bg-white shadow" : ""} py-2 px-3 flex-1 rounded transition-all`} onClick={() => setActiveCategoryTab(categoriesTabs.expense)}>Expense Categories</button>
+          <button className={`${activeCategoryTab == "Income" ? "bg-white shadow" : ""} py-2 px-3 flex-1 rounded transition-all`} onClick={() => setActiveCategoryTab(categoriesTabs.income)}>Income Categories</button>
         </div>
       </div>
 
@@ -102,7 +99,7 @@ function Categories() {
                     </div>
                   </div>
                   <div className='opacity-0 group-hover:opacity-100 flex gap-4'>
-                    <button onClick={() => dispatch(actions.setEditCategory(category))} className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'>
+                    <button onClick={() => setEditCategory(category)} className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'>
                       <MdOutlineEdit size={15}/>
                     </button>
                     <button onClick={() => deleteCategory(category._id)} className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'> 
@@ -116,7 +113,7 @@ function Categories() {
         }
       </div>
 
-      {editCategory && <EditCategoryModal category={editCategory}/>}
+      {/* {editCategory && <EditCategoryModal category={editCategory}/>} */}
 
     </div>
   )

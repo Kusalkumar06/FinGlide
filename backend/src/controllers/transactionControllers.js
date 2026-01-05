@@ -4,11 +4,12 @@ import {AccountModel} from '../models/accountModel.js'
 export const createTransaction = async(req,res) => {
   try{
     const {transactionType, description,categoryId,accountId,fromAccountId,toAccountId,amount,notes} = req.body
-    
+    const userId = req.user.userId;
     const newTransaction = await TransactionModel.create({
-      userId :req.user.userId,
+      userId :userId,
       transactionType,description ,categoryId,accountId,fromAccountId,toAccountId,amount,notes
     })
+
 
     if(transactionType === "Income"){
       await AccountModel.findOneAndUpdate({_id:accountId,userId:req.user.userId},{$inc:{ balance : amount }})
@@ -19,16 +20,21 @@ export const createTransaction = async(req,res) => {
       await AccountModel.findOneAndUpdate({_id:toAccountId,userId:req.user.userId},{$inc:{balance:amount}})
     }
 
+    const transactions = await TransactionModel.find({ userId }).populate("accountId fromAccountId toAccountId categoryId").sort({date: -1})
+    const accounts = await AccountModel.find({ userId })
+
     res.status(201).json({
-      message: `new Transaction created and updated balance.`
+      message: "Transaction created successfully",
+      transactions, 
+      accounts,     
     })
   } catch(err){
     res.status(500).json({
-      message: `Error during creating the Transaction ${err}`
+      message: "Error during creating the transaction",
+      error: err.message,
     })
   }
 }
-
 
 export const getTransactions = async(req,res) => {
   try{
@@ -91,7 +97,9 @@ export const deleteTransaction = async(req,res) => {
   try{
     const {id} = req.params;
 
-    const oldTran = await TransactionModel.findOneAndDelete({_id:id, userId: req.user.userId})
+    const userId = req.user.userId;
+
+    const oldTran = await TransactionModel.findOneAndDelete({_id:id, userId: userId})
 
     if(!oldTran){
       return res.status(404).json({
@@ -108,12 +116,20 @@ export const deleteTransaction = async(req,res) => {
       await AccountModel.findOneAndUpdate({_id: oldTran.toAccountId , userId:req.user.userId},{$inc : {balance: -oldTran.amount}})
     }
 
+    const transactions = await TransactionModel.find({ userId }).populate("accountId fromAccountId toAccountId categoryId").sort({date: -1})
+
+    const accounts = await AccountModel.find({ userId });
+
+
     res.status(200).json({
-      message: `Transaction deleted successfully.`
+      message: `Transaction deleted successfully.`,
+      transactions,
+      accounts,
     })
   } catch(err){
     res.status(500).json({
-      message: `Error during deleting the transaction ${err}.`
+      message: "Error during deleting the transaction",
+      error: err.message,
     })
   }
 }

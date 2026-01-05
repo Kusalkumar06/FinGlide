@@ -1,34 +1,31 @@
 import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import {
-  IoHomeOutline,
-  IoWalletOutline,
-  IoLogOutOutline,
-  IoTrashOutline
-} from "react-icons/io5"
+import { IoHomeOutline,IoWalletOutline,IoLogOutOutline,IoTrashOutline} from "react-icons/io5"
 import { LuTags, LuChartPie } from "react-icons/lu"
 import { LiaCreditCardSolid } from "react-icons/lia"
 import { TbReportSearch } from "react-icons/tb"
-import api from '../api/axios'
 import { useDispatch } from 'react-redux'
-import slice from '../redux/slices'
-
-const actions = slice.actions
+import { logoutUserThunk, deleteUserThunk } from '../redux/coreThunks'
 
 function SideBar() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const handleLogout = async () => {
-    await api.post("/auth/logout",{},{ withCredentials: true })
-    dispatch(actions.setIsUserLoggedIn(false))
-    navigate('/login', { replace: true })
+    const success = await dispatch(logoutUserThunk());
+    if (success) {
+      navigate("/login", { replace: true });
+    }
   }
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete your account?")) return
-    await api.delete("/auth/deleteuser",{ withCredentials: true })
-    navigate("/register", { replace: true })
+    if (!window.confirm("Are you sure you want to delete your account?"))
+      return;
+
+    const success = await dispatch(deleteUserThunk());
+    if (success) {
+      navigate("/register", { replace: true });
+    }
   }
 
   return (
@@ -84,7 +81,7 @@ function SideBar() {
           <div className="py-3 space-y-2 px-3">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-2 px-2 py-2 bg-[#F96C4A] text-white rounded"
+              className="w-full flex items-center gap-2 px-2 py-2 bg-[#F96C4A] text-white rounded cursor-pointer"
             >
               <IoLogOutOutline size={20} />
               <span className="hidden group-hover:inline xl:inline whitespace-nowrap">
@@ -94,7 +91,7 @@ function SideBar() {
 
             <button
               onClick={handleDelete}
-              className="w-full flex items-center gap-2 px-2 py-2 bg-[#F96C4A] text-white rounded"
+              className="w-full flex items-center gap-2 px-2 py-2 bg-[#F96C4A] text-white rounded cursor-pointer"
             >
               <IoTrashOutline size={20} />
               <span className="hidden group-hover:inline xl:inline whitespace-nowrap">

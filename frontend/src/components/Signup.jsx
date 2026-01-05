@@ -1,50 +1,58 @@
-import React from 'react'
-import { useSelector,useDispatch } from 'react-redux'
-import slice from '../redux/slices'
+import React,{useState} from 'react'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-import api from '../api/axios'
-const actions = slice.actions
+import { registerUser } from '../redux/coreThunks'
+import { useDispatch } from 'react-redux'
 
 function Signup() {
-  const dispatch = useDispatch()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+
 
   const gradientStyle = {
     background: 'radial-gradient(circle, #FFFBF3, #da6e39)',
   };
 
-  const {registerName,registerPassword,registerEmail,registerErr} = useSelector((store) => {
-    return store.sliceState;
-  })
+
+  const [registerName,setRegisterName] = useState('')
+  const [registerEmail,setRegisterEmail] = useState('')
+  const [registerPassword,setRegisterPassword] = useState('')
+  const [registerErr,setRegisterErr] = useState(false)
+
 
   const handleUsername = (event) => {
-    dispatch(actions.registername(event.target.value))
+    setRegisterName(event.target.value)
   }
 
   const handleEmail = (event) => {
-    dispatch(actions.registeremail(event.target.value))
+    setRegisterEmail(event.target.value)
   }
 
   const handlePassword = (event) => {
-    dispatch(actions.registerpassword(event.target.value))
+    setRegisterPassword(event.target.value)
   }
 
-  const handleSubmit = async(event) => {
+    const handleSubmit = async (event) => {
     event.preventDefault();
-    const details = {
-        username : registerName,
-        password : registerPassword,
-        email :registerEmail,
+
+    const success = await dispatch(
+      registerUser({
+        username: registerName,
+        email: registerEmail,
+        password: registerPassword,
+      })
+    );
+
+    if (success) {
+      setRegisterName("");
+      setRegisterEmail("");
+      setRegisterPassword("");
+      setRegisterErr(false);
+      navigate("/login", { replace: true });
+    } else {
+      setRegisterErr(true);
     }
-    const url = "/auth/register";
-    const data = await api.post(url,details)
-    dispatch(actions.registername(""))
-    dispatch(actions.registeremail(''))
-    dispatch(actions.registerpassword(''))
-    if (!data.error ) 
-        navigate("/login",{replace:true});
-  }
+  };
 
 
   return (

@@ -1,28 +1,23 @@
-import React from 'react'
-import ProgressBar from './ProgressBar'
+import  { useState } from 'react'
+import ProgressBar from '../components/ProgressBar'
 import { MdOutlineDelete,MdOutlineEdit } from "react-icons/md";
 import { useSelector,useDispatch } from 'react-redux'
-import slice from '../redux/slices';
-import { BudgetModal } from './AddModals';
-import { categoryIcons } from './Utilities';
+import {AddBudgetModal} from "../components/modals/add/AddBudgetModal"
+import { categoryIcons } from '../components/utils/utilities';
 import {TriangleAlert,CircleCheckBig,CircleX} from 'lucide-react'
-import EmptyView from './EmptyView';
-import api from '../api/axios'
+import EmptyView from '../components/EmptyView';
+import { deleteBudgetThunk } from '../redux/coreThunks';
+import { selectBudgets } from '../redux/selectors';
 
-const actions = slice.actions
 function Budgets() {
   const dispatch = useDispatch();
-  const {isBudgetModalOpen,budgetList} = useSelector((store) => {
-    return store.sliceState
-  })
 
-  const deleteBudget = async(budgetId) => {
-    const url = `/budget/delete/${budgetId}`
-    console.log(url)
-    await api.delete(url,{withCredentials:true})
-    const updatedBudgets = await api.get(`/budget/getbudgets/`,{withCredentials:true})
+  const [isBudgetModalOpen,setIsBudgetModalOpen] = useState(false)
 
-    dispatch(actions.setBudgetList(updatedBudgets.data.Budgets))
+  const budgetList = useSelector(selectBudgets)
+
+  const deleteBudget = (budgetId) => {
+    dispatch(deleteBudgetThunk(budgetId));
   }
 
 
@@ -36,14 +31,14 @@ function Budgets() {
 
   return (
     <div>
-      {isBudgetModalOpen && <BudgetModal/>}
+      {isBudgetModalOpen && <AddBudgetModal onClose={() => setIsBudgetModalOpen(false)}/>}
       <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5'>
         <div>
           <h1 className='text-[#3A3A3A] text-2xl sm:text-[28px] font-[500]'>Budgets</h1>
           <p className='text-[14px] text-[#3B3F40]'>Set spending limits and track your progress.</p>
         </div>
         <div>
-          <button onClick={() => dispatch(actions.setIsBudgetModalOpen())} className='bg-[#D96D38] text-white text-base sm:text-[18px] p-2 rounded px-5 cursor-pointer hover:bg-[#e05a38] transition-colors whitespace-nowrap'>+ Add Budget</button>
+          <button onClick={() => setIsBudgetModalOpen(true)} className='bg-[#D96D38] text-white text-base sm:text-[18px] p-2 rounded px-5 cursor-pointer hover:bg-[#e05a38] transition-colors whitespace-nowrap'>+ Add Budget</button>
         </div>
       </div>
       {budgetList.length > 0 ? <div>

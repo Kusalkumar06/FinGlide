@@ -1,8 +1,8 @@
 import React from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { useSelector } from "react-redux";
-import EmptyView from "./EmptyView";
-import { selectExpVsInc } from "../redux/selectors";
+import EmptyView from "../../EmptyView";
+import { selectExpVsInc } from "../../../redux/selectors";
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
@@ -24,7 +24,7 @@ export default function BarChartInVsEx() {
   console.log(expVsInc)
 
   return (
-    <div className="bg-[#FFFAF4] rounded-2xl p-4 w-full h-full flex-1 min-w-0">
+    <div className="bg-[#FFFAF4] rounded-2xl p-4 w-full h-full flex-1 min-w-0 border-2 border-[#DDDFDE] shadow-lg">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-gray-700">
           Monthly Income vs Expenses

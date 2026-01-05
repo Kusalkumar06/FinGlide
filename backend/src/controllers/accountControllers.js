@@ -5,8 +5,8 @@ import mongoose from "mongoose";
 export const createAccount = async(req,res) => {
   try{
     const {name ,accountType, accountNumber, balance, institution,icon} = req.body;
-
-    const exsisting_account = await AccountModel.findOne({name})
+    const userId=req.user.userId
+    const exsisting_account = await AccountModel.findOne({name,userId})
 
     if (exsisting_account){
         return res.status(400).json({
@@ -14,17 +14,22 @@ export const createAccount = async(req,res) => {
         })
     } else {
         const newAccount = await AccountModel.create({
-        userId: req.user.userId,
-        name, accountType, balance,institution,accountNumber, icon
-      });
+          userId: req.user.userId,
+          name, accountType, balance,institution,accountNumber, icon
+        });
 
-      res.status(201).json({
-        new_account : newAccount,
-      })
+        const accounts = await AccountModel.find({ userId });
+      
+
+        res.status(201).json({
+          message: "Account created successfully",
+          accounts,
+        })
     }
   } catch(err){
     res.status(500).json({
-      message: `Error during creating the account ${err}`
+      message: "Error during creating the account",
+      error: err.message,
     })
   }
 }
@@ -46,13 +51,18 @@ export const getAccounts = async(req,res) => {
 export const updateAccount = async(req,res) => {
   try{
     const updatedAccount = await AccountModel.findOneAndUpdate({_id:req.params.id,userId:req.user.userId},req.body,{new:true});
+    const userId=req.user.userId
+    const accounts = await AccountModel.find({ userId });
+
 
     res.status(200).json({
-      updatedAccount : updatedAccount
+      message: "Account updated successfully",
+      accounts
     })
   } catch(err){
     res.status(500).json({
-      message: `Error during updating the account ${err}`
+      message: "Error during updating the account",
+      error: err.message,
     })
   }
 }
@@ -60,13 +70,23 @@ export const updateAccount = async(req,res) => {
 export const deleteAccount = async(req,res) => {
   try{
     const deletedAccount = await AccountModel.findOneAndDelete({_id:req.params.id, userId:req.user.userId})
+    const userId=req.user.userId
+    if (!deletedAccount) {
+      return res.status(404).json({
+        message: "Account not found",
+      });
+    }
+
+    const accounts = await AccountModel.find({ userId });
 
     res.status(200).json({
-      message : "Account deleted successfully."
+      message : "Account deleted successfully.",
+      accounts, 
     })
   } catch(err){
     res.status(500).json({
-      message: `Error during deleting the account ${err}`
+      message: `Error during deleting the account.`,
+      error: err.message,
     })
   }
 }

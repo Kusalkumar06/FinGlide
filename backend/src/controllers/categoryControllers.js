@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 export const createCategory = async(req,res) => {
   try{
     const {name, categoryType, icon, description} = req.body;
+    const userId=req.user.userId
 
     const exsisting_category = await CategoryModel.findOne({name,userId:req.user.userId})
 
@@ -14,17 +15,21 @@ export const createCategory = async(req,res) => {
         })
     } else {
         const newCategory = await CategoryModel.create({
-        userId: req.user.userId,
-        name, categoryType, icon, description
-      });
+          userId: req.user.userId,
+          name, categoryType, icon, description
+        });
 
-      res.status(201).json({
-        new_category : newCategory,
-      })
+        const categories = await CategoryModel.find({ userId });
+
+        res.status(201).json({
+          message: "Category created successfully",
+          categories,
+        })
     }
   } catch(err){
     res.status(500).json({
-      message: `Error during creating the category ${err}`
+      message: "Error during creating the category",
+      error: err.message,
     })
   }
 }
@@ -46,13 +51,18 @@ export const getCategories = async(req,res) => {
 export const updateCategory = async(req,res) => {
   try{
     const updatedCategory = await CategoryModel.findOneAndUpdate({_id:req.params.id,userId:req.user.userId},req.body,{new:true},{ runValidators: true });
+    const userId=req.user.userId
+
+    const categories = await CategoryModel.find({ userId });
 
     res.status(200).json({
-      updatedCategory : updatedCategory
+      message: "Category updated successfully",
+      categories, 
     })
   } catch(err){
     res.status(500).json({
-      message: `Error during updating the category ${err}`
+      message: "Error during updating the category",
+      error: err.message,
     })
   }
 }
@@ -60,59 +70,28 @@ export const updateCategory = async(req,res) => {
 export const deleteCategory = async(req,res) => {
   try{
     const deletedCategory = await CategoryModel.findOneAndDelete({_id:req.params.id, userId:req.user.userId})
+    const userId=req.user.userId
+    if (!deletedCategory) {
+      return res.status(404).json({
+        message: "Category not found to delete.",
+      });
+    }
+
+    const categories = await CategoryModel.find({ userId });
+
 
     res.status(200).json({
-      message : "Category deleted successfully."
+      message : "Category deleted successfully.",
+      categories
     })
   } catch(err){
     res.status(500).json({
-      message: `Error during deleting the Category ${err}`
+      message: "Error during deleting the category",
+      error: err.message,
     })
   }
 }
 
-// export const getPieData = async(req,res) => {
-//   try{
-//     const userId = new mongoose.Types.ObjectId(req.user.userId);
-//     const startDate = new Date();
-//     startDate.setDate(1);
-//     startDate.setHours(0, 0, 0, 0);
-
-//     const endDate = new Date();
-//     endDate.setMonth(endDate.getMonth() + 1);
-
-
-//     const transactions = await TransactionModel.aggregate([{
-//       $match: {
-//         userId: userId,
-//         transactionType: "Expense",
-//         date: { $gte: startDate, $lt: endDate },
-//       }},
-//       {
-//         $group:{_id: "$categoryId", total:{$sum: "$amount"}}
-//       }
-//     ])
-
-//     const results = await Promise.all(
-//       transactions.map(async(eachTransac) => {
-//         const category = await CategoryModel.findOne({userId,_id: eachTransac._id})
-//         return {
-//           name: category.name,
-//           total: eachTransac.total,
-//           color: category.color
-//         }
-//       })
-//     )
-
-//     res.status(200).json({
-//       transactionData : results
-//     })
-//   } catch(err){
-//     res.status(500).json({
-//       message: `Error during fetching the pieData ${err}`
-//     })
-//   }
-// }
 
 export const getPieData = async (req, res) => {
   try {

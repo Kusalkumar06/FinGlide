@@ -2,43 +2,22 @@ import { BudgetModel } from "../models/budgetModel.js";
 import { TransactionModel } from "../models/transactionModel.js";
 import mongoose from "mongoose";
 
-export const createBudget = async (req,res) => {
-    try {
-      const {categoryId, limit,period,icon,color} = req.body;
-
-      const budget = await BudgetModel.create({
-        userId: req.user.userId,
-        categoryId,limit,period,icon,color
-      })
-
-      res.status(201).json({
-        message: `Budget created successfully.`,
-        budget: budget,
-      })
-    } catch(err){
-      res.status(500).json({
-        message: `Error during creating the budget ${err}.`,
-      })
-    }
-}
-
-export const getBudgets = async(req,res) => {
-  try {
-    const budgets = await BudgetModel.find({userId:req.user.userId}).populate("categoryId");
+const buildBudgetsResponse = async(userId) => {
+  const budgets = await BudgetModel.find({userId}).populate("categoryId");
 
     const results = []
 
     for (const budget of budgets){
 
       const query = {
-        userId: new mongoose.Types.ObjectId(req.user.userId),
+        userId: new mongoose.Types.ObjectId(userId),
         categoryId: new mongoose.Types.ObjectId(budget.categoryId._id),
         transactionType: "Expense",
       };
 
       if (budget.period === "weekly"){
         const now = new Date();
-        const firstDayOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); // Sunday
+        const firstDayOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); 
         firstDayOfWeek.setHours(0, 0, 0, 0);
 
         const lastDayOfWeek = new Date(firstDayOfWeek);
@@ -47,7 +26,7 @@ export const getBudgets = async(req,res) => {
         query.date = { $gte: firstDayOfWeek, $lt: lastDayOfWeek };
       } else if (budget.period === "monthly") {
         const start = new Date();
-        start.setDate(1); // first day of current month
+        start.setDate(1); 
         start.setHours(0, 0, 0, 0);
 
         const end = new Date(start);
@@ -56,8 +35,8 @@ export const getBudgets = async(req,res) => {
         query.date = { $gte: start, $lt: end };
       }  else if (budget.period === "yearly") {
         const now = new Date();
-        start = new Date(now.getFullYear(), 0, 1);
-        end = new Date(now.getFullYear() + 1, 0, 1);
+        const start = new Date(now.getFullYear(), 0, 1);
+        const end = new Date(now.getFullYear() + 1, 0, 1);
         query.date = { $gte: start, $lt: end };
       }
 
@@ -82,6 +61,39 @@ export const getBudgets = async(req,res) => {
         period: budget.period,
       });
     }
+
+    return results;
+}
+
+
+export const createBudget = async (req,res) => {
+    try {
+      const {categoryId, limit,period,icon,color} = req.body;
+      const userId = req.user.userId
+      const budget = await BudgetModel.create({
+        userId: req.user.userId,
+        categoryId,limit,period,icon,color
+      })
+
+      const budgets = await buildBudgetsResponse(userId);
+
+      res.status(201).json({
+        message: `Budget created successfully.`,
+        budgets,
+      })
+    } catch(err){
+      res.status(500).json({
+        message: "Error during creating the budget",
+        error: err.message,
+      })
+    }
+}
+
+
+export const getBudgets = async(req,res) => {
+  try {
+    const userId = req.user.userId;
+    const results = await buildBudgetsResponse(userId);
 
     res.status(201).json({
       message: `Fetched all Budgets.`,
@@ -118,20 +130,23 @@ export const updateBudget = async(req,res) => {
 export const deleteBudget = async(req,res) => {
   try{
     const deleteBudget = await BudgetModel.findOneAndDelete({_id: req.params.id,userId: req.user.userId})
-
+    const userId=req.user.userId
     if(!deleteBudget){
       return res.status(401).json({
         message : "Budget Not found to Delete."
       })
     }
 
+    const budgets = await buildBudgetsResponse(userId);
+
     res.status(201).json({
       message: `Budget Deleted successfully.`,
-      deletedBudget: deleteBudget,
+      budgets,
     })
   } catch(err){
     res.status(500).json({
-      message: `Error during deleting the budget. ${err}`,
+      message: "Error during deleting the budget",
+      error: err.message,
     })
   }
 }

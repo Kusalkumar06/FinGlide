@@ -1,27 +1,22 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { MdOutlineDelete,MdOutlineEdit } from "react-icons/md";
-import api from '../api/axios';
 import { useSelector,useDispatch } from 'react-redux'
-import slice from '../redux/slices';
-import { AccountModal } from './AddModals';
-import { EditAccountModal } from './EditModals';
-import { accountIcons } from './Utilities';
-
-const actions = slice.actions
+import {AddAccountModal} from '../components/modals/add/AddAccountModal.jsx'
+import {EditAccountModal} from "../components/modals/edit/EditAccountModal.jsx"
+import { accountIcons } from '../components/utils/utilities.js';
+import { deleteAccountThunk } from '../redux/coreThunks.js';
+import { selectAccounts } from '../redux/selectors.js';
 
 function Accounts() {
   const dispatch = useDispatch();
-  const {accountList,isAccountModalOpen,editAccount} = useSelector((store) => {
-    return store.sliceState
-  })
 
-  const deleteAccount = async(id) => {
-    const url = `/account/delete/${id}`
-    await api.delete(url,{withCredentials:true})
+  const [isAddAccountModelOpen,setIsAccountModalOpen] = useState(false)
+  const [editAccount,setEditAccount] = useState(null)
 
-    const accounts = await api.get(`/account/getAccounts/`,{withCredentials:true})
+  const accountList = useSelector(selectAccounts)
 
-    dispatch(actions.setAccountList(accounts.data.accounts))
+  const deleteAccount = (id) => {
+    dispatch(deleteAccountThunk(id));
   }
 
   const reducer = (a,b) => a+b.balance 
@@ -30,14 +25,15 @@ function Accounts() {
 
   return (
     <div>
-      {isAccountModalOpen && <AccountModal/>}
+      {isAddAccountModelOpen && <AddAccountModal onClose={() => setIsAccountModalOpen(false)}/>}
+      {editAccount && <EditAccountModal editAccount={editAccount} onClose={() => setEditAccount(null)}/>}
       <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5'>
         <div>
           <h1 className='text-[#3A3A3A] text-2xl sm:text-[28px] font-[500]'>Accounts</h1>
           <p className='text-[14px] text-[#3B3F40]'>Manage your financial accounts and view balances.</p>
         </div>
         <div>
-          <button onClick={() => dispatch(actions.setIsAccountModalOpen())} className='bg-[#D96D38] text-white text-base sm:text-[18px] p-2 rounded px-5 cursor-pointer hover:bg-[#e05a38] transition-colors whitespace-nowrap'>+ Add Account</button>
+          <button onClick={() => setIsAccountModalOpen(true)} className='bg-[#D96D38] text-white text-base sm:text-[18px] p-2 rounded px-5 cursor-pointer hover:bg-[#e05a38] transition-colors whitespace-nowrap'>+ Add Account</button>
         </div>
       </div>
 
@@ -69,7 +65,7 @@ function Accounts() {
                   </div>
                 </div>
                 <div className='opacity-0 group-hover:opacity-100 flex gap-4'>
-                  <button onClick={() => dispatch(actions.setEditAccount(account))} className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'>
+                  <button onClick={() => setEditAccount(account)} className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'>
                     <MdOutlineEdit size={15}/>
                   </button>
                   <button onClick={() => deleteAccount(account._id)} className='hover:bg-[#D96D38] text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer'> 
@@ -94,7 +90,7 @@ function Accounts() {
           )})
         }
       </div>
-      {editAccount && <EditAccountModal editAccount={editAccount}/>}
+      
     </div>
   )
 }
