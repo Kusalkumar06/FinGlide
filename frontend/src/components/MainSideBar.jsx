@@ -75,6 +75,16 @@ function SideBar() {
               <TbReportSearch size={20} className="shrink-0" />
               <span className="hidden group-hover:inline xl:inline whitespace-nowrap">Reports</span>
             </NavLink>
+
+            <NavLink to="/about" className={({ isActive }) => `flex items-center gap-3 py-2 px-2 rounded transition-colors ${isActive ? 'bg-[#F96C4A] text-white': 'text-[#505050] hover:bg-[#F96C4A] hover:text-white'}`}>
+              <TbReportSearch size={20} className="shrink-0" />
+              <span className="hidden group-hover:inline xl:inline whitespace-nowrap">About us</span>
+            </NavLink>
+
+            <NavLink to="/contact" className={({ isActive }) => `flex items-center gap-3 py-2 px-2 rounded transition-colors ${isActive ? 'bg-[#F96C4A] text-white' : 'text-[#505050] hover:bg-[#F96C4A] hover:text-white'} `}>
+              <LuChartPie size={20} className="shrink-0" />
+              <span className="hidden group-hover:inline xl:inline whitespace-nowrap">Contact us</span>
+            </NavLink>
           </nav>
 
 

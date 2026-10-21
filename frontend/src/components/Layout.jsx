@@ -1,11 +1,13 @@
 import { Outlet } from 'react-router-dom'
 import Footer from './Footer'
 import SideBar from './MainSideBar'
+import { FetchAppData } from './FetchAppData'
 
 
 function Layout() {
   return (
     <>
+    <FetchAppData />
       <div className="min-h-screen flex flex-col">
         <div className="flex flex-1 w-full">
           <div className="">

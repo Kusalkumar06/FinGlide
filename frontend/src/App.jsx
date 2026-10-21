@@ -8,6 +8,8 @@ import Accounts from './pages/Accounts'
 import Transactions from './pages/TransactionPage.jsx'
 import Budgets from './pages/Budgets'
 import Reports from './pages/ReportsPage.jsx'
+import About from './pages/About'
+import Contact from './pages/Contact'
 import {ProtectedRoute, PublicRoute} from './components/ProtectedRoute'
 import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
@@ -36,16 +38,20 @@ function App() {
 
       <div>
         <Routes>
-          <Route path='/' element={<ProtectedRoute><Layout/></ProtectedRoute>}>
-            <Route index element={<DashBoard/>}></Route>
-            <Route path='/categories/' element={<Categories/>}></Route>
-            <Route path='/accounts' element={<Accounts/>}></Route>
-            <Route path='/transactions' element ={<Transactions/>}></Route>
-            <Route path='/budgets' element ={<Budgets/>}></Route>
-            <Route path='/reports' element ={<Reports/>}></Route>
+          <Route element={<Layout />}>
+            <Route path="/" element={<ProtectedRoute><DashBoard /></ProtectedRoute>} />
+            <Route path="/categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
+            <Route path="/accounts" element={<ProtectedRoute><Accounts /></ProtectedRoute>} />
+            <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
+            <Route path="/budgets" element={<ProtectedRoute><Budgets /></ProtectedRoute>} />
+            <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
           </Route>
-          <Route path='/register/' element={<PublicRoute><Signup /></PublicRoute>}></Route>
-          <Route path='/login/' element={<PublicRoute><Signin /></PublicRoute>}></Route>
+
+          <Route path="/register" element={<PublicRoute><Signup /></PublicRoute>} />
+          <Route path="/login" element={<PublicRoute><Signin /></PublicRoute>} />
         </Routes>
       </div>
       <ToastContainer position='top-right'

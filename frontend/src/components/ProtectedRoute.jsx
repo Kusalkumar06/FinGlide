@@ -1,15 +1,14 @@
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 import api from "../api/axios";
 import Loader from "./Loader";
-import { fetchCoreData,fetchReportsData } from "../redux/coreThunks";
+// import { fetchCoreData,fetchReportsData } from "../redux/coreThunks";
 
 export function ProtectedRoute({ children }) {
   const [authenticated, setAuthenticated] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -25,13 +24,6 @@ export function ProtectedRoute({ children }) {
 
     checkAuth();
   }, []);
-
-  useEffect(() => {
-    if (authenticated) {
-      dispatch(fetchCoreData());
-      dispatch(fetchReportsData())
-    }
-  }, [authenticated, dispatch]);
 
   if (checkingAuth) {
     return <Loader />;

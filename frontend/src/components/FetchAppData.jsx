@@ -16,4 +16,6 @@ export const FetchAppData = () => {
       dispatch(fetchReportsData());
     }
   }, [isUserLoggedIn, dispatch]);
+
+  return null;
 }
