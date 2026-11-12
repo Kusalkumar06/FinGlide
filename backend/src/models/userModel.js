@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 import { TransactionModel } from './transactionModel.js'
 import { AccountModel } from "./accountModel.js";
 import { CategoryModel } from "./categoryModel.js";
-import {BudgetModel} from "./budgetModel.js"
+import { BudgetModel } from "./budgetModel.js";
+import { SessionModel } from "./sessionModel.js";
 
 const userSchema = new mongoose.Schema({
     username:{
@@ -31,7 +32,8 @@ userSchema.pre("findOneAndDelete", async function(next) {
             TransactionModel.deleteMany({userId}),
             AccountModel.deleteMany({userId}),
             CategoryModel.deleteMany({userId}),
-            BudgetModel.deleteMany({userId})
+            BudgetModel.deleteMany({userId}),
+            SessionModel.deleteMany({userId})
         ])
         
         console.log(`Deleted all the for user ${userId}`);

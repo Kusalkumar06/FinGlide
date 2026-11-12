@@ -409,14 +409,12 @@ export const updateCategoryThunk =
 
 
 export const restoreSession = () => async (dispatch) => {
-  dispatch(coreActions.startLoading());
-
   try {
-    await api.get("/auth/check", { withCredentials: true });
+    await api.get("/auth/check");
     dispatch(coreActions.setIsUserLoggedIn(true));
   } catch {
     dispatch(coreActions.setIsUserLoggedIn(false));
   } finally {
-    dispatch(coreActions.stopLoading());
+    dispatch(coreActions.setIsAuthInitialized(true));
   }
 };

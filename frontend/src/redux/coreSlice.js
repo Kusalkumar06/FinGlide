@@ -19,6 +19,7 @@ const coreSlice = createSlice({
   name: "core",
   initialState: {
     isUserLoggedIn: false,
+    isAuthInitialized: false,
 
     accountList: [],
     categoryList: [],
@@ -50,6 +51,9 @@ const coreSlice = createSlice({
     setIsUserLoggedIn(state, action) {
       state.isUserLoggedIn = action.payload;
     },
+    setIsAuthInitialized(state, action) {
+      state.isAuthInitialized = action.payload;
+    },
     setAccountList(state, action) {
       state.accountList = action.payload;
     },
@@ -78,7 +82,10 @@ const coreSlice = createSlice({
       state.spendVsBudgetData = action.payload;
     },
     resetCoreState() {
-      return coreSlice.getInitialState();
+      return {
+        ...coreSlice.getInitialState(),
+        isAuthInitialized: true,
+      };
     },
   },
 });
