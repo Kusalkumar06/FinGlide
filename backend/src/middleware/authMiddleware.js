@@ -1,34 +1,44 @@
-import jwt from "jsonwebtoken"
-import "dotenv/config"
-import { UserModel } from "../models/userModel.js"
+import "dotenv/config";
+import { verifyAccessToken } from "../utils/tokenUtils.js";
 
-export const authenticate = async (req,res,next) => {
-  const token = req.cookies.authToken;
+export const authenticate = async (req, res, next) => {
+  const token = req.cookies.accessToken || req.cookies.authToken;
 
-  if (!token){
+  if (!token) {
     return res.status(401).json({
-      message: "Token not provided",
-    })
+      message: "Access token not provided",
+      code: "TOKEN_MISSING",
+    });
   }
-  try{
-    const secretCode = process.env.SECRET_CODE
-    if (!secretCode) {
-      return res.status(500).json({
-        message: "Server misconfiguration"
-      })
+
+  try {
+    const verified = verifyAccessToken(token);
+
+    if (!verified || !verified.userId) {
+      return res.status(401).json({
+        message: "Invalid token payload",
+        code: "INVALID_TOKEN",
+      });
     }
-    const verified = jwt.verify(token,secretCode)
-    const userDetails = await UserModel.findOne({username: verified.username})
-    if (!userDetails){
-      return res.status(400).json({
-        message: "user not found."
-      })
-    }
-    req.user = {userId: userDetails._id.toString(), username: userDetails.username}
+
+    req.user = {
+      userId: verified.userId,
+      username: verified.username,
+      email: verified.email,
+    };
+
     next();
-  } catch (err){
-    res.status(401).json({
-      message: "Invalid Token",
-    })
+  } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({
+        message: "Access token expired",
+        code: "TOKEN_EXPIRED",
+      });
+    }
+
+    return res.status(401).json({
+      message: "Invalid access token",
+      code: "INVALID_TOKEN",
+    });
   }
-}
+};
