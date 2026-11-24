@@ -5,7 +5,6 @@ import accountRouter from "./routes/accountRoutes.js";
 import categoryRouter from "./routes/categoryRoutes.js";
 import trasactionRouter from "./routes/transactionRoutes.js";
 import budgetRouter from "./routes/budgetRoutes.js";
-import apiOnly from "./middleware/apiOnly.js";
 import cookieParser from "cookie-parser"
 
 import "dotenv/config"
@@ -43,8 +42,6 @@ async function main(){
 }
 
 main()
-
-app.use("/api", apiOnly)
 
 app.use('/api/auth/', authRouter)
 
