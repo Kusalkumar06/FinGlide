@@ -14,6 +14,9 @@ import { connectDB } from "./config/db.js";
 
 const app = express();
 
+// Trust reverse proxy (1 hop for Render / standard reverse proxies) so client IP is accurately extracted
+app.set("trust proxy", 1);
+
 app.use(cors({
   origin: ["http://localhost:5173", "https://finglide-gamma.vercel.app"], 
   credentials: true,
