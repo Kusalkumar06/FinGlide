@@ -1,17 +1,18 @@
 import { createBudget,getBudgets,updateBudget,deleteBudget,spendVsBudget } from "../controllers/budgetControllers.js";
 import { Router } from "express";
 import { authenticate } from "../middleware/authMiddleware.js";
+import { validateCsrfToken } from "../middleware/csrfMiddleware.js";
 
 const budgetRouter = Router();
 
-budgetRouter.post('/createBudget',authenticate,createBudget)
+budgetRouter.post('/createBudget',authenticate,validateCsrfToken,createBudget)
 
 budgetRouter.get('/getBudgets',authenticate,getBudgets)
 
 budgetRouter.get('/spendVsBudget',authenticate,spendVsBudget)
 
-budgetRouter.put('/update/:id',authenticate,updateBudget)
+budgetRouter.put('/update/:id',authenticate,validateCsrfToken,updateBudget)
 
-budgetRouter.delete('/delete/:id',authenticate,deleteBudget)
+budgetRouter.delete('/delete/:id',authenticate,validateCsrfToken,deleteBudget)
 
 export default budgetRouter

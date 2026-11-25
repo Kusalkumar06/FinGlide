@@ -5,6 +5,7 @@ import { AccountModel } from "../models/accountModel.js";
 import { SessionModel } from "../models/sessionModel.js";
 import "dotenv/config";
 import { defaultCategories, defaultAccounts } from "../default.js";
+import { generateCsrfToken } from "../utils/csrfUtils.js";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -98,6 +99,7 @@ export const login = async (req, res) => {
       userId: existingUser._id.toString(),
       username: existingUser.username,
       email: existingUser.email,
+      sessionId: session._id.toString(),
     });
 
     const refreshToken = generateRefreshToken({
@@ -113,8 +115,14 @@ export const login = async (req, res) => {
     res.cookie("accessToken", accessToken, accessCookieOptions);
     res.cookie("refreshToken", refreshToken, refreshCookieOptions);
 
+    const csrfToken = generateCsrfToken({
+      userId: existingUser._id.toString(),
+      sessionId: session._id.toString(),
+    });
+
     return res.status(200).json({
       message: "Login Successful.",
+      csrfToken,
       user: {
         userId: existingUser._id.toString(),
         username: existingUser.username,
@@ -138,26 +146,44 @@ export const refreshToken = async (req, res) => {
       });
     }
 
-    let decoded;
-    try {
-      decoded = verifyRefreshToken(rawRefreshToken);
-    } catch {
-      return res.status(401).json({
-        message: "Invalid or expired refresh token",
-        code: "INVALID_REFRESH_TOKEN",
-      });
+    // Use resolvedSession and refreshDecoded if already verified by middleware, or resolve directly
+    let session = req.resolvedSession;
+    let decoded = req.refreshDecoded;
+
+    if (!session || !decoded) {
+      try {
+        decoded = verifyRefreshToken(rawRefreshToken);
+      } catch {
+        return res.status(401).json({
+          message: "Invalid or expired refresh token",
+          code: "INVALID_REFRESH_TOKEN",
+        });
+      }
+
+      const { userId, sessionId } = decoded;
+      session = await SessionModel.findById(sessionId);
+
+      if (!session) {
+        return res.status(401).json({
+          message: "Session not found or expired",
+          code: "SESSION_EXPIRED",
+        });
+      }
+
+      // Explicit identity verification
+      if (
+        session._id.toString() !== sessionId.toString() ||
+        session.userId.toString() !== userId.toString()
+      ) {
+        return res.status(401).json({
+          message: "Session identity mismatch",
+          code: "SESSION_IDENTITY_MISMATCH",
+        });
+      }
     }
 
-    const { userId, sessionId } = decoded;
-    const session = await SessionModel.findById(sessionId);
-
-    if (!session) {
-      return res.status(401).json({
-        message: "Session not found or expired",
-        code: "SESSION_EXPIRED",
-      });
-    }
-
+    const userId = session.userId.toString();
+    const sessionId = session._id.toString();
     const incomingHash = hashToken(rawRefreshToken);
 
     // Reuse detection
@@ -192,6 +218,7 @@ export const refreshToken = async (req, res) => {
     const newAccessToken = generateAccessToken({
       userId: session.userId.toString(),
       username: req.user?.username || decoded.username,
+      sessionId: session._id.toString(),
     });
 
     const newRefreshToken = generateRefreshToken({
@@ -208,9 +235,15 @@ export const refreshToken = async (req, res) => {
     res.cookie("accessToken", newAccessToken, accessCookieOptions);
     res.cookie("refreshToken", newRefreshToken, refreshCookieOptions);
 
+    const csrfToken = generateCsrfToken({
+      userId: session.userId.toString(),
+      sessionId: session._id.toString(),
+    });
+
     return res.status(200).json({
       message: "Tokens refreshed successfully",
       success: true,
+      csrfToken,
     });
   } catch (err) {
     return res.status(500).json({
@@ -220,24 +253,38 @@ export const refreshToken = async (req, res) => {
 };
 
 export const check = async (req, res) => {
+  let csrfToken = null;
+  if (req.user?.userId && req.user?.sessionId) {
+    csrfToken = generateCsrfToken({
+      userId: req.user.userId.toString(),
+      sessionId: req.user.sessionId.toString(),
+    });
+  }
+
   res.status(200).json({
     message: "User is authenticated",
     success: true,
     user: req.user,
+    csrfToken,
   });
 };
 
 export const logout = async (req, res) => {
   try {
-    const rawRefreshToken = req.cookies?.refreshToken;
-    if (rawRefreshToken) {
-      try {
-        const decoded = verifyRefreshToken(rawRefreshToken);
-        if (decoded?.sessionId) {
-          await SessionModel.findByIdAndDelete(decoded.sessionId);
+    const sessionIdToRevoke = req.logoutSessionId;
+    if (sessionIdToRevoke) {
+      await SessionModel.findByIdAndDelete(sessionIdToRevoke);
+    } else {
+      const rawRefreshToken = req.cookies?.refreshToken;
+      if (rawRefreshToken) {
+        try {
+          const decoded = verifyRefreshToken(rawRefreshToken);
+          if (decoded?.sessionId) {
+            await SessionModel.findByIdAndDelete(decoded.sessionId);
+          }
+        } catch {
+          // Token verification failed or already expired, still proceed to clear cookies
         }
-      } catch {
-        // Token verification failed or already expired, still proceed to clear cookies
       }
     }
 
