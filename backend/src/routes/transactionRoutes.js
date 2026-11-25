@@ -1,10 +1,11 @@
 import { createTransaction,getTransactions,updateTransaction,deleteTransaction,yearlySummary,expVsincYearly } from "../controllers/transactionControllers.js";
 import { authenticate } from "../middleware/authMiddleware.js";
+import { validateCsrfToken } from "../middleware/csrfMiddleware.js";
 import { Router } from "express";
 
 const trasactionRouter = Router()
 
-trasactionRouter.post('/createTransaction',authenticate,createTransaction)
+trasactionRouter.post('/createTransaction',authenticate,validateCsrfToken,createTransaction)
 
 trasactionRouter.get('/getTransactions',authenticate,getTransactions)
 
@@ -12,8 +13,8 @@ trasactionRouter.get('/yearlySummary',authenticate,yearlySummary)
 
 trasactionRouter.get('/expVsincYearly',authenticate,expVsincYearly)
 
-trasactionRouter.put('/update/:id',authenticate,updateTransaction)
+trasactionRouter.put('/update/:id',authenticate,validateCsrfToken,updateTransaction)
 
-trasactionRouter.delete('/delete/:id',authenticate,deleteTransaction)
+trasactionRouter.delete('/delete/:id',authenticate,validateCsrfToken,deleteTransaction)
 
 export default trasactionRouter

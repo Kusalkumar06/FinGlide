@@ -5,8 +5,8 @@ import accountRouter from "./routes/accountRoutes.js";
 import categoryRouter from "./routes/categoryRoutes.js";
 import trasactionRouter from "./routes/transactionRoutes.js";
 import budgetRouter from "./routes/budgetRoutes.js";
-import apiOnly from "./middleware/apiOnly.js";
 import cookieParser from "cookie-parser"
+import { validateOrigin } from "./middleware/csrfMiddleware.js";
 
 import "dotenv/config"
 
@@ -15,11 +15,16 @@ import { connectDB } from "./config/db.js";
 const app = express();
 
 app.use(cors({
-  origin: ["http://localhost:5173","https://finglide-gamma.vercel.app"], 
-  credentials: true,               
+  origin: ["http://localhost:5173", "https://finglide-gamma.vercel.app"], 
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token", "Accept"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 }));
 app.use(express.json())
 app.use(cookieParser())
+
+// Strict Origin/Referer validation on state-changing API operations
+app.use("/api", validateOrigin);
 
 const PORT = process.env.PORT || 5000
 const URL = process.env.MONGO_URI
@@ -43,8 +48,6 @@ async function main(){
 }
 
 main()
-
-app.use("/api", apiOnly)
 
 app.use('/api/auth/', authRouter)
 
