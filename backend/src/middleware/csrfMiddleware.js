@@ -5,6 +5,7 @@ import { SessionModel } from "../models/sessionModel.js";
 const TRUSTED_ORIGINS = new Set([
   "http://localhost:5173",
   "https://finglide-gamma.vercel.app",
+  "https://finglide-test.vercel.app",
 ]);
 
 const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
