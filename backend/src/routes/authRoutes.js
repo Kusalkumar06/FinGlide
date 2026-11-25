@@ -7,11 +7,13 @@ import {
   validateCsrfToken,
 } from "../middleware/csrfMiddleware.js";
 import { loginLimiter, registerLimiter } from "../middleware/rateLimitMiddleware.js";
+import { validateRequest } from "../middleware/validateRequest.js";
+import { loginSchema, registerSchema } from "../schemas/authSchemas.js";
 
 const authRouter = Router();
 
-authRouter.post("/login", loginLimiter, login);
-authRouter.post("/register", registerLimiter, register);
+authRouter.post("/login", loginLimiter, validateRequest({ body: loginSchema }), login);
+authRouter.post("/register", registerLimiter, validateRequest({ body: registerSchema }), register);
 authRouter.post("/refresh", resolveRefreshSessionAndValidateCsrf, refreshToken);
 authRouter.post("/logout", resolveLogoutSessionAndValidateCsrf, logout);
 authRouter.get("/check", authenticate, check);

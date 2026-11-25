@@ -18,7 +18,11 @@ const app = express();
 app.set("trust proxy", 1);
 
 app.use(cors({
-  origin: ["http://localhost:5173", "https://finglide-gamma.vercel.app"], 
+  origin: [
+    "http://localhost:5173",
+    "https://finglide-gamma.vercel.app",
+    "https://finglide-test.vercel.app",
+  ], 
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token", "Accept"],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
