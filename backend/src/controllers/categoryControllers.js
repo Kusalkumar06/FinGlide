@@ -4,19 +4,23 @@ import mongoose from "mongoose";
 
 export const createCategory = async(req,res) => {
   try{
-    const {name, categoryType, icon, description} = req.body;
-    const userId=req.user.userId
+    const validatedData = req.validated?.body || req.body;
+    const { name, categoryType, icon, description } = validatedData;
+    const userId = req.user.userId;
 
-    const exsisting_category = await CategoryModel.findOne({name,userId:req.user.userId})
+    const exsisting_category = await CategoryModel.findOne({ name, userId });
 
     if (exsisting_category){
         return res.status(400).json({
             message: "category name already exists. Try using another name.",
-        })
+        });
     } else {
         const newCategory = await CategoryModel.create({
-          userId: req.user.userId,
-          name, categoryType, icon, description
+          userId,
+          name,
+          categoryType,
+          icon,
+          description,
         });
 
         const categories = await CategoryModel.find({ userId });
@@ -24,15 +28,15 @@ export const createCategory = async(req,res) => {
         res.status(201).json({
           message: "Category created successfully",
           categories,
-        })
+        });
     }
   } catch(err){
     res.status(500).json({
       message: "Error during creating the category",
       error: err.message,
-    })
+    });
   }
-}
+};
 
 export const getCategories = async(req,res) => {
   try{
@@ -50,22 +54,35 @@ export const getCategories = async(req,res) => {
 
 export const updateCategory = async(req,res) => {
   try{
-    const updatedCategory = await CategoryModel.findOneAndUpdate({_id:req.params.id,userId:req.user.userId},req.body,{new:true},{ runValidators: true });
-    const userId=req.user.userId
+    const validatedData = req.validated?.body || req.body;
+    const { name, categoryType, icon, description } = validatedData;
+    const updatePayload = { name, categoryType, icon, description };
+
+    const updatedCategory = await CategoryModel.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user.userId },
+      updatePayload,
+      { new: true, runValidators: true }
+    );
+    if (!updatedCategory) {
+      return res.status(404).json({
+        message: "Category not found",
+      });
+    }
+    const userId = req.user.userId;
 
     const categories = await CategoryModel.find({ userId });
 
     res.status(200).json({
       message: "Category updated successfully",
       categories, 
-    })
+    });
   } catch(err){
     res.status(500).json({
       message: "Error during updating the category",
       error: err.message,
-    })
+    });
   }
-}
+};
 
 export const deleteCategory = async(req,res) => {
   try{

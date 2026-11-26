@@ -4,18 +4,24 @@ import mongoose from "mongoose";
 
 export const createAccount = async(req,res) => {
   try{
-    const {name ,accountType, accountNumber, balance, institution,icon} = req.body;
-    const userId=req.user.userId
-    const exsisting_account = await AccountModel.findOne({name,userId})
+    const validatedData = req.validated?.body || req.body;
+    const { name, accountType, accountNumber, balance, institution, icon } = validatedData;
+    const userId = req.user.userId;
+    const exsisting_account = await AccountModel.findOne({ name, userId });
 
     if (exsisting_account){
         return res.status(400).json({
             message: "account name already exists. Try using another name.",
-        })
+        });
     } else {
         const newAccount = await AccountModel.create({
-          userId: req.user.userId,
-          name, accountType, balance,institution,accountNumber, icon
+          userId,
+          name,
+          accountType,
+          balance,
+          institution,
+          accountNumber,
+          icon,
         });
 
         const accounts = await AccountModel.find({ userId });
@@ -24,15 +30,15 @@ export const createAccount = async(req,res) => {
         res.status(201).json({
           message: "Account created successfully",
           accounts,
-        })
+        });
     }
   } catch(err){
     res.status(500).json({
       message: "Error during creating the account",
       error: err.message,
-    })
+    });
   }
-}
+};
 
 export const getAccounts = async(req,res) => {
   try{
@@ -50,22 +56,34 @@ export const getAccounts = async(req,res) => {
 
 export const updateAccount = async(req,res) => {
   try{
-    const updatedAccount = await AccountModel.findOneAndUpdate({_id:req.params.id,userId:req.user.userId},req.body,{new:true});
-    const userId=req.user.userId
-    const accounts = await AccountModel.find({ userId });
+    const validatedData = req.validated?.body || req.body;
+    const { name, accountType, balance, accountNumber, institution, icon } = validatedData;
+    const updatePayload = { name, accountType, balance, accountNumber, institution, icon };
 
+    const updatedAccount = await AccountModel.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user.userId },
+      updatePayload,
+      { new: true, runValidators: true }
+    );
+    if (!updatedAccount) {
+      return res.status(404).json({
+        message: "Account not found",
+      });
+    }
+    const userId = req.user.userId;
+    const accounts = await AccountModel.find({ userId });
 
     res.status(200).json({
       message: "Account updated successfully",
-      accounts
-    })
+      accounts,
+    });
   } catch(err){
     res.status(500).json({
       message: "Error during updating the account",
       error: err.message,
-    })
+    });
   }
-}
+};
 
 export const deleteAccount = async(req,res) => {
   try{
