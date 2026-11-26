@@ -1,5 +1,6 @@
 import { BudgetModel } from "../models/budgetModel.js";
 import { TransactionModel } from "../models/transactionModel.js";
+import { CategoryModel } from "../models/categoryModel.js";
 import mongoose from "mongoose";
 
 const buildBudgetsResponse = async(userId) => {
@@ -68,26 +69,44 @@ const buildBudgetsResponse = async(userId) => {
 
 export const createBudget = async (req,res) => {
     try {
-      const {categoryId, limit,period,icon,color} = req.body;
-      const userId = req.user.userId
+      const validatedData = req.validated?.body || req.body;
+      const { categoryId, limit, period } = validatedData;
+      const userId = req.user.userId;
+
+      // Verify category ownership and categoryType (must be Expense)
+      const category = await CategoryModel.findOne({ _id: categoryId, userId });
+      if (!category) {
+        return res.status(404).json({
+          message: "Category not found or unauthorized",
+        });
+      }
+      if (category.categoryType !== "Expense") {
+        return res.status(400).json({
+          message: `Budget category must be an Expense category, but found '${category.categoryType}'`,
+          code: "CATEGORY_TYPE_MISMATCH",
+        });
+      }
+
       const budget = await BudgetModel.create({
-        userId: req.user.userId,
-        categoryId,limit,period,icon,color
-      })
+        userId,
+        categoryId,
+        limit,
+        period,
+      });
 
       const budgets = await buildBudgetsResponse(userId);
 
       res.status(201).json({
         message: `Budget created successfully.`,
         budgets,
-      })
+      });
     } catch(err){
       res.status(500).json({
         message: "Error during creating the budget",
         error: err.message,
-      })
+      });
     }
-}
+};
 
 
 export const getBudgets = async(req,res) => {
@@ -108,48 +127,72 @@ export const getBudgets = async(req,res) => {
 
 export const updateBudget = async(req,res) => {
   try{
-    const updateBudget = await BudgetModel.findOneAndUpdate({_id: req.params.id,userId: req.user.userId},req.body,{new:true})
+    const validatedData = req.validated?.body || req.body;
+    const { categoryId, limit, period } = validatedData;
+    const userId = req.user.userId;
 
-    if(!updateBudget){
-      return res.status(401).json({
-        message : "Budget Not found to Update."
-      })
+    // Verify category ownership and categoryType (must be Expense)
+    const category = await CategoryModel.findOne({ _id: categoryId, userId });
+    if (!category) {
+      return res.status(404).json({
+        message: "Category not found or unauthorized",
+      });
+    }
+    if (category.categoryType !== "Expense") {
+      return res.status(400).json({
+        message: `Budget category must be an Expense category, but found '${category.categoryType}'`,
+        code: "CATEGORY_TYPE_MISMATCH",
+      });
     }
 
-    res.status(201).json({
+    const updatePayload = { categoryId, limit, period };
+
+    const updateBudget = await BudgetModel.findOneAndUpdate(
+      { _id: req.params.id, userId },
+      updatePayload,
+      { new: true, runValidators: true }
+    );
+
+    if(!updateBudget){
+      return res.status(404).json({
+        message : "Budget not found",
+      });
+    }
+
+    res.status(200).json({
       message: `Budget updated successfully.`,
       updatedBudget: updateBudget,
-    })
+    });
   } catch(err){
     res.status(500).json({
       message: `Error during updating the budget. ${err}`,
-    })
+    });
   }
-}
+};
 
 export const deleteBudget = async(req,res) => {
   try{
     const deleteBudget = await BudgetModel.findOneAndDelete({_id: req.params.id,userId: req.user.userId})
     const userId=req.user.userId
     if(!deleteBudget){
-      return res.status(401).json({
-        message : "Budget Not found to Delete."
-      })
+      return res.status(404).json({
+        message : "Budget not found",
+      });
     }
 
     const budgets = await buildBudgetsResponse(userId);
 
-    res.status(201).json({
+    res.status(200).json({
       message: `Budget Deleted successfully.`,
       budgets,
-    })
+    });
   } catch(err){
     res.status(500).json({
       message: "Error during deleting the budget",
       error: err.message,
-    })
+    });
   }
-}
+};
 
 export const spendVsBudget = async(req,res) => {
   try{
